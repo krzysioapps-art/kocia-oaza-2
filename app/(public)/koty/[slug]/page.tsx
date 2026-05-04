@@ -103,7 +103,7 @@ export default async function CatPage({ params }: PageProps) {
       media:cat_media(*)
     `)
         .eq("slug", slug)
-        .single();
+        .maybeSingle();
 
     if (!cat || error) {
         return <div>Nie znaleziono kota</div>;
