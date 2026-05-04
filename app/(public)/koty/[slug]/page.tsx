@@ -92,7 +92,7 @@ export async function generateMetadata({ params }: PageProps) {
                     alt: cat.name,
                 },
             ],
-            url: `https://kocia-oaza.pl/koty/${slug}`,
+            url: `https://new.kocia-oaza.pl/koty/${slug}`,
             type: "website",
         },
     };
@@ -270,7 +270,7 @@ export default async function CatPage({ params }: PageProps) {
 
                             <ShareBar
                                 title={`Poznaj ${cat.name}`}
-                                url={`https://kocia-oaza.pl/koty/${slug}`}
+                                url={`https://new.kocia-oaza.pl/koty/${slug}`}
                             />
 
                             <div className="cat-media card-base" id="media">
