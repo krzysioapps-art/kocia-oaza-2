@@ -69,14 +69,23 @@ function getPrimaryImage(cat: any) {
 
 export async function generateMetadata({ params }: PageProps) {
     const { slug } = await params;
-
     const supabase = await createClient();
 
     const { data: cat } = await supabase
         .from("cats")
-        .select("*")
+        .select(`
+            *,
+            media:cat_media(*)
+        `)
         .eq("slug", slug)
         .single();
+
+    const rawImage = getPrimaryImage(cat);
+
+    // Facebook wymaga absolutnego URL
+    const imageUrl = rawImage.startsWith("http")
+        ? rawImage
+        : `https://new.kocia-oaza.pl${rawImage}`;
 
     return {
         title: `Poznaj ${cat.name}`,
@@ -86,7 +95,7 @@ export async function generateMetadata({ params }: PageProps) {
             description: cat.description ?? "",
             images: [
                 {
-                    url: getPrimaryImage(cat), // 🔥 ważne
+                    url: imageUrl,
                     width: 1200,
                     height: 630,
                     alt: cat.name,
