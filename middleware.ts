@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export function middleware(req) {
+export function middleware(req: NextRequest) {
   const ua = req.headers.get("user-agent") || "";
 
   if (
@@ -10,5 +10,5 @@ export function middleware(req) {
     return NextResponse.next();
   }
 
-  // 🔒 Twoja reszta logiki (auth itd.)
+  return NextResponse.next();
 }
