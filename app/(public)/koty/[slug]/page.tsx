@@ -1,3 +1,8 @@
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+
+export const revalidate = 0;
+
 import PostList from "@/app/components/news/PostList";
 import "@/app/style/koty/cat-page.css";
 import CatTabs from "@/app/components/ui/CatTabs";
