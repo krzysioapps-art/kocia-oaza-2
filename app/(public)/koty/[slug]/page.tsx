@@ -1,8 +1,3 @@
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-export const fetchCache = "force-no-store";
-export const runtime = "nodejs";
-
 import PostList from "@/app/components/news/PostList";
 import "@/app/style/koty/cat-page.css";
 import CatTabs from "@/app/components/ui/CatTabs";
@@ -14,9 +9,9 @@ import type { Media } from "@/types/media";
 import ShareBar from "@/app/components/ui/ShareBar";
 
 type PageProps = {
-    params: {
+    params: Promise<{
         slug: string;
-    };
+    }>;
 };
 
 /* =========================
@@ -73,62 +68,22 @@ function getPrimaryImage(cat: any) {
 }
 
 export async function generateMetadata({ params }: PageProps) {
-    try {
-        const { slug } = params;
-        const supabase = await createClient();
+    const { slug } = await params;
 
-        const { data: cat } = await supabase
-            .from("cats")
-            .select(`
-                *,
-                media:cat_media(*)
-            `)
-            .eq("slug", slug)
-            .maybeSingle(); // 👈 ważne!
-
-        // 🔒 fallback jeśli brak kota
-        if (!cat) {
-            return {
-                title: "Kot",
-                description: "Brak danych",
-            };
-        }
-
-        const rawImage = getPrimaryImage(cat);
-
-        const imageUrl = rawImage.startsWith("http")
-            ? rawImage
-            : `https://new.kocia-oaza.pl${rawImage}`;
-
-        return {
-            title: `Poznaj ${cat.name}`,
-            description: cat.description ?? "",
-            alternates: {
-                canonical: `https://new.kocia-oaza.pl/koty/${slug}`,
-            },
-            openGraph: {
-                title: `Poznaj ${cat.name}`,
-                description: cat.description ?? "",
-                images: [
-                    {
-                        url: imageUrl,
-                        width: 1200,
-                        height: 630,
-                        alt: cat.name,
-                    },
-                ],
-                url: `https://new.kocia-oaza.pl/koty/${slug}`,
-                type: "website",
-            },
-        };
-    } catch (e) {
-        console.error("METADATA ERROR", e);
-
-        return {
-            title: "Kot",
-            description: "Błąd ładowania",
-        };
-    }
+    return {
+        title: "Kocia Oaza",
+        description: "Poznaj koty do adopcji",
+        openGraph: {
+            title: "Kocia Oaza",
+            description: "Poznaj koty do adopcji",
+            url: `https://new.kocia-oaza.pl/koty/${slug}`,
+            images: [
+                {
+                    url: "https://new.kocia-oaza.pl/og-default.jpg",
+                },
+            ],
+        },
+    };
 }
 
 /* =========================
@@ -136,7 +91,7 @@ export async function generateMetadata({ params }: PageProps) {
    ========================= */
 
 export default async function CatPage({ params }: PageProps) {
-    const { slug } = params;
+    const { slug } = await params;
 
     const supabase = await createClient();
 
@@ -148,7 +103,7 @@ export default async function CatPage({ params }: PageProps) {
       media:cat_media(*)
     `)
         .eq("slug", slug)
-        .maybeSingle();
+        .single();
 
     if (!cat || error) {
         return <div>Nie znaleziono kota</div>;
