@@ -1,15 +1,6 @@
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-// ważne dla botów (Next 15/16)
-export const metadata = {
-    // jeśli używasz generateMetadata – zostaw, ale:
-    other: {
-        // hint dla Next, żeby nie streamował head dla botów
-        'x-robots-render': 'full',
-    },
-};
-
 import PostList from "@/app/components/news/PostList";
 import "@/app/style/koty/cat-page.css";
 import CatTabs from "@/app/components/ui/CatTabs";
