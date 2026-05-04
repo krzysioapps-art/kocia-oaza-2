@@ -137,6 +137,10 @@ body.page--cat .navbar {
   margin-top: var(--space-3);
 }
 
+.cat-layout--single {
+  grid-template-columns: 1fr;
+}
+
 /* =========================
    📌 SIDEBAR → teraz wygląda jak home cards
    ========================= */

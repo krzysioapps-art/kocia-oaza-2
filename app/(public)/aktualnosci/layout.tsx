@@ -2,15 +2,8 @@ import "@/app/style/ui/modal.css";
 
 export default function Layout({
   children,
-  modal,
 }: {
-  children: React.ReactNode
-  modal: React.ReactNode
+  children: React.ReactNode;
 }) {
-  return (
-    <>
-      {children}
-      {modal}
-    </>
-  )
+  return <>{children}</>;
 }
