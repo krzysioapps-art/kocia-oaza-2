@@ -1,49 +1,98 @@
-.share-bar {
+/* =========================
+   SHARE
+   ========================= */
+
+.share {
+  position: relative;
+}
+
+/* 🔘 BUTTON (kółko 40x40) */
+.share__trigger {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+
   display: flex;
   align-items: center;
-  gap: 10px;
-
-  padding: 10px 14px;
-  border-radius: var(--radius-md);
+  justify-content: center;
 
   background: var(--color-bg);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-accent-1-strong);
+  color: var(--color-accent-1-strong);
 
-  flex-wrap: wrap;
-}
-
-.share-bar__label {
-  font-size: 13px;
-  opacity: 0.6;
-}
-
-.share-btn {
-  border: none;
-  background: #f2f2f2;
-
-  padding: 6px 10px;
-  border-radius: 999px;
-
-  font-size: 13px;
   cursor: pointer;
-
   transition: all 0.2s ease;
 }
 
-.share-btn:hover {
-  background: #e5e5e5;
+/* 🔥 HOVER */
+.share__trigger:hover {
+  background: var(--color-accent-1-strong);
+  color: #fff;
 }
 
-.share-btn--fb {
-  background: #1877f2;
-  color: white;
+/* 💬 TOOLTIP */
+.share__tooltip {
+  position: absolute;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+
+  background: #000;
+  color: #fff;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 6px;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.2s ease;
 }
 
-.share-btn--fb:hover {
-  background: #166fe0;
+.share:hover .share__tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
-.share-bar {
-  margin-top: var(--space-2);
-  justify-content: space-between;
+/* 📦 MENU */
+.share__menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+
+  padding: 6px;
+  min-width: 180px;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+
+  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+  z-index: 200;
+}
+
+/* 🔘 MENU BUTTONS */
+.share__menu button {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  background: none;
+  border: none;
+  padding: 8px 10px;
+
+  border-radius: 8px;
+  cursor: pointer;
+
+  font-size: 14px;
+  color: var(--color-text);
+
+  transition: background 0.2s ease;
+}
+
+.share__menu button:hover {
+  background: var(--color-bg-alt);
 }

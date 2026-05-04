@@ -70,18 +70,53 @@ function getPrimaryImage(cat: any) {
 export async function generateMetadata({ params }: PageProps) {
     const { slug } = await params;
 
-    return {
-        title: "Kocia Oaza",
-        description: "Poznaj koty do adopcji",
-        openGraph: {
+    const supabase = await createClient();
+
+    const { data: cat } = await supabase
+        .from("cats")
+        .select(`
+            name,
+            description,
+            slug,
+            image_url,
+            media:cat_media(url, is_primary)
+        `)
+        .eq("slug", slug)
+        .maybeSingle();
+
+    if (!cat) {
+        return {
             title: "Kocia Oaza",
-            description: "Poznaj koty do adopcji",
-            url: `https://new.kocia-oaza.pl/koty/${slug}`,
+        };
+    }
+
+    const image =
+        cat.media?.find((m: any) => m.is_primary)?.url ||
+        cat.media?.[0]?.url ||
+        cat.image_url ||
+        "https://new.kocia-oaza.pl/og-default.jpg";
+
+    return {
+        title: `${cat.name} szuka domu | Kocia Oaza`,
+        description:
+            cat.description?.slice(0, 160) ||
+            `Poznaj ${cat.name} i daj mu dom ❤️`,
+
+        openGraph: {
+            title: `${cat.name} szuka domu`,
+            description:
+                cat.description?.slice(0, 160) ||
+                `Poznaj ${cat.name} i daj mu dom ❤️`,
+            url: `https://new.kocia-oaza.pl/koty/${cat.slug}`,
+            siteName: "Kocia Oaza",
             images: [
                 {
-                    url: "https://new.kocia-oaza.pl/og-default.jpg",
+                    url: image,
+                    width: 1200,
+                    height: 630,
                 },
             ],
+            type: "article",
         },
     };
 }
@@ -185,6 +220,7 @@ export default async function CatPage({ params }: PageProps) {
                             <button className="button button--outline-primary">
                                 Wesprzyj
                             </button>
+                            <ShareBar title="Sprawdź tego kota!" />
                         </div>
                     )}
 
@@ -255,11 +291,6 @@ export default async function CatPage({ params }: PageProps) {
                                     </div>
                                 )}
                             </div>
-
-                            <ShareBar
-                                title={`Poznaj ${cat.name}`}
-                                url={`https://new.kocia-oaza.pl/koty/${slug}`}
-                            />
 
                             <div className="cat-media card-base" id="media">
                                 <h2>Zdjęcia i filmy</h2>
