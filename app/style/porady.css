@@ -1,0 +1,86 @@
+/* =========================
+   🐱 ADVICE PAGE
+   ========================= */
+
+.advice {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* BLOKI */
+.advice {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.advice-block {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  align-items: start;
+  gap: var(--space-2);
+}
+
+/* wrapper na ikonę */
+.advice-icon {
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: var(--radius-pill);
+  background: var(--color-accent-1); /* 🔥 tło */
+
+  flex-shrink: 0;
+}
+
+/* ikonka */
+.advice-icon svg {
+  width: 22px;
+  height: 22px;
+  display: block;
+
+  color: var(--color-accent-1-strong); /* 🔥 kolor */
+}
+
+.advice-block h3 {
+  margin-bottom: 4px;
+}
+
+/* LISTY */
+.advice-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+
+  max-width: 600px;
+  margin: var(--space-3) auto 0;
+}
+
+.advice-list div {
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+}
+
+/* NEGATIVE */
+.advice-list--danger div {
+  background: var(--color-accent-3);
+}
+
+/* SUCCESS */
+.advice-list--success div {
+  background: var(--color-accent-1);
+}
+
+/* CTA */
+.advice-cta {
+  text-align: center;
+  margin-top: var(--space-4);
+  font-size: 18px;
+}

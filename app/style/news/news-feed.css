@@ -1,0 +1,11 @@
+.news-feed__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.news-feed__footer {
+  margin-top: var(--space-5);
+  display: flex;
+  justify-content: center;
+}

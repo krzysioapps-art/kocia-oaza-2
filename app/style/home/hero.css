@@ -1,0 +1,126 @@
+/* BACKGROUND HERO */
+
+.hero--bg {
+    background-image: url("/hero-bg12.webp");
+    /* desktop */
+    background-size: cover;
+    background-position: center 90%;
+    background-repeat: no-repeat;
+}
+
+@media (max-width: 768px) {
+    .hero--bg {
+        background-image: url("/hero-bg-mobile.webp");
+        background-position: center center;
+        /* ważne */
+    }
+}
+
+/* overlay */
+
+.hero--overlay {
+    position: relative;
+}
+
+.hero--overlay::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background: radial-gradient(circle at center,
+            rgba(255, 255, 255, 0.85) 15%,
+            rgba(255, 255, 255, 0.6) 25%,
+            rgba(255, 255, 255, 0.2) 40%,
+            rgba(255, 255, 255, 0) 50%);
+}
+
+/* inner layout */
+
+.hero__inner {
+    position: relative;
+    z-index: 1;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    /* 🔥 */
+
+    text-align: center;
+    /* 🔥 */
+
+    gap: 24px;
+
+    min-height: 55vh;
+    max-width: 800px;
+    /* lekko zwiększamy przy center */
+    margin: 0 auto;
+    /* 🔥 */
+}
+
+.hero__actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    /* 🔥 */
+    flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+    .hero__inner {
+        min-height: 70vh;
+    }
+
+    .hero__actions {
+        flex-direction: column;
+        align-items: stretch;
+        /* żeby były na pełną szerokość */
+    }
+
+    .hero--overlay::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+
+        background: radial-gradient(circle at 50% 44%,
+                rgba(255, 255, 255, 0.85) 15%,
+                rgba(255, 255, 255, 0.6) 25%,
+                rgba(255, 255, 255, 0.2) 40%,
+                rgba(255, 255, 255, 0) 50%);
+    }
+}
+
+.hero--with-stats {
+    position: relative;
+    padding-bottom: 0;
+
+    /* 🔥 dynamiczna wysokość fade */
+    --fade-height: 350px;
+    /* desktop default */
+}
+
+.hero--with-stats::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: var(--fade-height);
+
+    background: linear-gradient(to bottom,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.4) 30%,
+            rgba(255, 255, 255, 0.8) 55%,
+            var(--color-bg) 100%);
+
+    pointer-events: none;
+}
+
+
+.hero__stats {
+    position: relative;
+    z-index: 1;
+
+    padding-bottom: var(--space-6);
+}

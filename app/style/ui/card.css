@@ -1,0 +1,46 @@
+.card {
+  flex: 0 0 340px;
+
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+
+  background: var(--color-bg);
+
+  text-decoration: none;
+  color: inherit;
+
+  transition: transform 0.2s ease;
+}
+
+.card>img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+.card__media {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+
+  border-radius: var(--radius-md);
+}
+
+.card.variant--primary {
+  background: var(--color-accent-1);
+}
+
+.card.variant--secondary {
+  background: var(--color-accent-2);
+}
+
+.card.variant--tertiary {
+  background: var(--color-accent-3);
+}
+
+@media (max-width: 768px) {
+  .card {
+    flex: 0 0 300px;
+  }
+}

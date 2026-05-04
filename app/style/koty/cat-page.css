@@ -1,0 +1,656 @@
+/* =========================
+   🐱 CAT PAGE
+   ========================= */
+
+.cat-page {
+  width: 100%;
+}
+
+.cat-section {
+  padding-top: var(--space-3);
+}
+
+body.page--cat .navbar {
+  position: static;
+  box-shadow: none;
+}
+
+/* =========================
+   🐱 HEADER (TEN SAM UKŁAD, LEPSZY LOOK)
+   ========================= */
+
+.cat-header {
+  background: var(--color-bg);
+}
+
+.cat-header__top {
+  padding-top: var(--space-3);
+  padding-bottom: var(--space-3);
+
+  /* 🔥 bardziej “home feel” */
+  background: linear-gradient(to bottom,
+      var(--color-accent-light, transparent) 0%,
+      rgba(255, 255, 255, 0.6) 60%,
+      rgba(255, 255, 255, 0) 100%);
+}
+
+.cat-header__center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+/* =========================
+   🐱 AVATAR (bez zmiany struktury, tylko polish)
+   ========================= */
+
+.cat-avatar-wrap {
+  width: 164px;
+  aspect-ratio: 1 / 1;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+  border: 4px solid var(--color-accent-strong);
+
+  overflow: hidden;
+  flex-shrink: 0;
+
+  /* 🔥 subtle depth */
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.cat-avatar {
+  width: 150px;
+  height: 150px;
+
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* =========================
+   🐱 NAME + AGE
+   ========================= */
+
+.cat-name {
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: -5px;
+}
+
+.cat-age {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+  font-size: 14px;
+}
+
+.cat-age__label {
+  color: #888;
+}
+
+.cat-age__value {
+  font-weight: 600;
+  color: var(--color-accent-strong);
+}
+
+/* =========================
+   🔥 STICKY BAR (BEZ ZMIANY LOGIKI)
+   ========================= */
+
+.cat-header__sticky {
+  position: sticky;
+  top: 0px;
+  z-index: 120;
+
+  background: rgba(255, 255, 255, 1);
+
+  border-bottom: 1px solid var(--color-border);
+}
+
+.cat-header__row {
+  height: var(--navbar-height);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* CTA */
+
+.cat-actions {
+  margin-left: auto;
+  display: flex;
+  gap: var(--space-2);
+}
+
+/* =========================
+   📦 LAYOUT (ten sam)
+   ========================= */
+
+.cat-layout {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+/* =========================
+   📌 SIDEBAR → teraz wygląda jak home cards
+   ========================= */
+
+.cat-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+
+  position: sticky;
+  top: calc((var(--navbar-height) * 1) + var(--space-3));
+  height: fit-content;
+}
+
+.cat-sidebar .card-base div {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+
+/* =========================
+   📄 MAIN
+   ========================= */
+
+.cat-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.cat-similar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.cat-similar__footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.cat-similar__spacer {
+  flex: 1;
+  /* 🔥 wypycha przyciski na boki */
+}
+
+/* =========================
+   📝 STORY
+   ========================= */
+
+.cat-story {
+  line-height: 1.8;
+  font-size: 16px;
+
+  background: var(--color-bg);
+}
+
+/* =========================
+   🔥 URGENCY
+   ========================= */
+
+.cat-urgency {
+  background: #fff8e1;
+  border-radius: var(--radius-md);
+
+  font-size: 14px;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* =========================
+   🐱 SIMILAR
+   ========================= */
+
+.cat-similar__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+}
+
+.cat-card {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--color-bg);
+
+  transition: all 0.25s ease;
+}
+
+.cat-card:hover {
+  transform: translateY(-2px);
+}
+
+.cat-card__image {
+  height: 140px;
+}
+
+.cat-card__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cat-card__body {
+  padding: var(--space-2);
+}
+
+/* =========================
+   🎨 GENDER THEME (bez zmian)
+   ========================= */
+
+.cat-page.cat--male {
+  --color-accent-light: var(--color-accent-1);
+  --color-accent-strong: var(--color-accent-1-strong);
+}
+
+.cat-page.cat--female {
+  --color-accent-light: var(--color-accent-3);
+  --color-accent-strong: var(--color-accent-3-strong);
+}
+
+/* =========================
+   🎯 BUTTON OVERRIDE
+   ========================= */
+
+.cat-page .button--primary {
+  background: var(--color-accent-strong);
+  color: #fff;
+}
+
+.cat-page .button--outline-primary {
+  border-color: var(--color-accent-strong);
+  color: var(--color-accent-strong);
+}
+
+.cat-page .button--outline-primary:hover {
+  background: var(--color-accent-strong);
+  color: #fff;
+}
+
+/* =========================
+   📱 RESPONSIVE
+   ========================= */
+
+@media (max-width: 1024px) {
+  .cat-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .cat-sidebar {
+    position: static;
+  }
+}
+
+@media (max-width: 768px) {
+
+  .cat-avatar-wrap {
+    width: 124px;
+  }
+
+  .cat-avatar {
+    width: 110px;
+    height: 110px;
+  }
+
+  .cat-name {
+    font-size: 22px;
+  }
+
+  .cat-similar__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .cat-similar__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* TABS */
+
+.cat-tabs {
+  display: flex;
+  gap: 16px;
+}
+
+.cat-tabs button {
+  background: none;
+  border: none;
+  font-size: 14px;
+  opacity: 0.6;
+  cursor: pointer;
+  position: relative;
+  padding-bottom: 6px;
+  transition: all 0.2s ease;
+}
+
+/* hover */
+
+.cat-tabs button:hover {
+  opacity: 1;
+}
+
+/* ACTIVE */
+
+.cat-tabs button.active {
+  opacity: 1;
+  font-weight: 600;
+}
+
+/* underline */
+
+.cat-tabs button.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+
+  width: 100%;
+  height: 2px;
+
+  background: var(--color-accent-strong);
+  border-radius: 2px;
+}
+
+.cat-tabs {
+  display: flex;
+  align-items: center;
+  height: 44px;
+  /* 🔥 to samo co button */
+}
+
+.cat-tabs button {
+  position: relative;
+  height: 44px;
+  /* 🔥 identyczna wysokość */
+  display: flex;
+  align-items: center;
+
+  background: none;
+  border: none;
+  padding: 0 4px;
+
+  font-size: 14px;
+  opacity: 0.6;
+  cursor: pointer;
+}
+
+.cat-tabs button.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  /* 🔥 bo button = 44px i siedzi centralnie */
+
+  width: 100%;
+  height: 2px;
+
+  background: var(--color-accent-strong);
+}
+
+.cat-tabs button {
+  color: inherit;
+  /* 🔥 usuwa niebieski */
+  -webkit-appearance: none;
+  /* 🔥 iOS reset */
+  appearance: none;
+
+  text-decoration: none;
+}
+
+.cat-tabs button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+#posts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+@media (max-width: 768px) {
+  .cat-header__row {
+    flex-direction: column;
+    align-items: stretch;
+    height: auto;
+    gap: var(--space-2);
+    padding: var(--space-3);
+  }
+
+  /* TABS */
+  .cat-tabs {
+    width: 100%;
+    overflow-x: auto;
+    gap: 12px;
+  }
+
+  .cat-tabs button {
+    flex-shrink: 0;
+  }
+
+  /* CTA */
+  .cat-actions {
+    width: 100%;
+    margin-left: 0;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2);
+  }
+
+  .cat-actions .button {
+    width: 100%;
+  }
+
+  .cat-actions {
+    order: -1;
+    /* 🔥 CTA idzie nad tabs */
+  }
+
+  .cat-tabs {
+    order: 1;
+  }
+}
+
+/* =========================
+   🐱 CAT SLIDER (FIXED)
+   ========================= */
+
+/* 🔥 wychodzi tylko z paddingu, NIE z viewportu */
+.cat-slider-bleed {
+  margin-left: calc(var(--container-padding) * -1);
+  margin-right: calc(var(--container-padding) * -1);
+}
+
+/* wrapper */
+.cat-slider {
+  overflow: hidden;
+}
+
+/* track */
+.cat-slider__track {
+  display: flex;
+  gap: var(--space-2);
+
+  overflow-x: auto;
+  scroll-behavior: smooth;
+
+
+  scrollbar-width: none;
+}
+
+/* hide scrollbar */
+.cat-slider__track::-webkit-scrollbar {
+  display: none;
+}
+
+/* 🔥 KLUCZOWE — żeby grid nie puchł */
+.cat-main {
+  min-width: 0;
+}
+
+/* cards */
+.cat-card--slider {
+  flex: 0 0 200px;
+}
+
+/* snap */
+.cat-slider__track {
+  scroll-snap-type: x mandatory;
+}
+
+.cat-card--slider {
+  scroll-snap-align: start;
+}
+
+.cats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+}
+
+@media (max-width: 768px) {
+  .cats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* =========================
+   🖼 CAT MEDIA (FINAL FIXED)
+   ========================= */
+
+.cat-media {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* GRID */
+
+.cat-media__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+  .cat-media__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .cat-media__grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+}
+
+/* ITEM */
+
+.cat-media__item {
+  position: relative;
+  cursor: pointer;
+
+  border-radius: var(--radius-md);
+  overflow: hidden;
+
+  aspect-ratio: 1 / 1;
+  background: #f5f5f5;
+}
+
+/* MEDIA */
+
+.cat-media__item img,
+.cat-media__item video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+/* 🔥 KLUCZ — blokuje glitch klików */
+
+.cat-media__item video {
+  pointer-events: none;
+}
+
+/* HOVER */
+
+.cat-media__item:hover img,
+.cat-media__item:hover video {
+  transform: scale(1.04);
+  filter: brightness(1.05);
+}
+
+/* =========================
+   🎥 VIDEO OVERLAY
+   ========================= */
+
+.video-overlay {
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(0, 0, 0, 0.25);
+  pointer-events: none;
+}
+
+/* PLAY BUTTON */
+
+.play-icon {
+  width: 56px;
+  height: 56px;
+
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+/* TRIANGLE */
+
+.play-icon::after {
+  content: "";
+
+  width: 0;
+  height: 0;
+
+  border-left: 14px solid white;
+  border-top: 9px solid transparent;
+  border-bottom: 9px solid transparent;
+
+  transform: translateX(2px);
+}
+
+/* HOVER */
+
+.cat-media__item:hover .play-icon {
+  transform: scale(1.1);
+  background: rgba(0, 0, 0, 0.75);
+}

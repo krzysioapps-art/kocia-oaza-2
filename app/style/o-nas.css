@@ -1,0 +1,209 @@
+/* =========================
+   🧠 ABOUT PAGE
+   ========================= */
+
+/* 🔥 delikatny rytm sekcji */
+.about-story {
+  align-items: center;
+}
+
+/* obraz */
+.about-image img {
+  width: 100%;
+  border-radius: var(--radius-xl);
+  object-fit: cover;
+
+  /* 🔥 subtle depth */
+}
+
+/* =========================
+   ✨ STORY SECTION (lekkie tło)
+   ========================= */
+
+.about-story {
+  position: relative;
+}
+
+/* 🔥 delikatne tło „plama” */
+.about-story::before {
+  content: "";
+  position: absolute;
+
+  width: 420px;
+  height: 420px;
+
+  background: var(--color-accent-1);
+  opacity: 0.25;
+
+  border-radius: 50%;
+
+  top: -80px;
+  left: -80px;
+
+  z-index: -1;
+}
+
+/* =========================
+   ❤️ MISJA (czytelność + rytm)
+   ========================= */
+
+.section--alt .text p {
+  margin-bottom: var(--space-2);
+}
+
+/* =========================
+   📊 STATS — bardziej premium
+   ========================= */
+
+.stats {
+  text-align: center;
+}
+
+.stats .card-base {
+  align-items: center;
+  text-align: center;
+
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+
+  background: var(--color-bg);
+}
+
+/* liczby */
+.stats strong {
+  font-size: 40px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/* opis */
+.stats p {
+  opacity: 0.7;
+}
+
+/* =========================
+   🌈 subtelne kolory kart
+   ========================= */
+
+.stats .card-base:nth-child(1) {
+  background: var(--color-accent-1);
+}
+
+.stats .card-base:nth-child(2) {
+  background: var(--color-accent-2);
+}
+
+.stats .card-base:nth-child(3) {
+  background: var(--color-accent-3);
+}
+
+/* =========================
+   📱 MOBILE
+   ========================= */
+
+@media (max-width: 768px) {
+
+  .about-story {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+
+  .about-story::before {
+    width: 260px;
+    height: 260px;
+    top: -40px;
+    left: -40px;
+  }
+
+  .stats strong {
+    font-size: 28px;
+  }
+}
+
+.mission-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.mission-icon {
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+}
+
+/* 🎨 kolory rotacyjne */
+.mission-card:nth-child(3n + 1) .mission-icon {
+  background: var(--color-accent-1);
+}
+.mission-card:nth-child(3n + 2) .mission-icon {
+  background: var(--color-accent-2);
+}
+.mission-card:nth-child(3n + 3) .mission-icon {
+  background: var(--color-accent-3);
+}
+
+.mission-card:nth-child(3n + 1) svg {
+  color: var(--color-accent-1-strong);
+}
+.mission-card:nth-child(3n + 2) svg {
+  color: var(--color-accent-2-strong);
+}
+.mission-card:nth-child(3n + 3) svg {
+  color: var(--color-accent-3-strong);
+}
+
+.contact-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-1);
+}
+
+.contact-icon {
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+  background: var(--color-accent-1);
+}
+
+.contact-icon svg {
+  color: var(--color-accent-1-strong);
+}
+
+.about-intro {
+  max-width: 640px;
+  margin: 0 auto;
+
+  text-align: center;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.about-intro strong {
+  font-weight: 600;
+  color: var(--color-accent-1-strong);
+}
+
+@media (max-width: 768px) {
+  .mission-card {
+    align-items: flex-start;
+  }
+
+  .mission-icon {
+    margin-top: 2px; /* lekki alignment do tekstu */
+  }
+}

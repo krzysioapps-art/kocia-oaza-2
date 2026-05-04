@@ -1,0 +1,151 @@
+.post {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+
+  padding: var(--space-2);
+  border-radius: var(--radius-lg);
+
+  background: var(--color-bg);
+}
+
+/* HEADER */
+
+.post__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.post__avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  object-fit: cover;
+}
+
+/* DATE */
+
+.post__date {
+  opacity: 0.6;
+}
+
+/* CONTENT */
+
+.post__content-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.post__content {
+  line-height: 1.5;
+}
+
+/* SHOW MORE */
+
+.post__more {
+  border: none;
+  background: none;
+  padding: 0;
+
+  font-size: 14px;
+  cursor: pointer;
+
+  color: var(--color-accent-1-strong);
+}
+
+/* MEDIA */
+
+.post__image {
+  width: 100%;
+  height: 400px;          /* 🔥 KLUCZ */
+  object-fit: cover;
+  border-radius: var(--radius-md);
+}
+
+/* GALLERY */
+
+.post__gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+
+  max-width: 420px; /* 🔥 KLUCZ */
+}
+
+.post__gallery img {
+  width: 100%;
+  aspect-ratio: 1 / 1;   /* 🔥 miniaturki */
+  object-fit: cover;
+
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+/* FOOTER */
+
+.post__footer {
+  display: flex;
+  gap: var(--space-3);
+  opacity: 0.7;
+}
+
+.post__thumb {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+}
+
+.post__thumb img,
+.post__thumb video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 🔥 VIDEO BADGE */
+
+.post__video-badge {
+  position: absolute;
+  inset: 0;
+
+  display: grid;
+  place-items: center;
+
+  font-size: 28px;
+  color: white;
+
+  background: rgba(0, 0, 0, 0.25);
+
+  transition: background 0.2s ease;
+}
+
+/* hover (desktop) */
+
+@media (hover: hover) {
+  .post__thumb:hover .post__video-badge {
+    background: rgba(0, 0, 0, 0.4);
+  }
+}
+
+.post__content--expanded {
+  display: block !important;
+  overflow: visible !important;
+  -webkit-line-clamp: unset !important;
+  -webkit-box-orient: unset !important;
+}
+
+.news-feed__empty {
+  text-align: center;
+  background: var(--color-bg-alt);
+  border: 1px solid var(--color-border);
+}
+
+.news-feed__empty p {
+  opacity: 0.7;
+  font-size: 14px;
+}

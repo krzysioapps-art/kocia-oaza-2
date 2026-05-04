@@ -1,0 +1,40 @@
+/* CARD */
+
+.help__card {
+  background: var(--color-bg-alt);
+}
+
+/* ICON */
+
+.help__icon {
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 9999px;
+  background: var(--color-bg);
+}
+
+/* LINK (CTA inside card) */
+
+.help__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  margin-top: auto; /* 🔥 spycha na dół */
+}
+
+/* HOVER */
+
+@media (hover: hover) {
+  .help__card:hover {
+    transform: translateY(-2px);
+  }
+}

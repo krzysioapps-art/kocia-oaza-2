@@ -1,0 +1,52 @@
+
+/* HEADER – USUŃ lokalny, używaj globalnego */
+/* .section__header zamiast .cats-section__header */
+
+/* FOOTER */
+
+.cats-section__footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2); /* 16px */
+}
+
+/* NAV BUTTONY */
+
+.cats-section__nav {
+  width: 44px;
+  height: 44px;
+
+  border-radius: 9999px;
+  border: none;
+
+  background: var(--color-bg-alt);
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.cats-section__nav:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+@media (hover: hover) {
+  .cats-section__nav:hover {
+    background: var(--color-accent-1);
+  }
+}
+
+.cats-section__nav:active {
+  transform: scale(0.96);
+}
+
+@media (max-width: 768px) {
+  .cats-section__nav {
+    display: none;
+  }
+}

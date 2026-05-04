@@ -1,0 +1,101 @@
+/* =========================
+   🐾 ADOPTION PAGE
+   ========================= */
+
+/* STEPS */
+.adoption-steps {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+}
+
+@media (max-width: 768px) {
+  .adoption-steps {
+    grid-template-columns: 1fr;
+  }
+}
+
+.adoption-step {
+  position: relative;
+}
+
+/* numer */
+.step-number {
+  font-size: 32px;
+  font-weight: 600;
+  opacity: 0.15;
+}
+
+/* telefon */
+.adoption-contact {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: var(--space-2);
+  font-weight: 500;
+}
+
+/* REQUIREMENTS */
+.adoption-req {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+  text-align: center;
+}
+
+.adoption-req .card-base {
+  align-items: center;
+}
+
+/* FAQ */
+.faq {
+  display: grid;
+  gap: var(--space-3);
+}
+
+/* ICON */
+.step-icon {
+  width: 56px;
+  height: 56px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+  background: var(--color-accent-1);
+
+  margin-bottom: var(--space-1);
+}
+
+/* ikona kolor */
+.step-icon svg {
+  color: var(--color-accent-1-strong);
+}
+
+/* CARD alignment */
+.adoption-step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.adoption-step:nth-child(3n + 1) .step-icon {
+  background: var(--color-accent-1);
+}
+.adoption-step:nth-child(3n + 2) .step-icon {
+  background: var(--color-accent-2);
+}
+.adoption-step:nth-child(3n + 3) .step-icon {
+  background: var(--color-accent-3);
+}
+
+.adoption-step:nth-child(3n + 1) svg {
+  color: var(--color-accent-1-strong);
+}
+.adoption-step:nth-child(3n + 2) svg {
+  color: var(--color-accent-2-strong);
+}
+.adoption-step:nth-child(3n + 3) svg {
+  color: var(--color-accent-3-strong);
+}

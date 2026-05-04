@@ -1,0 +1,109 @@
+/* =========================
+   🛠 HOW WE HELP PAGE
+   ========================= */
+
+/* MEDIA */
+.how-hero__media-wrap {
+  margin-top: auto; /* 🔥 przykleja do dołu */
+}
+
+.how-hero__media {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--container-padding);
+}
+
+.how-hero__media img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+
+  margin-top: var(--space-5);
+  border-radius: var(--radius-lg);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* mobile → nadal 3 */
+@media (max-width: 768px) {
+  .how-hero__media {
+    gap: var(--space-1);
+  }
+}
+
+
+/* =========================
+   🧩 PROCESS
+   ========================= */
+
+.process {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+}
+
+@media (max-width: 768px) {
+  .process {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* =========================
+   📊 STATS
+   ========================= */
+
+/* =========================
+   📊 STATS — tylko uzupełnienie
+   ========================= */
+
+.stats .card-base {
+  align-items: center;
+  text-align: center;
+}
+
+/* 🔥 klucz — centrowanie KAŻDEGO elementu */
+.stats .card-base > * {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* 🔥 SVG fix (lucide baseline) */
+.stats .card-base svg {
+  display: block;
+}
+
+.stats .card-base {
+  align-items: center;     /* poziomo */
+  text-align: center;      /* tekst */
+}
+
+
+
+/* =========================
+   ✍️ TEXT
+   ========================= */
+
+/* używamy systemu z root — tylko delikatny override */
+.section p.text {
+  font-size: 18px;
+  opacity: 0.85;
+}
+
+
+/* =========================
+   🔘 BUTTON
+   ========================= */
+
+.card-base .button {
+  margin-top: var(--space-2);
+  align-self: flex-start;
+}
+
+.section--final {
+  background: var(--color-accent-1);
+}
