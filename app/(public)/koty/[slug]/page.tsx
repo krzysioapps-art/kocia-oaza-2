@@ -1,5 +1,7 @@
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+export const fetchCache = "force-no-store";
+export const runtime = "nodejs";
 
 import PostList from "@/app/components/news/PostList";
 import "@/app/style/koty/cat-page.css";
@@ -69,46 +71,20 @@ function getPrimaryImage(cat: any) {
         "/avatar.jpg"
     );
 }
-
-export async function generateMetadata({ params }: PageProps) {
-    const { slug } = await params;
-    const supabase = await createClient();
-
-    const { data: cat } = await supabase
-        .from("cats")
-        .select(`
-            *,
-            media:cat_media(*)
-        `)
-        .eq("slug", slug)
-        .single();
-
-    const rawImage = getPrimaryImage(cat);
-
-    // Facebook wymaga absolutnego URL
-    const imageUrl = rawImage.startsWith("http")
-        ? rawImage
-        : `https://new.kocia-oaza.pl${rawImage}`;
-
-    return {
-        title: `Poznaj ${cat.name}`,
-        description: cat.description ?? "",
-        openGraph: {
-            title: `Poznaj ${cat.name}`,
-            description: cat.description ?? "",
-            images: [
-                {
-                    url: imageUrl,
-                    width: 1200,
-                    height: 630,
-                    alt: cat.name,
-                },
-            ],
-            url: `https://new.kocia-oaza.pl/koty/${slug}`,
-            type: "website",
-        },
-    };
-}
+export const metadata = {
+  title: "TEST",
+  description: "TEST",
+  openGraph: {
+    title: "TEST",
+    description: "TEST",
+    url: "https://new.kocia-oaza.pl",
+    images: [
+      {
+        url: "https://res.cloudinary.com/demo/image/upload/sample.jpg",
+      },
+    ],
+  },
+};
 
 /* =========================
    🐱 PAGE
