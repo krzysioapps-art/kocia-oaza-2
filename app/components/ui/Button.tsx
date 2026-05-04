@@ -6,7 +6,9 @@ type ButtonProps = {
   variant?: Variant;
   mode?: Mode;
   onClick?: () => void;
-  href?: string; // 🔥 dodajemy
+  href?: string;
+  target?: string; // ✅
+  rel?: string;    // ✅
 };
 
 export default function Button({
@@ -15,18 +17,21 @@ export default function Button({
   mode = "solid",
   onClick,
   href,
+  target,   // ✅ dodaj
+  rel,      // ✅ dodaj
 }: ButtonProps) {
   const classes = [
     "button",
-    `button--${variant}`,
-    mode === "outline" ? `button--outline-${variant}` : "",
+    mode === "outline"
+      ? `button--outline-${variant}`
+      : `button--${variant}`,
   ]
     .filter(Boolean)
     .join(" ");
 
   if (href) {
     return (
-      <a href={href} className={classes}>
+      <a href={href} target={target} rel={rel} className={classes}>
         {children}
       </a>
     );

@@ -1,6 +1,8 @@
 "use client";
 import { useEffect } from "react";
-import "@/app/style/ui/modal.css";
+
+import "@/app/style/koty/cat-page.css";
+import "@/app/style/koty/cat-actions.css";
 
 export default function CatLayout({ children }: { children: React.ReactNode }) {
   useEffect(() => {

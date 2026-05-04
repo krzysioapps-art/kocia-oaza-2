@@ -1,6 +1,17 @@
-import "./style/root.css";
-import "./style/ui/share-bar.css";
 import RevealProvider from "@/app/components/ui/RevealProvider";
+
+import "@/app/style/root.css";
+
+/* layout */
+import "@/app/style/layout/navbar.css";
+import "@/app/style/layout/footer.css";
+
+/* UI (globalne komponenty) */
+import "@/app/style/ui/card.css";
+import "@/app/style/ui/modal.css";
+import "@/app/style/ui/post.css";
+import "@/app/style/ui/button-share.css";
+import "@/app/style/ui/slider.css";
 
 //import { DM_Sans, Quicksand } from "next/font/google";
 import { Quicksand, Caveat } from "next/font/google";

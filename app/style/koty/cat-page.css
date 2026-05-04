@@ -23,15 +23,18 @@ body.page--cat .navbar {
   background: var(--color-bg);
 }
 
+.cat-header__sticky {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+}
+
 .cat-header__top {
   padding-top: var(--space-3);
   padding-bottom: var(--space-3);
-
-  /* 🔥 bardziej “home feel” */
-  background: linear-gradient(to bottom,
-      var(--color-accent-light, transparent) 0%,
-      rgba(255, 255, 255, 0.6) 60%,
-      rgba(255, 255, 255, 0) 100%);
 }
 
 .cat-header__center {
@@ -98,32 +101,40 @@ body.page--cat .navbar {
 }
 
 /* =========================
-   🔥 STICKY BAR (BEZ ZMIANY LOGIKI)
+   🔥 HEADER BAR (TABS + CTA)
    ========================= */
 
-.cat-header__sticky {
-  position: sticky;
-  top: 0px;
-  z-index: 120;
-
-  background: rgba(255, 255, 255, 1);
-
-  border-bottom: 1px solid var(--color-border);
-}
-
 .cat-header__row {
-  height: var(--navbar-height);
   display: flex;
   align-items: center;
+  justify-content: space-between; /* 🔥 brakowało */
+
   gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
 }
 
-/* CTA */
+/* =========================
+   📱 MOBILE
+   ========================= */
 
-.cat-actions {
-  margin-left: auto;
-  display: flex;
-  gap: var(--space-2);
+@media (max-width: 768px) {
+  .cat-header__row {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cat-tabs {
+    order: 1;
+
+    width: 100%;
+    overflow-x: auto;
+    gap: 12px;
+  }
+
+  .cat-tabs button {
+    flex-shrink: 0;
+  }
 }
 
 /* =========================
@@ -267,25 +278,6 @@ body.page--cat .navbar {
 }
 
 /* =========================
-   🎯 BUTTON OVERRIDE
-   ========================= */
-
-.cat-page .button--primary {
-  background: var(--color-accent-strong);
-  color: #fff;
-}
-
-.cat-page .button--outline-primary {
-  border-color: var(--color-accent-strong);
-  color: var(--color-accent-strong);
-}
-
-.cat-page .button--outline-primary:hover {
-  background: var(--color-accent-strong);
-  color: #fff;
-}
-
-/* =========================
    📱 RESPONSIVE
    ========================= */
 
@@ -330,6 +322,12 @@ body.page--cat .navbar {
 .cat-tabs {
   display: flex;
   gap: var(--space-2);
+  min-width: 0;
+  overflow-x: auto;
+  white-space: nowrap;
+  align-items: center;
+  height: 44px;
+   flex: 1;
 }
 
 .cat-tabs button {
@@ -371,12 +369,7 @@ body.page--cat .navbar {
   border-radius: 2px;
 }
 
-.cat-tabs {
-  display: flex;
-  align-items: center;
-  height: 44px;
-  /* 🔥 to samo co button */
-}
+
 
 .cat-tabs button {
   position: relative;
@@ -427,58 +420,16 @@ body.page--cat .navbar {
   gap: var(--space-2);
 }
 
-@media (max-width: 768px) {
-  .cat-header__row {
-    flex-direction: column;
-    align-items: stretch;
-    height: auto;
-    gap: var(--space-2);
-    padding: var(--space-3);
-  }
-
-  /* TABS */
-  .cat-tabs {
-    width: 100%;
-    overflow-x: auto;
-    gap: 12px;
-  }
-
-  .cat-tabs button {
-    flex-shrink: 0;
-  }
-
-  /* CTA */
-  .cat-actions {
-    width: 100%;
-    margin-left: 0;
-
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-2);
-  }
-
-  .cat-actions .button {
-    width: 100%;
-  }
-
-  .cat-actions {
-    order: -1;
-    /* 🔥 CTA idzie nad tabs */
-  }
-
-  .cat-tabs {
-    order: 1;
-  }
-}
-
 /* =========================
    🐱 CAT SLIDER (FIXED)
    ========================= */
 
 /* 🔥 wychodzi tylko z paddingu, NIE z viewportu */
 .cat-slider-bleed {
-  margin-left: calc(var(--container-padding) * -1);
-  margin-right: calc(var(--container-padding) * -1);
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 /* wrapper */
@@ -542,6 +493,7 @@ body.page--cat .navbar {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  background: var(--color-bg);
 }
 
 /* GRID */

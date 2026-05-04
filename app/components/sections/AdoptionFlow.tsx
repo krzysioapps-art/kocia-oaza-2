@@ -6,8 +6,6 @@ import Button from "@/app/components/ui/Button";
 
 import { FileText, Handshake, CheckCircle, ArrowRight } from "lucide-react";
 
-import "@/app/style/home/adoption-flow.css";
-
 export default function AdoptionFlow() {
   return (
     <section className="section section--yell">

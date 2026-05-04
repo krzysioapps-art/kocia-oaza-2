@@ -4,8 +4,6 @@ import Container from "@/app/components/ui/Container";
 import Heading from "@/app/components/ui/Heading";
 import { Home, Clock, HeartHandshake, ArrowRight } from "lucide-react";
 
-import "@/app/style/home/help-section.css";
-
 import Section from "@/app/components/ui/Section";
 
 export default function HelpSection() {

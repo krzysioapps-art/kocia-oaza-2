@@ -2,6 +2,8 @@ import Container from "@/app/components/ui/Container";
 import Heading from "@/app/components/ui/Heading";
 import Button from "@/app/components/ui/Button";
 
+import "@/app/style/o-nas.css";
+
 import {
     Heart,
     TrendingUp,
@@ -16,8 +18,6 @@ import {
     MapPin,
     ArrowRight,
 } from "lucide-react";
-
-import "@/app/style/o-nas.css";
 
 export default function AboutPage() {
     return (

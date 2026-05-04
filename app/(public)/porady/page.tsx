@@ -2,6 +2,8 @@ import Container from "@/app/components/ui/Container";
 import Heading from "@/app/components/ui/Heading";
 import Button from "@/app/components/ui/Button";
 
+import "@/app/style/porady.css";
+
 import {
     Clock,
     Home,
@@ -12,8 +14,6 @@ import {
     Star,
     ArrowRight,
 } from "lucide-react";
-
-import "@/app/style/porady.css";
 
 export default function AdvicePage() {
     return (

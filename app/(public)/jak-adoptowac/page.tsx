@@ -2,6 +2,8 @@ import Container from "@/app/components/ui/Container";
 import Heading from "@/app/components/ui/Heading";
 import Button from "@/app/components/ui/Button";
 
+import "@/app/style/jak-adoptowac.css";
+
 import {
     Phone,
     CheckCircle,
@@ -12,9 +14,6 @@ import {
     User,
     FileText,
 } from "lucide-react";
-
-
-import "@/app/style/jak-adoptowac.css";
 
 export default function AdoptionPage() {
     return (

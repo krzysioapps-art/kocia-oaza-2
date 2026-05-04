@@ -1,17 +1,14 @@
 import PostList from "@/app/components/news/PostList";
-import "@/app/style/koty/cat-page.css";
 import CatTabs from "@/app/components/ui/CatTabs";
-import { Clock, CheckCircle } from "lucide-react";
+import { Clock, CheckCircle, ArrowRight } from "lucide-react";
 import SimilarCatsSlider from "@/app/components/koty/SimilarCatsSlider";
 import { createClient } from "@/lib/supabase/server";
 import CatMedia from "@/app/components/koty/CatMedia";
 import type { Media } from "@/types/media";
-import ShareBar from "@/app/components/ui/ShareBar";
+import ShareBar from "@/app/components/ui/ShareButton";
 
 type PageProps = {
-    params: Promise<{
-        slug: string;
-    }>;
+    params: { slug: string };
 };
 
 /* =========================
@@ -90,6 +87,7 @@ export async function generateMetadata({ params }: PageProps) {
         };
     }
 
+
     const image =
         cat.media?.find((m: any) => m.is_primary)?.url ||
         cat.media?.[0]?.url ||
@@ -126,8 +124,9 @@ export async function generateMetadata({ params }: PageProps) {
    ========================= */
 
 export default async function CatPage({ params }: PageProps) {
-    const { slug } = await params;
 
+    const { slug } = await params;
+    console.log("SLUG:", slug);
     const supabase = await createClient();
 
     // 🐱 CAT + MEDIA
@@ -177,8 +176,9 @@ export default async function CatPage({ params }: PageProps) {
     const waitMonths = monthsSince(cat.created_at);
 
     const isAdopted = cat.status === "adopted";
-    console.log(allMedia);
-    console.log(videoMedia);
+
+    const hasVirtual = !!cat.virtual_adoption_url;
+
     return (
         <main className={`cat-page ${cat.gender === "female" ? "cat--female" : "cat--male"}`}>
 
@@ -195,6 +195,7 @@ export default async function CatPage({ params }: PageProps) {
                         </div>
 
                         <h1 className="cat-name">{cat.name}</h1>
+
 
                         <div className="cat-age">
                             <span className="cat-age__label">Wiek:</span>
@@ -213,14 +214,26 @@ export default async function CatPage({ params }: PageProps) {
                     <CatTabs />
 
                     {!isAdopted && (
-                        <div className="cat-actions">
-                            <button className="button button--primary">
-                                Adoptuj: {cat.name}
+                        <div className={`cat-actions ${hasVirtual ? "cat-actions--3" : "cat-actions--2"}`}>
+
+                            <button className="cat-cta cat-cta--primary">
+                                Adoptuj
                             </button>
-                            <button className="button button--outline-primary">
-                                Wesprzyj
-                            </button>
-                            <ShareBar title="Sprawdź tego kota!" />
+
+                            {hasVirtual && (
+                                <a
+                                    href={cat.virtual_adoption_url}
+                                    className="cat-cta cat-cta--outline"
+                                    target="_blank"
+                                >
+                                    Adoptuj wirtualnie
+                                </a>
+                            )}
+
+                            <div className="cat-share">
+                                <ShareBar title="Sprawdź tego kota!" />
+                            </div>
+
                         </div>
                     )}
 

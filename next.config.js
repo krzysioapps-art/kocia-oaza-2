@@ -5,8 +5,6 @@ const nextConfig = {
     "192.168.1.17",
   ],
 
-  turbopack: {},
-
   images: {
     remotePatterns: [
       {
@@ -18,20 +16,6 @@ const nextConfig = {
         hostname: "pleso.me",
       },
     ],
-  },
-
-  async headers() {
-    return [
-      {
-        source: "/(.*)",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=60, s-maxage=60",
-          },
-        ],
-      },
-    ];
   },
 };
 

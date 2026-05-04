@@ -11,8 +11,6 @@ import Card from "@/app/components/ui/Card";
 
 import { createClient } from "@/lib/supabase/client";
 
-import "@/app/style/home/cats-section.css";
-
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
 function getPrimaryImage(cat: any) {

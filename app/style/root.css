@@ -276,6 +276,7 @@ a {
     transition: filter 0.2s ease;
 
     gap: 8px;
+    font-family: inherit;
 }
 
 .button:hover {

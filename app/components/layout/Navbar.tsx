@@ -6,9 +6,7 @@ import Link from "next/link";
 
 import Container from "@/app/components/ui/Container";
 import Button from "@/app/components/ui/Button";
-import { NAV_ITEMS, NAV_ACTION } from "@/app/data/navigation";
-
-import "@/app/style/layout/navbar.css";
+import { NAV_ITEMS } from "@/app/data/navigation";
 
 export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
@@ -107,10 +105,6 @@ export default function Navbar() {
                                 Wesprzyj nas
                             </Button>
                         </a>
-
-                        <Button variant="primary">
-                            {NAV_ACTION.label}
-                        </Button>
                     </div>
 
                     {/* HAMBURGER */}
@@ -150,10 +144,6 @@ export default function Navbar() {
                                 </Link>
                             );
                         })}
-
-                        <div className="navbar__action">
-                            <Button variant="secondary">{NAV_ACTION.label}</Button>
-                        </div>
                     </div>
                 )}
             </Container>
