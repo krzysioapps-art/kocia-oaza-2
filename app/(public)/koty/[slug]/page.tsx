@@ -73,46 +73,62 @@ function getPrimaryImage(cat: any) {
 }
 
 export async function generateMetadata({ params }: PageProps) {
-    const { slug } = params;
-    const supabase = await createClient();
+    try {
+        const { slug } = params;
+        const supabase = await createClient();
 
-    const { data: cat } = await supabase
-        .from("cats")
-        .select(`
-            *,
-            media:cat_media(*)
-        `)
-        .eq("slug", slug)
-        .single();
+        const { data: cat } = await supabase
+            .from("cats")
+            .select(`
+                *,
+                media:cat_media(*)
+            `)
+            .eq("slug", slug)
+            .maybeSingle(); // 👈 ważne!
 
-    const rawImage = getPrimaryImage(cat);
+        // 🔒 fallback jeśli brak kota
+        if (!cat) {
+            return {
+                title: "Kot",
+                description: "Brak danych",
+            };
+        }
 
-    // Facebook wymaga absolutnego URL
-    const imageUrl = rawImage.startsWith("http")
-        ? rawImage
-        : `https://new.kocia-oaza.pl${rawImage}`;
+        const rawImage = getPrimaryImage(cat);
 
-    return {
-        title: `Poznaj ${cat.name}`,
-        description: cat.description ?? "",
-        alternates: {
-            canonical: `https://new.kocia-oaza.pl/koty/${slug}`,
-        },
-        openGraph: {
+        const imageUrl = rawImage.startsWith("http")
+            ? rawImage
+            : `https://new.kocia-oaza.pl${rawImage}`;
+
+        return {
             title: `Poznaj ${cat.name}`,
             description: cat.description ?? "",
-            images: [
-                {
-                    url: imageUrl,
-                    width: 1200,
-                    height: 630,
-                    alt: cat.name,
-                },
-            ],
-            url: `https://new.kocia-oaza.pl/koty/${slug}`,
-            type: "website",
-        },
-    };
+            alternates: {
+                canonical: `https://new.kocia-oaza.pl/koty/${slug}`,
+            },
+            openGraph: {
+                title: `Poznaj ${cat.name}`,
+                description: cat.description ?? "",
+                images: [
+                    {
+                        url: imageUrl,
+                        width: 1200,
+                        height: 630,
+                        alt: cat.name,
+                    },
+                ],
+                url: `https://new.kocia-oaza.pl/koty/${slug}`,
+                type: "website",
+            },
+        };
+    } catch (e) {
+        console.error("METADATA ERROR", e);
+
+        return {
+            title: "Kot",
+            description: "Błąd ładowania",
+        };
+    }
 }
 
 /* =========================
@@ -132,7 +148,7 @@ export default async function CatPage({ params }: PageProps) {
       media:cat_media(*)
     `)
         .eq("slug", slug)
-        .single();
+        .maybeSingle();
 
     if (!cat || error) {
         return <div>Nie znaleziono kota</div>;
