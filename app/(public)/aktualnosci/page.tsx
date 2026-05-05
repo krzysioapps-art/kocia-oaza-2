@@ -1,15 +1,15 @@
 import PostList from "@/app/components/news/PostList";
 import PostModal from "@/app/components/news/PostModal";
-import { posts } from "@/app/data/posts";
 import Container from "@/app/components/ui/Container";
 import Heading from "@/app/components/ui/Heading";
 
-export default function NewsPage({
+export default async function NewsPage({
   searchParams,
 }: {
-  searchParams: { post?: string };
+  searchParams: Promise<{ post?: string }>;
 }) {
-  const postId = searchParams.post;
+  const params = await searchParams;
+  const postId = params.post;
 
   return (
     <main>
@@ -26,7 +26,7 @@ export default function NewsPage({
 
       <section className="section section--alt">
         <Container>
-          <PostList posts={posts} />
+          <PostList />
         </Container>
       </section>
 

@@ -19,7 +19,7 @@ type Cat = {
 
   status?: "available" | "reserved" | "adopted";
   gender?: "male" | "female";
-  age_months?: number;
+  birth_date?: string | null;
 
   tags?: string[];
 
@@ -82,7 +82,7 @@ export default async function CatsPage() {
 
             {cats.map((cat) => {
               const status = getStatusMeta(cat.status);
-              const age = formatAge(cat.age_months);
+              const age = formatAge(cat.birth_date);
 
               return (
                 <Card

@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import CatMedia from "@/app/components/koty/CatMedia";
 import type { Media } from "@/types/media";
 import ShareBar from "@/app/components/ui/ShareButton";
+import { formatAge } from "@/lib/utils/formatAge";
 
 type PageProps = {
     params: { slug: string };
@@ -126,7 +127,6 @@ export async function generateMetadata({ params }: PageProps) {
 export default async function CatPage({ params }: PageProps) {
 
     const { slug } = await params;
-    console.log("SLUG:", slug);
     const supabase = await createClient();
 
     // 🐱 CAT + MEDIA
@@ -144,10 +144,7 @@ export default async function CatPage({ params }: PageProps) {
     }
 
     // 📝 POSTS
-    const { data: catPosts } = await supabase
-        .from("posts")
-        .select("*")
-        .contains("cats", [cat.id]);
+   
 
     // 🖼️ MEDIA
     const allMedia: Media[] = cat.media ?? [];
@@ -200,7 +197,7 @@ export default async function CatPage({ params }: PageProps) {
                         <div className="cat-age">
                             <span className="cat-age__label">Wiek:</span>
                             <span className="cat-age__value">
-                                {ageFromBirth(cat.birth_date) ?? "Brak danych"}
+                                {formatAge(cat.birth_date) || "Brak danych"}
                             </span>
                         </div>
 
@@ -315,7 +312,7 @@ export default async function CatPage({ params }: PageProps) {
 
                             <div className="cat-posts" id="posts">
                                 <h2>Aktualności o {cat.name}</h2>
-                                <PostList posts={catPosts ?? []} />
+                                <PostList catId={cat.id} />
                             </div>
 
                             {similarCats.length > 0 && (

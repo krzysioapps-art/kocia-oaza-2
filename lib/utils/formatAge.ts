@@ -1,5 +1,16 @@
-export function formatAge(months?: number | null) {
-  if (!months || months <= 0) return "";
+export function formatAge(date?: string | null) {
+  if (!date) return "";
+
+  const birth = new Date(date);
+  if (isNaN(birth.getTime())) return "";
+
+  const now = new Date();
+
+  let months =
+    (now.getFullYear() - birth.getFullYear()) * 12 +
+    (now.getMonth() - birth.getMonth());
+
+  if (months <= 0) return "";
 
   if (months < 12) {
     return `${months} ${months === 1 ? "miesiąc" : "mies."}`;

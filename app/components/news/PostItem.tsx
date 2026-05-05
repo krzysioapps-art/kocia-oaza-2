@@ -1,9 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import "@/app/style/news/post.css";
 import Link from "next/link";
-import { Post } from "@/app/data/posts";
 import GalleryModal from "@/app/components/ui/GalleryModal";
 import { createClient } from "@/lib/supabase/client";
 
@@ -13,31 +11,39 @@ type Cat = {
   slug: string;
 };
 
+type Post = {
+  post_id: string;
+
+  author: {
+    name: string;
+    profile_picture: string;
+  };
+
+  message: string;
+  created_time: string;
+
+  media?: {
+    url: string;
+    type?: "image" | "video";
+  }[];
+
+  reactions: { total_count: number };
+  comments: { total_count: number };
+
+  cats?: {
+    id: string;
+    name: string;
+    slug: string;
+  }[];
+};
+
 export default function PostItem({ post }: { post: Post }) {
   const [expanded, setExpanded] = useState(false);
-  const [relatedCats, setRelatedCats] = useState<Cat[]>([]);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   useEffect(() => {
     setExpanded(false);
   }, [post.post_id]);
-
-  useEffect(() => {
-    async function loadCats() {
-      if (!post.cats || post.cats.length === 0) return;
-
-      const supabase = createClient();
-
-      const { data } = await supabase
-        .from("cats")
-        .select("id, name, slug")
-        .in("id", post.cats);
-
-      setRelatedCats(data ?? []);
-    }
-
-    loadCats();
-  }, [post.cats]);
 
   const hasLongText = post.message.length > 180;
 
@@ -66,9 +72,8 @@ export default function PostItem({ post }: { post: Post }) {
       {/* CONTENT */}
       <div className="post__content-wrapper">
         <p
-          className={`post__content text-md ${
-            expanded ? "post__content--expanded" : "line-clamp-3"
-          }`}
+          className={`post__content text-md ${expanded ? "post__content--expanded" : "line-clamp-3"
+            }`}
         >
           {post.message}
         </p>
@@ -84,7 +89,7 @@ export default function PostItem({ post }: { post: Post }) {
       </div>
 
       {/* 🐱 POWIĄZANE KOTY */}
-      {relatedCats.map((cat) => (
+      {post.cats?.map((cat) => (
         <Link key={cat.id} href={`/koty/${cat.slug}`}>
           🐱 {cat.name}
         </Link>
@@ -93,7 +98,7 @@ export default function PostItem({ post }: { post: Post }) {
       {/* MEDIA */}
       {post.media && post.media.length > 0 && (
         <div className="post__gallery">
-          {post.media.slice(0, 6).map((media, i) => (
+          {post.media.slice(0, 6).map((media: { url: string; type?: "image" | "video" }, i) => (
             <div
               key={i}
               className="post__thumb"
