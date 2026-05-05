@@ -1,0 +1,177 @@
+/* =========================
+   🏠 TEMPORARY HOME PAGE
+   ========================= */
+
+
+/* =========================
+   🧩 PROCESS
+   ========================= */
+
+.process {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+}
+
+@media (max-width: 768px) {
+  .process {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* spójność z o-nas */
+.process .card-base {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+}
+
+
+/* =========================
+   🌈 GRID CARDS (sekcje)
+   ========================= */
+
+.grid-3 .card-base {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+
+/* =========================
+   ✍️ TEXT
+   ========================= */
+
+.temporary-home-page .section p.text {
+  font-size: 18px;
+  opacity: 0.85;
+  line-height: 1.6;
+}
+
+.temporary-home-page .section__footer {
+  display: flex;
+  justify-content: center;
+}
+
+.variant--primary {
+  background: var(--color-accent-1);
+}
+
+.variant--secondary {
+  background: var(--color-accent-2);
+}
+
+.variant--tertiary {
+  background: var(--color-accent-3);
+}
+
+
+/* =========================
+   🎯 ICON STYLE (jak o-nas)
+   ========================= */
+
+.mission-icon {
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+}
+
+/* rotacja kolorów */
+.section__content .card-base:nth-child(3n + 1) .mission-icon {
+  background: var(--color-accent-1);
+}
+.section__content .card-base:nth-child(3n + 2) .mission-icon {
+  background: var(--color-accent-2);
+}
+.section__content .card-base:nth-child(3n + 3) .mission-icon {
+  background: var(--color-accent-3);
+}
+
+.section__content .card-base:nth-child(3n + 1) svg {
+  color: var(--color-accent-1-strong);
+}
+.section__content .card-base:nth-child(3n + 2) svg {
+  color: var(--color-accent-2-strong);
+}
+.section__content .card-base:nth-child(3n + 3) svg {
+  color: var(--color-accent-3-strong);
+}
+
+
+/* =========================
+   🐾 ALT SECTION CARDS
+   ========================= */
+
+.section--alt .card-base {
+  background: var(--color-bg);
+}
+
+
+/* =========================
+   ✨ CARD INTERACTION
+   ========================= */
+
+.card-base {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+
+/* =========================
+   🔘 BUTTON ALIGNMENT
+   ========================= */
+
+.card-base .button {
+  margin-top: var(--space-2);
+  align-self: flex-start;
+}
+
+/* CTA centrowane */
+.section__footer .button {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+/* =========================
+   🎯 FINAL CTA
+   ========================= */
+
+.section--final {
+  background: var(--color-accent-1);
+}
+
+.section--final .button {
+  transform: scale(1.05);
+}
+
+
+/* =========================
+   📱 MOBILE TWEAKS
+   ========================= */
+
+@media (max-width: 768px) {
+
+  .process .card-base {
+    align-items: flex-start;
+  }
+
+}
+
+/* =========================
+   🎯 CARD ALIGNMENT FIX
+   ========================= */
+
+.temporary-home-page .card-base {
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;     /* 🔥 poziome centrowanie */
+  text-align: center;      /* 🔥 tekst na środku */
+
+  gap: var(--space-1);
+}

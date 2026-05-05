@@ -1,8 +1,8 @@
-import "@/app/style/how-we-help.css";
+import "@/app/style/dom-tymczasowy.css";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <main className="how-we-help-page">
+    <main className="temporary-home-page">
       {children}
     </main>
   );

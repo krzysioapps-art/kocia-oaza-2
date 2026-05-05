@@ -64,7 +64,7 @@ export default function AboutPage() {
                         <Heading level="md">Nasza misja</Heading>
                     </div>
 
-                    <div className="grid-2 section__content about-mission reveal-parent">
+                    <div className="grid-2 section__content about-mission">
 
                         <div className="card-base mission-card">
                             <div className="mission-icon"><Target /></div>
@@ -107,7 +107,7 @@ export default function AboutPage() {
                         <Heading level="md">Co jest dla nas najważniejsze</Heading>
                     </div>
 
-                    <div className="grid-3 section__content reveal-parent">
+                    <div className="grid-3 section__content">
 
                         <div className="card-base variant--primary">
                             <Heart />
@@ -156,7 +156,7 @@ export default function AboutPage() {
                         <Heading level="md">Skontaktuj się z nami</Heading>
                     </div>
 
-                    <div className="grid-3 section__content about-contact reveal-parent">
+                    <div className="grid-3 section__content about-contact">
 
                         <div className="card-base contact-card">
                             <div className="contact-icon"><Mail /></div>

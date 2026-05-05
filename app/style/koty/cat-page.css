@@ -475,8 +475,16 @@ body.page--cat .navbar {
 
 .cats-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-3);
+}
+
+.cats-grid > * {
+  min-width: 0;
+}
+
+.card {
+  min-width: 0;
 }
 
 @media (max-width: 768px) {
@@ -609,4 +617,48 @@ body.page--cat .navbar {
 .cat-media__item:hover .play-icon {
   transform: scale(1.1);
   background: rgba(0, 0, 0, 0.75);
+}
+
+
+
+.cat-meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+
+  font-size: 13px;
+  opacity: 0.7;
+}
+
+.cat-meta__item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cat-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: var(--radius-pill);
+
+  background: var(--color-bg-alt);
+}
+
+.card:hover .tag {
+  background: var(--color-accent-1);
+  color: var(--color-accent-1-strong);
+}
+
+.card-link {
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 500;
+
+  color: var(--color-accent-1-strong);
 }

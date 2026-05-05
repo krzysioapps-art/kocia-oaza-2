@@ -1,5 +1,3 @@
-import RevealProvider from "@/app/components/ui/RevealProvider";
-
 import "@/app/style/root.css";
 
 /* layout */
@@ -43,9 +41,7 @@ export default function RootLayout({
   return (
     <html lang="pl">
       <body className={`${quicksand.variable} ${caveat.variable}`}>
-        <RevealProvider>
           {children}
-        </RevealProvider>
       </body>
     </html>
   );

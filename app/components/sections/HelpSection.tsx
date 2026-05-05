@@ -21,7 +21,7 @@ export default function HelpSection() {
       {/* CONTENT */}
       <Section.Content>
         <div className="section__content">
-          <div className="grid-3 reveal-parent">
+          <div className="grid-3">
             {/* CARD 1 */}
             <a href="/koty" className="card card-base variant--primary">
               <div className="help__icon">

@@ -81,7 +81,7 @@
 
 .navbar__nav {
     display: flex;
-    gap: 24px;
+    gap: 16px;
     align-items: center;
 }
 
@@ -208,7 +208,7 @@
 
 /* responsive */
 
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
     .navbar__nav {
         display: none;
     }

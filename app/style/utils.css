@@ -1,0 +1,28 @@
+.status {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* 🟢 available */
+.status--available {
+  background: #e6fffa;
+  color: #2c7a7b;
+}
+
+/* 🟡 reserved */
+.status--reserved {
+  background: #fff8e1;
+  color: #b7791f;
+}
+
+/* ⚫ adopted */
+.status--adopted {
+  background: #f1f1f1;
+  color: #666;
+}

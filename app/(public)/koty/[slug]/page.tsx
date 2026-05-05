@@ -216,9 +216,12 @@ export default async function CatPage({ params }: PageProps) {
                     {!isAdopted && (
                         <div className={`cat-actions ${hasVirtual ? "cat-actions--3" : "cat-actions--2"}`}>
 
-                            <button className="cat-cta cat-cta--primary">
+                            <a
+                                href={`/zgloszenie/${cat.slug}`}
+                                className="cat-cta cat-cta--primary"
+                            >
                                 Adoptuj
-                            </button>
+                            </a>
 
                             {hasVirtual && (
                                 <a

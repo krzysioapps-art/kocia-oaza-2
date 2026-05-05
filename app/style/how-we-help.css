@@ -2,7 +2,11 @@
    🛠 HOW WE HELP PAGE
    ========================= */
 
-/* MEDIA */
+
+/* =========================
+   🎬 HERO MEDIA
+   ========================= */
+
 .how-hero__media-wrap {
   margin-top: auto; /* 🔥 przykleja do dołu */
 }
@@ -10,11 +14,11 @@
 .how-hero__media {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-2);
+  gap: var(--space-3);
 
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 var(--container-padding);
+  padding: 0 0;
 }
 
 .how-hero__media img {
@@ -23,12 +27,11 @@
   object-fit: cover;
 
   margin-top: var(--space-5);
+
   border-radius: var(--radius-lg);
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
 }
 
-/* mobile → nadal 3 */
+/* mobile */
 @media (max-width: 768px) {
   .how-hero__media {
     gap: var(--space-1);
@@ -37,7 +40,7 @@
 
 
 /* =========================
-   🧩 PROCESS
+   🧩 PROCESS (jak pomagamy)
    ========================= */
 
 .process {
@@ -52,58 +55,158 @@
   }
 }
 
+/* 🔥 spójność z mission-card */
+.process .card-base {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 
-/* =========================
-   📊 STATS
-   ========================= */
-
-/* =========================
-   📊 STATS — tylko uzupełnienie
-   ========================= */
-
-.stats .card-base {
   align-items: center;
   text-align: center;
 }
 
-/* 🔥 klucz — centrowanie KAŻDEGO elementu */
-.stats .card-base > * {
-  margin-left: auto;
-  margin-right: auto;
-}
 
-/* 🔥 SVG fix (lucide baseline) */
-.stats .card-base svg {
-  display: block;
-}
+/* =========================
+   🐾 WOLNO ŻYJĄCE
+   ========================= */
 
-.stats .card-base {
-  align-items: center;     /* poziomo */
-  text-align: center;      /* tekst */
+.section--alt .card-base {
+  background: var(--color-bg);
 }
-
 
 
 /* =========================
    ✍️ TEXT
    ========================= */
 
-/* używamy systemu z root — tylko delikatny override */
 .section p.text {
   font-size: 18px;
   opacity: 0.85;
 }
 
-
 /* =========================
-   🔘 BUTTON
+   ✨ CARD INTERACTIONS
    ========================= */
 
-.card-base .button {
-  margin-top: var(--space-2);
-  align-self: flex-start;
+.card-base {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
+
+
+/* =========================
+   🎯 FINAL CTA
+   ========================= */
 
 .section--final {
   background: var(--color-accent-1);
+}
+
+.section--final .button {
+  transform: scale(1.05);
+}
+
+
+/* =========================
+   📱 MOBILE TWEAKS
+   ========================= */
+
+@media (max-width: 768px) {
+
+  .process .card-base {
+    align-items: flex-start;
+  }
+
+}
+
+/* =========================
+   🎯 ICON STYLE (jak o-nas)
+   ========================= */
+
+.mission-icon {
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+}
+
+/* PROCESS */
+.process .card-base:nth-child(3n + 1) .mission-icon {
+  background: var(--color-accent-1);
+}
+.process .card-base:nth-child(3n + 2) .mission-icon {
+  background: var(--color-accent-2);
+}
+.process .card-base:nth-child(3n + 3) .mission-icon {
+  background: var(--color-accent-3);
+}
+
+.process .card-base:nth-child(3n + 1) svg {
+  color: var(--color-accent-1-strong);
+}
+.process .card-base:nth-child(3n + 2) svg {
+  color: var(--color-accent-2-strong);
+}
+.process .card-base:nth-child(3n + 3) svg {
+  color: var(--color-accent-3-strong);
+}
+
+/* WOLNO ŻYJĄCE */
+.grid-3 .card-base:nth-child(3n + 1) .mission-icon {
+  background: var(--color-accent-1);
+}
+.grid-3 .card-base:nth-child(3n + 2) .mission-icon {
+  background: var(--color-accent-2);
+}
+.grid-3 .card-base:nth-child(3n + 3) .mission-icon {
+  background: var(--color-accent-3);
+}
+
+.grid-3 .card-base:nth-child(3n + 1) svg {
+  color: var(--color-accent-1-strong);
+}
+.grid-3 .card-base:nth-child(3n + 2) svg {
+  color: var(--color-accent-2-strong);
+}
+.grid-3 .card-base:nth-child(3n + 3) svg {
+  color: var(--color-accent-3-strong);
+}
+
+.grid-3.stats .card-base {
+  align-items: center;
+  text-align: center;
+}
+
+.grid-3.stats .button {
+  align-self: center;
+}
+
+/* =========================
+   🖼 PROCESS MEDIA
+   ========================= */
+
+.how-process__media {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+
+  margin-top: var(--space-4);
+}
+
+.how-process__media img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+
+  border-radius: var(--radius-lg);
+}
+
+/* mobile */
+@media (max-width: 768px) {
+  .how-process__media {
+    grid-template-columns: 1fr;
+  }
 }

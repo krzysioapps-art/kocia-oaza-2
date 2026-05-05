@@ -99,3 +99,26 @@
 .adoption-step:nth-child(3n + 3) svg {
   color: var(--color-accent-3-strong);
 }
+
+/* =========================
+   🎯 CENTER STEPS (ADOPTION)
+   ========================= */
+
+.adoption-steps .card-base {
+  align-items: center;
+  text-align: center;
+}
+
+.adoption-steps .step-icon {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* =========================
+   ❓ FAQ CENTER
+   ========================= */
+
+.faq .card-base {
+  align-items: center;
+  text-align: center;
+}
