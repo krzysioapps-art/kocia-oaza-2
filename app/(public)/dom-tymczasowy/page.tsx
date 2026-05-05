@@ -301,7 +301,7 @@ export default function TemporaryHomePage() {
                     </div>
 
                     <div className="section__footer">
-                        <Button href="/kontakt">
+                        <Button href="/zgloszenie?type=temporary">
                             Zgłoś się jako dom tymczasowy <ArrowRight size={16} />
                         </Button>
                     </div>

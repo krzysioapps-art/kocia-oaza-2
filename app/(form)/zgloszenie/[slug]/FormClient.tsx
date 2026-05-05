@@ -13,9 +13,9 @@ import { ArrowLeft, ArrowRight, Heart, Home, CheckCircle } from "lucide-react";
 ========================= */
 
 type Cat = {
-    id: string;
-    name: string;
-    slug: string;
+    id?: string;
+    name?: string;
+    slug?: string;
     image_url?: string | null;
     media?: {
         url: string;
@@ -62,7 +62,7 @@ export default function FormClient({ cat }: Props) {
         type: "",
     });
 
-    const catName = cat?.name || "kota";
+    const catName = cat?.name || "kota 🐾";
 
     const update = (field: string, value: any) => {
         setForm((prev: any) => ({ ...prev, [field]: value }));
@@ -111,7 +111,7 @@ export default function FormClient({ cat }: Props) {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    cat_id: cat.id,
+                    cat_id: cat?.id ?? null,
                     form_type: form.type,
                     data: form,
                 }),
@@ -170,8 +170,8 @@ export default function FormClient({ cat }: Props) {
                             Skontaktujemy się z Tobą wkrótce.
                         </p>
 
-                        <Button href={`/koty/${cat.slug}`}>
-                            Wróć do profilu kota
+                        <Button href={cat?.slug ? `/koty/${cat.slug}` : "/koty"}>
+                            {cat?.slug ? "Wróć do profilu kota" : "Zobacz wszystkie koty"}
                         </Button>
 
                     </div>
@@ -186,7 +186,7 @@ export default function FormClient({ cat }: Props) {
                 <div className="form-container">
 
                     <Button
-                        href={`/koty/${cat.slug}`}
+                        href={cat?.slug ? `/koty/${cat.slug}` : "/koty"}
                         mode="outline"
                         className="button--icon"
                     >
@@ -215,14 +215,20 @@ export default function FormClient({ cat }: Props) {
                                 : `Adoptuj ${catName}`}
                     </Heading>
 
-                    <div className="form-cat">
-                        <img
-                            src={getPrimaryImage(cat)}
-                            alt={cat.name}
-                            className="form-cat__image"
-                        />
-                        <p className="form-cat__name">{cat.name}</p>
-                    </div>
+                    {cat?.id ? (
+                        <div className="form-cat">
+                            <img
+                                src={getPrimaryImage(cat)}
+                                alt={cat.name}
+                                className="form-cat__image"
+                            />
+                            <p className="form-cat__name">{cat.name}</p>
+                        </div>
+                    ) : (
+                        <p className="text text-center">
+                            Wypełnij formularz — pomożemy dobrać idealnego kota 🐾
+                        </p>
+                    )}
 
                     {/* STEP 0 */}
                     {step === 0 && (
