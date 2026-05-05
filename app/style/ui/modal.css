@@ -121,14 +121,3 @@
   backdrop-filter: blur(8px);
   animation: fadeIn 0.2s ease;
 }
-
-@keyframes modalIn {
-  from {
-    transform: scale(0.92);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}

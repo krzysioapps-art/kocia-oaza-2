@@ -105,12 +105,15 @@ body.page--cat .navbar {
    ========================= */
 
 .cat-header__row {
+  height: var(--navbar-height);
+  padding: 0 var(--space-3);
+
+
   display: flex;
   align-items: center;
   justify-content: space-between; /* 🔥 brakowało */
 
   gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
 }
 
 /* =========================
@@ -122,6 +125,7 @@ body.page--cat .navbar {
     display: flex;
     flex-direction: column;
     align-items: stretch;
+    height: calc(var(--navbar-height) * 2);
   }
 
   .cat-tabs {
