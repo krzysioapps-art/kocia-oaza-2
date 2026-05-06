@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import Container from "@/app/components/ui/Container";
 import Heading from "@/app/components/ui/Heading";
 
@@ -17,6 +19,19 @@ import {
     RefreshCw,
     Mail,
 } from "lucide-react";
+
+export const metadata: Metadata = {
+    title: "Polityka prywatności | Kocia Oaza",
+    description:
+        "Informacje dotyczące przetwarzania danych osobowych, formularzy adopcyjnych oraz polityki prywatności serwisu Kocia Oaza.",
+    alternates: {
+        canonical: "https://kocia-oaza.pl/polityka-prywatnosci",
+    },
+    robots: {
+        index: true,
+        follow: true,
+    },
+};
 
 export default function PrivacyPolicyPage() {
     return (

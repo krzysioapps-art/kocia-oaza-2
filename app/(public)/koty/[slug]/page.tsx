@@ -30,26 +30,6 @@ function monthsSince(date?: string | null) {
     );
 }
 
-function ageFromBirth(date?: string | null) {
-    if (!date) return null;
-
-    const birth = new Date(date);
-    if (isNaN(birth.getTime())) return null;
-
-    const now = new Date();
-
-    let years = now.getFullYear() - birth.getFullYear();
-    let months = now.getMonth() - birth.getMonth();
-
-    if (months < 0) {
-        years--;
-        months += 12;
-    }
-
-    if (years <= 0) return `${months} mies.`;
-    return `${years} ${years === 1 ? "rok" : "lata"}`;
-}
-
 function getStatusLabel(status?: string) {
     if (status === "adopted") return "Adoptowany";
     if (status === "available") return "Szuka domu";
@@ -101,6 +81,15 @@ export async function generateMetadata({ params }: PageProps) {
             cat.description?.slice(0, 160) ||
             `Poznaj ${cat.name} i daj mu dom ❤️`,
 
+        alternates: {
+            canonical: `https://new.kocia-oaza.pl/koty/${cat.slug}`,
+        },
+
+        robots: {
+            index: true,
+            follow: true,
+        },
+
         openGraph: {
             title: `${cat.name} szuka domu`,
             description:
@@ -144,7 +133,7 @@ export default async function CatPage({ params }: PageProps) {
     }
 
     // 📝 POSTS
-   
+
 
     // 🖼️ MEDIA
     const allMedia: Media[] = cat.media ?? [];

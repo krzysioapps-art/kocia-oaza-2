@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import Container from "@/app/components/ui/Container";
 import Heading from "@/app/components/ui/Heading";
 import Button from "@/app/components/ui/Button";
@@ -14,6 +16,24 @@ import {
     Star,
     ArrowRight,
 } from "lucide-react";
+
+export const metadata: Metadata = {
+    title: "Jak zdobyć zaufanie kota? | Kocia Oaza",
+    description:
+        "Sprawdź jak budować relację z kotem po adopcji. Poznaj sposoby na zdobycie zaufania kota i najczęstsze błędy opiekunów.",
+    alternates: {
+        canonical: "https://kocia-oaza.pl/porady",
+    },
+    openGraph: {
+        title: "Jak zdobyć zaufanie kota? | Kocia Oaza",
+        description:
+            "Dowiedz się jak oswoić kota, budować zaufanie i uniknąć najczęstszych błędów po adopcji.",
+        url: "https://kocia-oaza.pl/porady",
+        siteName: "Kocia Oaza",
+        locale: "pl_PL",
+        type: "article",
+    },
+};
 
 export default function AdvicePage() {
     return (
@@ -152,7 +172,7 @@ export default function AdvicePage() {
                 </Container>
             </section>
 
-             {/* CTA */}
+            {/* CTA */}
             <section className="section section--alt">
                 <Container>
                     <div className="section__header">

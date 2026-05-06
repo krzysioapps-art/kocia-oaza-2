@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import Container from "@/app/components/ui/Container";
 import Heading from "@/app/components/ui/Heading";
 import Button from "@/app/components/ui/Button";
@@ -12,6 +14,24 @@ import {
     Sparkles,
     ArrowRight,
 } from "lucide-react";
+
+export const metadata: Metadata = {
+    title: "Jak pomagamy kotom | Kocia Oaza",
+    description:
+        "Zobacz jak pomagamy bezdomnym kotom. Leczenie, kastracje, adopcje i opieka nad kotami wolno żyjącymi w Warszawie.",
+    alternates: {
+        canonical: "https://kocia-oaza.pl/jak-pomagamy",
+    },
+    openGraph: {
+        title: "Jak pomagamy kotom | Kocia Oaza",
+        description:
+            "Poznaj działania Kociej Oazy — ratowanie kotów, leczenie, adopcje i pomoc kotom wolno żyjącym.",
+        url: "https://kocia-oaza.pl/jak-pomagamy",
+        siteName: "Kocia Oaza",
+        locale: "pl_PL",
+        type: "website",
+    },
+};
 
 export default function HowWeHelpPage() {
     return (

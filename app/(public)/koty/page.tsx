@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import { createClient } from "@/lib/supabase/server";
 
 import Container from "@/app/components/ui/Container";
@@ -41,6 +43,24 @@ function mapCat(cat: Cat) {
     tags: cat.tags ?? [],
   };
 }
+
+export const metadata: Metadata = {
+  title: "Koty do adopcji | Kocia Oaza",
+  description:
+    "Poznaj koty szukające domu w Kociej Oazie. Sprawdź profile kotów do adopcji, ich charakter, wiek i potrzeby.",
+  alternates: {
+    canonical: "https://kocia-oaza.pl/koty",
+  },
+  openGraph: {
+    title: "Koty do adopcji | Kocia Oaza",
+    description:
+      "Zobacz koty dostępne do adopcji i znajdź swojego przyszłego przyjaciela.",
+    url: "https://kocia-oaza.pl/koty",
+    siteName: "Kocia Oaza",
+    locale: "pl_PL",
+    type: "website",
+  },
+};
 
 export default async function CatsPage() {
   const supabase = await createClient();

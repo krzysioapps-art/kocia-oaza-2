@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import Hero from "@/app/components/sections/Hero";
 import HowWeHelp from "@/app/components/sections/HowWeHelp";
 import CatsSection from "../components/sections/CatsSection";
@@ -15,6 +17,24 @@ import "@/app/style/home/how-we-help.css";
 import "@/app/style/home/stats.css";
 import "@/app/style/home/tips-preview.css";
 
+export const metadata: Metadata = {
+  title: "Kocia Oaza | Adopcja kotów i pomoc bezdomnym kotom",
+  description:
+    "Poznaj koty do adopcji, wspieraj działania Kociej Oazy i pomóż bezdomnym kotom znaleźć bezpieczny dom.",
+  alternates: {
+    canonical: "https://kocia-oaza.pl",
+  },
+  openGraph: {
+    title: "Kocia Oaza | Adopcja kotów i pomoc bezdomnym kotom",
+    description:
+      "Poznaj koty do adopcji, wspieraj działania Kociej Oazy i pomóż bezdomnym kotom znaleźć bezpieczny dom.",
+    url: "https://kocia-oaza.pl",
+    siteName: "Kocia Oaza",
+    locale: "pl_PL",
+    type: "website",
+  },
+};
+
 export default function HomePage() {
   return (
     <main>
@@ -27,7 +47,6 @@ export default function HomePage() {
 
       <AdoptionFlow />
       <TipsSection />
-
 
       <FinalCTA />
     </main>

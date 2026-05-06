@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import Container from "@/app/components/ui/Container";
 import Heading from "@/app/components/ui/Heading";
 import Button from "@/app/components/ui/Button";
@@ -14,6 +16,24 @@ import {
     User,
     FileText,
 } from "lucide-react";
+
+export const metadata: Metadata = {
+    title: "Jak adoptować kota? | Kocia Oaza",
+    description:
+        "Dowiedz się jak wygląda proces adopcji kota w Kociej Oazie. Poznaj warunki adopcji, wymagania i kolejne etapy poznania kota.",
+    alternates: {
+        canonical: "https://kocia-oaza.pl/jak-adoptowac",
+    },
+    openGraph: {
+        title: "Jak adoptować kota? | Kocia Oaza",
+        description:
+            "Sprawdź jak przebiega adopcja kota — od zgłoszenia po przygotowanie domu i podpisanie umowy.",
+        url: "https://kocia-oaza.pl/jak-adoptowac",
+        siteName: "Kocia Oaza",
+        locale: "pl_PL",
+        type: "article",
+    },
+};
 
 export default function AdoptionPage() {
     return (

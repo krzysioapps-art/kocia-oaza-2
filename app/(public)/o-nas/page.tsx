@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import Container from "@/app/components/ui/Container";
 import Heading from "@/app/components/ui/Heading";
 import Button from "@/app/components/ui/Button";
@@ -18,6 +20,24 @@ import {
     MapPin,
     ArrowRight,
 } from "lucide-react";
+
+export const metadata: Metadata = {
+    title: "O nas | Kocia Oaza",
+    description:
+        "Poznaj misję Kociej Oazy. Pomagamy bezdomnym kotom, organizujemy adopcje i wspieramy odpowiedzialną opiekę nad zwierzętami w Warszawie.",
+    alternates: {
+        canonical: "https://kocia-oaza.pl/o-nas",
+    },
+    openGraph: {
+        title: "O nas | Kocia Oaza",
+        description:
+            "Dowiedz się kim jesteśmy, jak pomagamy kotom i jakie wartości stoją za Kocią Oazą.",
+        url: "https://kocia-oaza.pl/o-nas",
+        siteName: "Kocia Oaza",
+        locale: "pl_PL",
+        type: "website",
+    },
+};
 
 export default function AboutPage() {
     return (

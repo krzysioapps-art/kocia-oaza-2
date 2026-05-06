@@ -1,5 +1,7 @@
 "use client";
 
+import type { Metadata } from "next";
+
 import Container from "@/app/components/ui/Container";
 import Heading from "@/app/components/ui/Heading";
 import Button from "@/app/components/ui/Button";
@@ -12,6 +14,24 @@ import {
     MessageCircle,
     ArrowRight,
 } from "lucide-react";
+
+export const metadata: Metadata = {
+    title: "Dom tymczasowy dla kota | Kocia Oaza",
+    description:
+        "Dowiedz się jak zostać domem tymczasowym dla kota. Pomóż kotom dojść do siebie i przygotować się do adopcji.",
+    alternates: {
+        canonical: "https://kocia-oaza.pl/dom-tymczasowy",
+    },
+    openGraph: {
+        title: "Dom tymczasowy dla kota | Kocia Oaza",
+        description:
+            "Zostań domem tymczasowym i pomóż kotom w drodze do nowego domu.",
+        url: "https://kocia-oaza.pl/dom-tymczasowy",
+        siteName: "Kocia Oaza",
+        locale: "pl_PL",
+        type: "article",
+    },
+};
 
 export default function TemporaryHomePage() {
     return (

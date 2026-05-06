@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import Container from "@/app/components/ui/Container";
 import Heading from "@/app/components/ui/Heading";
 import Button from "@/app/components/ui/Button";
@@ -15,6 +17,24 @@ import {
     Mail,
     MapPin,
 } from "lucide-react";
+
+export const metadata: Metadata = {
+    title: "Dołącz do nas | Wolontariat w Kociej Oazie",
+    description:
+        "Pomóż bezdomnym kotom razem z Kocią Oazą. Wolontariat, dom tymczasowy, transport, social media i pomoc przy adopcjach.",
+    alternates: {
+        canonical: "https://kocia-oaza.pl/dolacz-do-nas",
+    },
+    openGraph: {
+        title: "Dołącz do nas | Kocia Oaza",
+        description:
+            "Dołącz do wolontariuszy Kociej Oazy i pomagaj kotom znaleźć bezpieczne domy.",
+        url: "https://kocia-oaza.pl/dolacz-do-nas",
+        siteName: "Kocia Oaza",
+        locale: "pl_PL",
+        type: "website",
+    },
+};
 
 export default function JoinUsPage() {
     return (
