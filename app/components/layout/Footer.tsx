@@ -1,7 +1,6 @@
 // app/components/layout/Footer.tsx
 
 import Container from "@/app/components/ui/Container";
-import "@/app/style/layout/footer.css";
 
 import { FaFacebookF, FaInstagram, FaTiktok } from "react-icons/fa";
 
@@ -52,9 +51,32 @@ export default function Footer() {
 
                         {/* SOCIAL */}
                         <div className="footer__social">
-                            <a href="#"><FaFacebookF size={16} /></a>
-                            <a href="#"><FaInstagram size={16} /></a>
-                            <a href="#"><FaTiktok size={16} /></a>
+                            <a
+                                href="https://www.facebook.com/Kociooaza"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label="Facebook"
+                            >
+                                <FaFacebookF size={16} />
+                            </a>
+
+                            <a
+                                href="https://www.instagram.com/kociaoaza/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label="Instagram"
+                            >
+                                <FaInstagram size={16} />
+                            </a>
+
+                            <a
+                                href="https://www.tiktok.com/@kocia.oaza"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label="TikTok"
+                            >
+                                <FaTiktok size={16} />
+                            </a>
                         </div>
                     </div>
                 </div>

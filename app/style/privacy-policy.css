@@ -1,0 +1,193 @@
+/* =========================
+   🔒 PRIVACY POLICY
+   ========================= */
+
+.privacy-layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* =========================
+   📄 CARD
+   ========================= */
+
+.privacy-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.privacy-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.privacy-card__header h2 {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* =========================
+   🎨 ICON
+   ========================= */
+
+.privacy-icon {
+  width: 48px;
+  height: 48px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: var(--color-accent-1);
+}
+
+.privacy-icon svg {
+  color: var(--color-accent-1-strong);
+}
+
+/* 🔥 rotacyjne kolory */
+
+.privacy-card:nth-child(3n + 1) .privacy-icon {
+  background: var(--color-accent-1);
+}
+
+.privacy-card:nth-child(3n + 2) .privacy-icon {
+  background: var(--color-accent-2);
+}
+
+.privacy-card:nth-child(3n + 3) .privacy-icon {
+  background: var(--color-accent-3);
+}
+
+.privacy-card:nth-child(3n + 1) svg {
+  color: var(--color-accent-1-strong);
+}
+
+.privacy-card:nth-child(3n + 2) svg {
+  color: var(--color-accent-2-strong);
+}
+
+.privacy-card:nth-child(3n + 3) svg {
+  color: var(--color-accent-3-strong);
+}
+
+/* =========================
+   📝 TEXT
+   ========================= */
+
+.privacy-card p {
+  opacity: 0.85;
+  line-height: 1.7;
+}
+
+.privacy-card ul {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  padding-left: 20px;
+}
+
+.privacy-card li {
+  opacity: 0.85;
+}
+
+/* =========================
+   ✨ HIGHLIGHT
+   ========================= */
+
+.privacy-highlight {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  padding: var(--space-3);
+
+  border-radius: var(--radius-lg);
+
+  background: var(--color-accent-1);
+}
+
+.privacy-highlight strong {
+  font-size: 18px;
+}
+
+.privacy-highlight span {
+  opacity: 0.7;
+  font-size: 14px;
+}
+
+.privacy-highlight a {
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+/* =========================
+   📩 CONTACT BOX
+   ========================= */
+
+.privacy-contact {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.privacy-contact__icon {
+  width: 56px;
+  height: 56px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: var(--color-accent-2);
+}
+
+.privacy-contact__icon svg {
+  color: var(--color-accent-2-strong);
+}
+
+.privacy-contact a {
+  display: inline-block;
+  margin-top: 8px;
+
+  font-weight: 600;
+}
+
+/* =========================
+   📱 MOBILE
+   ========================= */
+
+@media (max-width: 768px) {
+
+  .privacy-card__header {
+    align-items: flex-start;
+  }
+
+  .privacy-contact {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .privacy-card__header h2 {
+    font-size: 20px;
+  }
+}
