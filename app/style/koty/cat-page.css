@@ -666,3 +666,21 @@ body.page--cat .navbar-wrapper {
 
   color: var(--color-accent-1-strong);
 }
+
+.cat-waiting-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+
+  margin-top: 0.75rem;
+
+  padding: 0.45rem 0.7rem;
+
+  border-radius: 999px;
+
+  font-size: 0.78rem;
+  font-weight: 700;
+
+  background: rgba(255, 170, 0, 0.12);
+  color: #c77700;
+}

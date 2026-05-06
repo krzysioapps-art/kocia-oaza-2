@@ -1,12 +1,13 @@
 import PostList from "@/app/components/news/PostList";
 import CatTabs from "@/app/components/ui/CatTabs";
-import { Clock, CheckCircle, ArrowRight } from "lucide-react";
+import { Clock, CheckCircle } from "lucide-react";
 import SimilarCatsSlider from "@/app/components/koty/SimilarCatsSlider";
 import { createClient } from "@/lib/supabase/server";
 import CatMedia from "@/app/components/koty/CatMedia";
 import type { Media } from "@/types/media";
 import ShareBar from "@/app/components/ui/ShareButton";
 import { formatAge } from "@/lib/utils/formatAge";
+import { getWaitingLabel } from "@/lib/utils/getWaitingLabel";
 
 type PageProps = {
     params: { slug: string };
@@ -15,20 +16,6 @@ type PageProps = {
 /* =========================
    🧠 HELPERS
    ========================= */
-
-function monthsSince(date?: string | null) {
-    if (!date) return null;
-
-    const created = new Date(date);
-    if (isNaN(created.getTime())) return null;
-
-    const now = new Date();
-
-    return (
-        (now.getFullYear() - created.getFullYear()) * 12 +
-        (now.getMonth() - created.getMonth())
-    );
-}
 
 function getStatusLabel(status?: string) {
     if (status === "adopted") return "Adoptowany";
@@ -159,11 +146,11 @@ export default async function CatPage({ params }: PageProps) {
 
     const similarCats = similarCatsRaw ?? [];
 
-    const waitMonths = monthsSince(cat.created_at);
-
     const isAdopted = cat.status === "adopted";
 
     const hasVirtual = !!cat.virtual_adoption_url;
+
+    const waitingLabel = getWaitingLabel(cat.arrival_date);
 
     return (
         <main className={`cat-page ${cat.gender === "female" ? "cat--female" : "cat--male"}`}>
@@ -232,13 +219,10 @@ export default async function CatPage({ params }: PageProps) {
             <section className="section section--alt cat-section">
 
                 <div className="container">
-                    {!isAdopted && waitMonths !== null && waitMonths >= 1 && (
+                    {!isAdopted && waitingLabel && (
                         <div className="cat-urgency card-base">
                             <Clock size={16} />
-                            <span>
-                                Ten kot czeka na dom już{" "}
-                                <strong>{waitMonths} mies.</strong>
-                            </span>
+                            <span>{waitingLabel}</span>
                         </div>
                     )}
 

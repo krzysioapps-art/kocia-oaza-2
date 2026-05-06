@@ -1,6 +1,6 @@
 /* =========================
-       🤝 JOIN PAGE
-       ========================= */
+   🤝 JOIN PAGE
+   ========================= */
 
 .join-intro {
     max-width: 760px;
@@ -108,6 +108,93 @@
 }
 
 /* =========================
+   🕒 DUTY SECTION
+   ========================= */
+
+.join-duty-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: var(--space-3);
+}
+
+.join-duty-card {
+    gap: var(--space-2);
+}
+
+.join-duty-card h3 {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.join-duty-list {
+    display: flex;
+    flex-direction: column;
+
+    gap: 14px;
+}
+
+.join-duty-item {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 14px 16px;
+
+    border-radius: var(--radius-md);
+
+    background: rgba(0, 0, 0, 0.04);
+
+    font-weight: 500;
+}
+
+.join-duty-item svg {
+    flex-shrink: 0;
+
+    opacity: 0.75;
+}
+
+.join-duty-card--info {
+    justify-content: center;
+
+    text-align: center;
+}
+
+.join-duty-time {
+    font-size: 42px;
+    font-weight: 700;
+
+    line-height: 1;
+}
+
+.join-duty-note {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 10px;
+
+    padding: 14px 16px;
+
+    border-radius: var(--radius-md);
+
+    background: rgba(0, 0, 0, 0.05);
+
+    font-size: 15px;
+    line-height: 1.6;
+
+    text-align: left;
+}
+
+.join-duty-note svg {
+    flex-shrink: 0;
+
+    margin-top: 2px;
+
+    opacity: 0.75;
+}
+
+/* =========================
    📩 CTA
    ========================= */
 
@@ -150,4 +237,63 @@
     .join-card h3 {
         font-size: 18px;
     }
+
+    .join-duty-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .join-duty-time {
+        font-size: 34px;
+    }
+}
+
+/* =========================
+   🕒 DUTY SECTION
+   ========================= */
+
+.join-duty-item:nth-child(1) {
+    background: rgba(255, 214, 102, 0.18);
+}
+
+.join-duty-item:nth-child(2) {
+    background: rgba(129, 199, 132, 0.16);
+}
+
+.join-duty-item:nth-child(3) {
+    background: rgba(121, 134, 203, 0.16);
+}
+
+.join-duty-item:nth-child(4) {
+    background: rgba(244, 143, 177, 0.16);
+}
+
+.join-duty-item:nth-child(5) {
+    background: rgba(79, 195, 247, 0.16);
+}
+
+.join-duty-item svg {
+    opacity: 0.9;
+}
+
+/* prawa karta */
+
+.join-duty-card--info {
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255,255,255,0.7),
+            rgba(255,255,255,0.95)
+        );
+}
+
+/* czas */
+
+.join-duty-time {
+    color: var(--color-primary);
+}
+
+/* note */
+
+.join-duty-note {
+    background: rgba(255, 183, 77, 0.16);
 }

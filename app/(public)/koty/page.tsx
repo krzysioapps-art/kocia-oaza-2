@@ -10,6 +10,10 @@ import { formatAge } from "@/lib/utils/formatAge";
 import { getStatusMeta } from "@/lib/utils/formatStatus";
 import { Mars, Venus } from "lucide-react";
 
+import { getWaitingLabel } from "@/lib/utils/getWaitingLabel";
+
+import { Clock3 } from "lucide-react";
+
 import "@/app/style/koty/cat-page.css";
 
 type Cat = {
@@ -24,6 +28,8 @@ type Cat = {
   birth_date?: string | null;
 
   tags?: string[];
+
+  arrival_date?: string | null;
 
   media?: {
     url: string;
@@ -103,6 +109,7 @@ export default async function CatsPage() {
             {cats.map((cat) => {
               const status = getStatusMeta(cat.status);
               const age = formatAge(cat.birth_date);
+              const waitingLabel = getWaitingLabel(cat.arrival_date);
 
               return (
                 <Card
@@ -123,6 +130,13 @@ export default async function CatsPage() {
                       <span className={status.className}>
                         {status.label}
                       </span>
+                    )}
+
+                    {cat.status === "available" && waitingLabel && (
+                      <div className="cat-waiting-badge">
+                        <Clock3 size={14} />
+                        {waitingLabel}
+                      </div>
                     )}
 
                     {/* 🐱 NAZWA */}

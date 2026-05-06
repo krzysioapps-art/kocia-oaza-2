@@ -16,6 +16,11 @@ import {
     ArrowRight,
     Mail,
     MapPin,
+    PawPrint,
+    Eye,
+    ShieldCheck,
+    Soup,
+    BrushCleaning,
 } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -172,8 +177,83 @@ export default function JoinUsPage() {
                 </Container>
             </section>
 
-            {/* ✨ TEXT BLOCK */}
+            {/* 🧹 DYŻURY */}
             <section className="section section--alt">
+                <Container>
+
+                    <div className="section__header">
+                        <Heading level="md">
+                            Jak wyglądają dyżury?
+                        </Heading>
+
+                        <p className="text">
+                            To codzienna opieka nad kotami i ogromna część naszej pomocy.
+                        </p>
+                    </div>
+
+                    <div className="join-duty-grid section__content">
+
+                        <div className="card-base join-duty-card">
+                            <h3>Co robi się na dyżurze?</h3>
+
+                            <div className="join-duty-list">
+
+                                <div className="join-duty-item">
+                                    <Soup size={18} />
+                                    <span>Dawanie jedzenia i świeżej wody</span>
+                                </div>
+
+                                <div className="join-duty-item">
+                                    <BrushCleaning size={18} />
+                                    <span>Sprzątanie kuwet i porządki</span>
+                                </div>
+
+                                <div className="join-duty-item">
+                                    <PawPrint size={18} />
+                                    <span>Zabawa i socjalizacja kotów</span>
+                                </div>
+
+                                <div className="join-duty-item">
+                                    <Heart size={18} />
+                                    <span>Mizianie i głaskanie</span>
+                                </div>
+
+                                <div className="join-duty-item">
+                                    <Eye size={18} />
+                                    <span>Obserwacja samopoczucia kotów</span>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div className="card-base join-duty-card join-duty-card--info">
+
+                            <h3>Ile trwa dyżur?</h3>
+
+                            <div className="join-duty-time">
+                                1,5–2 godziny
+                            </div>
+
+                            <p>
+                                Nie musisz być codziennie — pomagamy dopasować grafik
+                                do możliwości wolontariuszy.
+                            </p>
+
+                            <div className="join-duty-note">
+                                <ShieldCheck size={18} />
+
+                                <span>
+                                    Nie musisz mieć doświadczenia medycznego —
+                                    podawaniem leków zajmują się osoby, które mają
+                                    odpowiednie doświadczenie i zalecenia.
+                                </span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </Container>
                 <Container>
 
                     <div className="join-highlight card-base">
