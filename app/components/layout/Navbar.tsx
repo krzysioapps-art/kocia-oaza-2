@@ -38,6 +38,8 @@ export default function Navbar() {
 
     const pathname = usePathname();
 
+    const wrapperRef = useRef<HTMLElement>(null);
+
     /* =========================
        SCROLL
     ========================= */
@@ -101,6 +103,34 @@ export default function Navbar() {
             window.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
+    useEffect(() => {
+
+        const updateHeaderHeight = () => {
+
+            if (!wrapperRef.current) return;
+
+            const height =
+                wrapperRef.current.offsetHeight;
+
+            document.documentElement.style.setProperty(
+                "--header-height",
+                `${height}px`
+            );
+        };
+
+        updateHeaderHeight();
+
+        window.addEventListener("resize", updateHeaderHeight);
+
+        return () => {
+            window.removeEventListener(
+                "resize",
+                updateHeaderHeight
+            );
+        };
+
+    }, []);
+
     /* =========================
        MOBILE MENU
     ========================= */
@@ -122,7 +152,10 @@ export default function Navbar() {
     };
 
     return (
-        <header className="navbar-wrapper">
+        <header
+            ref={wrapperRef}
+            className="navbar-wrapper"
+        >
             {/* TOPBAR */}
             <div className="topbar">
                 <Container>
@@ -190,8 +223,8 @@ export default function Navbar() {
                                         key={item.href}
                                         href={item.href}
                                         className={`navbar__link ${isActive
-                                                ? "navbar__link--active"
-                                                : ""
+                                            ? "navbar__link--active"
+                                            : ""
                                             }`}
                                     >
                                         {item.label}
@@ -207,8 +240,8 @@ export default function Navbar() {
                                 <button
                                     type="button"
                                     className={`navbar__dropdown-trigger ${helpOpen
-                                            ? "navbar__dropdown-trigger--active"
-                                            : ""
+                                        ? "navbar__dropdown-trigger--active"
+                                        : ""
                                         }`}
                                     onClick={() =>
                                         setHelpOpen((prev) => !prev)
@@ -219,16 +252,16 @@ export default function Navbar() {
                                     <ChevronDown
                                         size={16}
                                         className={`navbar__dropdown-icon ${helpOpen
-                                                ? "navbar__dropdown-icon--open"
-                                                : ""
+                                            ? "navbar__dropdown-icon--open"
+                                            : ""
                                             }`}
                                     />
                                 </button>
 
                                 <div
                                     className={`navbar__dropdown-menu ${helpOpen
-                                            ? "navbar__dropdown-menu--open"
-                                            : ""
+                                        ? "navbar__dropdown-menu--open"
+                                        : ""
                                         }`}
                                 >
                                     {HELP_ITEMS.map((item) => {
@@ -283,8 +316,8 @@ export default function Navbar() {
                     {visible && (
                         <div
                             className={`navbar__mobile ${open
-                                    ? "is-open"
-                                    : "is-closing"
+                                ? "is-open"
+                                : "is-closing"
                                 }`}
                         >
 
@@ -301,8 +334,8 @@ export default function Navbar() {
                                         href={item.href}
                                         onClick={handleToggle}
                                         className={`navbar__link ${isActive
-                                                ? "navbar__link--active"
-                                                : ""
+                                            ? "navbar__link--active"
+                                            : ""
                                             }`}
                                     >
                                         {item.label}

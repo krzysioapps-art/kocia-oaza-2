@@ -11,6 +11,7 @@
 
     z-index: 999;
 }
+
 .navbar {
     position: relative;
     top: 0;
@@ -322,11 +323,12 @@
 .navbar__mobile {
     position: fixed;
 
-    top: var(--navbar-height);
+    top: var(--header-height);
+
+    height: calc(100dvh - var(--header-height));
     left: 0;
 
     width: 100%;
-    height: calc(100dvh - var(--navbar-height));
 
     z-index: 9999;
 
