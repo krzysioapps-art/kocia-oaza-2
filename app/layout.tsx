@@ -34,6 +34,8 @@ const caveat = Caveat({
 export const metadata: Metadata = {
   metadataBase: new URL("https://kocia-oaza.pl"),
 
+  applicationName: "Kocia Oaza",
+
   title: {
     default: "Kocia Oaza",
     template: "%s | Kocia Oaza",
@@ -82,6 +84,11 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
@@ -100,6 +107,7 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "AnimalShelter",
               name: "Kocia Oaza",
+              alternateName: "Stowarzyszenie Kocia Oaza - Koci Raj",
               url: "https://kocia-oaza.pl",
               logo: "https://kocia-oaza.pl/kocia_oaza_sygnet.svg",
               email: "kocia.oaza@gmail.com",
