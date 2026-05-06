@@ -10,7 +10,7 @@
   padding-top: var(--space-3);
 }
 
-body.page--cat .navbar {
+body.page--cat .navbar-wrapper {
   position: static;
   box-shadow: none;
 }

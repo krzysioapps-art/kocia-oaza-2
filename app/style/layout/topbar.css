@@ -1,0 +1,79 @@
+/* =========================
+   TOPBAR
+   ========================= */
+
+.topbar {
+    height: 40px;
+
+    background: var(--color-accent-1);
+
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+
+.topbar__inner {
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: var(--space-2);
+}
+
+.topbar__content {
+    flex: 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    text-align: center;
+}
+
+.topbar__cta {
+    color: var(--color-accent-1-strong);
+}
+
+.topbar__close {
+    width: 28px;
+    height: 28px;
+
+    border: none;
+    background: transparent;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    cursor: pointer;
+}
+
+@media (hover:hover) {
+    .topbar__close:hover {
+        background: rgba(0,0,0,0.05);
+    }
+}
+
+@media (max-width: 768px) {
+
+    .topbar {
+        height: auto;
+        padding: 8px 0;
+    }
+
+    .topbar__content {
+        font-size: 13px;
+        justify-content: flex-start;
+    }
+
+    .topbar__cta {
+        display: none;
+    }
+}
