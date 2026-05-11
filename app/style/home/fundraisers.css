@@ -1,0 +1,26 @@
+/* app/style/home/fundraisers.css */
+
+.fundraisers {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.fundraisers__embed {
+  width: 100%;
+  max-width: 300px;
+
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+
+  background: white;
+
+  box-shadow:
+    0 8px 24px rgba(0,0,0,0.06);
+}
+
+.fundraisers__embed iframe {
+  display: block;
+  width: 100%;
+  border: none;
+}

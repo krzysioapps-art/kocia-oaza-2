@@ -6,3 +6,14 @@
 .section--alt .button {
   height: 44px;
 }
+
+@media (max-width: 768px) {
+  .section__footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .section__footer .button {
+    width: 100%;
+  }
+}

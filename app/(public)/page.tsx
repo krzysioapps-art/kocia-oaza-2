@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import Hero from "@/app/components/sections/Hero";
+import FundraisersSection from "../components/sections/FundraisersSection";
 import HowWeHelp from "@/app/components/sections/HowWeHelp";
 import CatsSection from "../components/sections/CatsSection";
 import HelpSection from "../components/sections/HelpSection";
@@ -34,13 +35,14 @@ export const metadata: Metadata = {
     type: "website",
   },
 };
-
+    // <NewsSection />
 export default function HomePage() {
   return (
     <main>
       <Hero />
       <HowWeHelp />
-      <NewsSection />
+      <FundraisersSection />
+  
 
       <HelpSection />
       <CatsSection />
