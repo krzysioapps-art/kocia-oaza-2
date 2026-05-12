@@ -83,8 +83,13 @@ export default function GalleryModal({
                 </button>
 
                 {/* MEDIA */}
-                {current.type === "video" ? (
-                    <video src={current.url} controls autoPlay />
+                {current.media_type === "video" ? (
+                    <video
+                        src={current.url.replace("/image/upload/", "/video/upload/")}
+                        controls
+                        autoPlay
+                        playsInline
+                    />
                 ) : (
                     <img src={current.url} alt="" />
                 )}

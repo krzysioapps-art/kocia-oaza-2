@@ -4,7 +4,7 @@ export const NAV_ITEMS = [
   { label: "Adopcja", href: "/jak-adoptowac" },
   { label: "O nas", href: "/o-nas" },
   { label: "Jak pomagamy", href: "/jak-pomagamy" },
-  { label: "Aktualności", href: "/aktualnosci" },
+ // { label: "Aktualności", href: "/aktualnosci" },
   { label: "Porady", href: "/porady" },
 ];
 

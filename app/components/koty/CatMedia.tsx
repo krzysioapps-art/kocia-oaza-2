@@ -6,32 +6,28 @@ import type { Media } from "@/types/media";
 
 export default function CatMedia({ media }: { media: Media[] }) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
-
-  const normalizedMedia = media.map((m: any) => ({
-    url: m.url,
-    type: m.media_type,
-  }));
-
+console.log(media);
   return (
     <>
-      {normalizedMedia.length > 0 ? (
+      {media.length > 0 ? (
         <div className="cat-media__grid">
-          {normalizedMedia.map((m, i) => (
+          {media.map((m, i) => (
             <div
               key={m.url}
               className="cat-media__item"
               onClick={() => setActiveIndex(i)}
             >
-              {m.type === "video" ? (
+              {m.media_type === "video" ? (
                 <>
                   <video
-                    src={m.url}
+                    src={m.url.replace("/image/upload/", "/video/upload/")}
+                    controls
                     muted
                     playsInline
                     preload="metadata"
+                    className="cat-video"
                   />
 
-                  {/* ✅ overlay */}
                   <div className="video-overlay">
                     <span className="play-icon" />
                   </div>
@@ -50,7 +46,7 @@ export default function CatMedia({ media }: { media: Media[] }) {
 
       {activeIndex !== null && (
         <GalleryModal
-          media={normalizedMedia}
+          media={media}
           startIndex={activeIndex}
           onClose={() => setActiveIndex(null)}
         />
