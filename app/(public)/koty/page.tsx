@@ -84,7 +84,9 @@ export default async function CatsPage() {
     return <div>Błąd ładowania kotów</div>;
   }
 
-  const cats = ((data ?? []) as Cat[]).map(mapCat);
+  const cats = ((data ?? []) as Cat[])
+  .filter((cat) => cat.media && cat.media.length > 0)
+  .map(mapCat);
 
   return (
     <main>

@@ -5,7 +5,10 @@ export async function getCats() {
 
   const { data, error } = await supabase
     .from("cats")
-    .select("*")
+    .select(`
+      *,
+      media:cat_media!inner(*)
+    `)
     .order("created_at", { ascending: false });
 
   if (error) {
