@@ -36,14 +36,21 @@ export default function CatsSection() {
       const { data } = await supabase
         .from("cats")
         .select(`
-          *,
-          media:cat_media(*)
-        `)
+    *,
+    media:cat_media(*)
+  `)
         .is("deleted_at", null)
-        .order("created_at", { ascending: false })
-        .limit(8);
+        .order("created_at", { ascending: false });
 
-      setLatest(data ?? []);
+      const filtered = (data ?? [])
+        .filter(
+          (cat) =>
+            (cat.media && cat.media.length > 0) ||
+            cat.image_url
+        )
+        .slice(0, 8);
+
+      setLatest(filtered);
     }
 
     load();
