@@ -1,33 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: NextRequest) {
-    const formData = await req.formData();
+export function middleware(req: NextRequest) {
+    const pathname = req.nextUrl.pathname;
 
-    const password =
-        formData.get("password");
+    const isDashboard =
+        pathname.startsWith("/panel");
 
-    if (
-        password !== process.env.ADMIN_PASSWORD
-    ) {
-        return NextResponse.redirect(
-            new URL("/panel-login", req.url)
-        );
+    const isLoginPage =
+        pathname.startsWith("/panel-login");
+
+    if (!isDashboard || isLoginPage) {
+        return NextResponse.next();
     }
 
-    const response = NextResponse.redirect(
-        new URL("/panel", req.url)
-    );
+    const authCookie =
+        req.cookies.get("kocia-admin");
 
-    response.cookies.set(
-        "kocia-admin",
-        "authorized",
-        {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
-            path: "/",
-        }
-    );
+    if (authCookie?.value === "authorized") {
+        return NextResponse.next();
+    }
 
-    return response;
+    return NextResponse.redirect(
+        new URL("/panel-login", req.url)
+    );
 }
+
+export const config = {
+    matcher: [
+        "/panel/:path*",
+        "/panel-login",
+    ],
+};
