@@ -15,6 +15,12 @@ const nextConfig = {
         protocol: "https",
         hostname: "pleso.me",
       },
+      {
+                protocol: "https",
+
+                hostname:
+                    "res.cloudinary.com",
+            },
     ],
   },
 };

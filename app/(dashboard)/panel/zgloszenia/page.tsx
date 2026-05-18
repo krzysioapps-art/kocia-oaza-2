@@ -9,18 +9,11 @@ export default async function AdoptionFormsPage() {
     const supabase = createClient();
 
     const { data: forms } = await supabase
-        .from("adoption_forms")
-        .select(`
-            *,
-            cats (
-                id,
-                name,
-                slug
-            )
-        `)
-        .order("created_at", {
-            ascending: false,
-        });
+    .from("adoption_forms")
+    .select("*")
+    .order("created_at", {
+        ascending: false,
+    });
 
     return (
         <main className="container section">

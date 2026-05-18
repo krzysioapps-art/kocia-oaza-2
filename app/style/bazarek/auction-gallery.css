@@ -1,0 +1,74 @@
+/* app/style/bazarek/auction-gallery.css */
+
+.auction-gallery {
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-2);
+}
+
+.auction-gallery__main {
+  width: 100%;
+
+  padding: 0;
+
+  border: none;
+  background: none;
+
+  cursor: pointer;
+
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+}
+
+.auction-gallery__image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+
+  object-fit: cover;
+
+  display: block;
+
+  height: auto;
+}
+
+.auction-gallery__thumbs {
+  display: flex;
+  gap: 12px;
+
+  overflow-x: auto;
+
+  padding-bottom: 4px;
+}
+
+.auction-gallery__thumb {
+  flex: 0 0 88px;
+
+  padding: 0;
+
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+
+  overflow: hidden;
+
+  background: none;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.auction-gallery__thumb.is-active {
+  border-color: var(--color-accent-1-strong);
+}
+
+.auction-gallery__thumb-image {
+  width: 100%;
+  height: 100%;
+
+  aspect-ratio: 1 / 1;
+
+  object-fit: cover;
+
+  display: block;
+}

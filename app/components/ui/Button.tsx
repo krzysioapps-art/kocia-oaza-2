@@ -5,6 +5,9 @@ type ButtonProps = {
   children: React.ReactNode;
   variant?: Variant;
   mode?: Mode;
+
+  type?: "button" | "submit" | "reset";
+
   disabled?: boolean;
   onClick?: () => void;
   href?: string;
@@ -17,6 +20,9 @@ export default function Button({
   children,
   variant = "primary",
   mode = "solid",
+
+  type = "button",
+
   disabled = false,
   onClick,
   href,
@@ -53,9 +59,10 @@ export default function Button({
   // 🔘 BUTTON
   return (
     <button
+      type={type}
       className={classes}
       onClick={onClick}
-      disabled={disabled} // 🔥 KLUCZ
+      disabled={disabled}
     >
       {children}
     </button>

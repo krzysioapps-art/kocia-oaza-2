@@ -1,7 +1,7 @@
 // app/(dashboard)/panel/layout.tsx
 
 import Link from "next/link";
-
+import "@/app/style/bazarek/dashboard-bazarek.css";
 type NavItem = {
     href: string;
     label: string;

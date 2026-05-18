@@ -44,3 +44,7 @@
     flex: 0 0 300px;
   }
 }
+
+.card-base.variant--alt {
+  background: var(--color-bg-alt);
+}
