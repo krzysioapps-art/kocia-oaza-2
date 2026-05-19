@@ -125,3 +125,39 @@
 .auction-card .button {
   flex-shrink: 0;
 }
+
+@media (max-width: 768px) {
+  .auction-card__title {
+    font-size: 16px;
+  }
+
+  .auction-card__description {
+    font-size: 13px;
+  }
+
+  .auction-card__meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1);
+  }
+
+  .auction-card__footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-2);
+  }
+
+  .auction-card .button {
+    width: 100%;
+  }
+
+  .auction-card__price strong {
+    font-size: 20px;
+  }
+
+  .auction-card__bids,
+  .auction-card__timer,
+  .auction-card__label {
+    font-size: 12px;
+  }
+}

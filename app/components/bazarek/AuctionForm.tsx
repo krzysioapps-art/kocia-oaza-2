@@ -253,8 +253,8 @@ export default function AuctionForm({
                             }
                         }
 
-                        setImages([
-                            ...images,
+                        setImages((prev) => [
+                            ...prev,
                             ...uploaded,
                         ]);
 

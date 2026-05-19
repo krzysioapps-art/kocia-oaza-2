@@ -16,6 +16,10 @@ const navItems: NavItem[] = [
         href: "/panel/zbiorki",
         label: "Zbiórki",
     },
+    {
+        href: "/panel/bazarek",
+        label: "Bazarek",
+    },
 ];
 
 export default function DashboardLayout({
