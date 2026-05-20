@@ -1,19 +1,20 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 
-import { createClient } from "@/lib/supabase/client";
-
+import { createClient } from "@/lib/supabase/server";
 
 import "@/app/style/zgloszenia.css";
 
 export default async function AdoptionFormsPage() {
-    const supabase = createClient();
+    const supabase = await createClient();
 
     const { data: forms } = await supabase
-    .from("adoption_forms")
-    .select("*")
-    .order("created_at", {
-        ascending: false,
-    });
+        .from("adoption_forms")
+        .select("*")
+        .order("created_at", {
+            ascending: false,
+        });
 
     return (
         <main className="container section">
