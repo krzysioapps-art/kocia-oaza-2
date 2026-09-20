@@ -130,6 +130,8 @@ export default function CookieConsent() {
     const [consent, setConsent] =
         useState<Consent | null>(null);
 
+    const [ready, setReady] = useState(false);
+
     const [settingsOpen, setSettingsOpen] =
         useState(false);
 
@@ -150,6 +152,8 @@ export default function CookieConsent() {
                 disableGoogleAnalytics();
             }
         }
+
+        setReady(true);
     }, []);
 
     useEffect(() => {
@@ -205,6 +209,10 @@ export default function CookieConsent() {
             rejectAll();
         }
     };
+
+    if (!ready) {
+        return null;
+    }
 
     if (consent && !settingsOpen) {
         return null;
