@@ -175,6 +175,21 @@
     color: var(--color-text);
 }
 
+.footer__cookieSettings {
+    display: block;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.footer__cookieSettings:hover {
+    text-decoration: underline;
+}
+
 @media (hover: hover) {
     .footer__social a:hover {
         background: var(--color-accent-1);

@@ -15,7 +15,8 @@ import "@/app/style/ui/slider.css";
 import { Quicksand, Caveat } from "next/font/google";
 import type { Metadata } from "next";
 
-import Script from "next/script";
+import CookieConsent from "@/app/components/cookies/CookieConsent";
+import "@/app/style/ui/cookie-consent.css";
 
 const quicksand = Quicksand({
   weight: ['400', '600', '700'],
@@ -123,20 +124,7 @@ export default function RootLayout({
 
         {children}
 
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-CE0WXQ1L85"
-          strategy="afterInteractive"
-        />
-
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-CE0WXQ1L85');
-  `}
-        </Script>
+        <CookieConsent />
 
       </body>
     </html>

@@ -55,6 +55,17 @@ export default function Footer() {
                             <a href="/polityka-prywatnosci">
                                 Polityka prywatności
                             </a>
+                            <button
+                                type="button"
+                                className="footer__cookieSettings"
+                                onClick={() => {
+                                    window.dispatchEvent(
+                                        new Event("kocia-oaza-open-cookie-settings")
+                                    );
+                                }}
+                            >
+                                Ustawienia cookies
+                            </button>
                         </div>
                     </div>
 

@@ -137,8 +137,9 @@ export default function PrivacyPolicyPage() {
                             </div>
 
                             <p>
-                                Dane przetwarzane są na podstawie zgody użytkownika
-                                (art. 6 ust. 1 lit. a RODO).
+                                Dane osobowe są przetwarzane zgodnie z art. 6 ust. 1 RODO,
+                                w zakresie niezbędnym do obsługi zgłoszenia adopcyjnego,
+                                kontaktu z osobą zainteresowaną oraz przeprowadzenia procesu adopcji.
                             </p>
                         </div>
 
@@ -164,14 +165,13 @@ export default function PrivacyPolicyPage() {
                             </div>
 
                             <p>
-                                Dane mogą być udostępniane wyłącznie osobom
-                                zaangażowanym w proces adopcji.
+                                Dane mogą być udostępniane osobom zaangażowanym
+                                w proces adopcji.
                             </p>
 
                             <p>
-                                Dane mogą być również przechowywane w systemach
-                                informatycznych wykorzystywanych do obsługi formularza
-                                oraz funkcjonowania strony.
+                                Dane są również przechowywane w systemie informatycznym
+                                wykorzystywanym do obsługi formularza i funkcjonowania strony.
                             </p>
                         </div>
 
@@ -189,30 +189,75 @@ export default function PrivacyPolicyPage() {
                                 <li>ich poprawienia</li>
                                 <li>usunięcia</li>
                                 <li>ograniczenia przetwarzania</li>
-                                <li>wycofania zgody w dowolnym momencie</li>
+                                <li>wniesienia skargi do Prezesa Urzędu Ochrony Danych Osobowych</li>
                             </ul>
 
                             <p>
-                                Wycofanie zgody możliwe jest poprzez kontakt mailowy.
+                                Jeżeli przetwarzanie danych odbywa się na podstawie zgody,
+                                użytkownik może wycofać ją w dowolnym momencie. Wycofanie zgody
+                                nie wpływa na zgodność z prawem przetwarzania dokonanego przed
+                                jej wycofaniem.
+                            </p>
+
+                            <p>
+                                W zakresie cookies analitycznych użytkownik może w dowolnym momencie
+                                zmienić lub wycofać zgodę poprzez „Ustawienia cookies” dostępne
+                                w stopce serwisu.
                             </p>
                         </div>
 
                         {/* 9 */}
                         <div className="card-base privacy-card">
                             <div className="privacy-card__header">
-                                <div className="privacy-icon"><Cookie /></div>
-                                <h2>9. Pliki cookies</h2>
+                                <div className="privacy-icon">
+                                    <Cookie />
+                                </div>
+
+                                <h2>9. Pliki cookies i narzędzia analityczne</h2>
                             </div>
 
                             <p>
-                                Strona może wykorzystywać pliki cookies w celach
-                                technicznych związanych z prawidłowym działaniem serwisu.
+                                Serwis wykorzystuje pliki cookies oraz inne mechanizmy
+                                przechowywania informacji w przeglądarce w zakresie niezbędnym
+                                do prawidłowego działania strony oraz zapamiętania wyboru
+                                użytkownika dotyczącego ustawień cookies.
                             </p>
 
                             <p>
-                                W przypadku korzystania z narzędzi analitycznych
-                                lub zewnętrznych usług mogą być wykorzystywane
-                                dodatkowe pliki cookies zbierające anonimowe dane.
+                                Za odrębną zgodą użytkownika serwis korzysta z Google Analytics 4
+                                w celu tworzenia statystyk dotyczących korzystania z serwisu
+                                i jego ulepszania. Google Analytics nie jest uruchamiane przed
+                                wyrażeniem zgody na cookies analityczne.
+                            </p>
+
+                            <p>
+                                Google Analytics może wykorzystywać własne pliki cookies,
+                                w szczególności <code>_ga</code> oraz <code>_ga_*</code>,
+                                służące między innymi do rozróżniania użytkowników i utrzymywania
+                                informacji o sesji. Google wskazuje, że w ramach standardowej
+                                implementacji Analytics może zbierać między innymi statystyki
+                                sesji, przybliżoną lokalizację oraz informacje o przeglądarce
+                                i urządzeniu.
+                            </p>
+
+                            <p>
+                                Udzielenie zgody na cookies analityczne jest dobrowolne.
+                                Brak zgody nie uniemożliwia korzystania z serwisu.
+                            </p>
+
+                            <p>
+                                Użytkownik może w dowolnym momencie zmienić lub wycofać zgodę
+                                na cookies analityczne za pomocą przycisku
+                                <strong> „Ustawienia cookies”</strong> dostępnego w stopce serwisu.
+                                Po wycofaniu zgody serwis przestaje wykorzystywać Google Analytics
+                                do dalszego pomiaru, a dostępne po stronie serwisu cookies
+                                analityczne są usuwane.
+                            </p>
+
+                            <p>
+                                Szczegółowe informacje dotyczące sposobu działania Google Analytics
+                                oraz wykorzystywanych przez tę usługę plików cookies są dostępne
+                                w dokumentacji Google.
                             </p>
                         </div>
 
