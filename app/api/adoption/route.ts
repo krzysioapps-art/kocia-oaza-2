@@ -207,9 +207,10 @@ export async function POST(req: Request) {
 
     try {
       await sendEmail({
-        to:
-          process.env.ADMIN_EMAIL ||
-          process.env.GMAIL_USER!,
+        to: [
+          process.env.ADMIN_EMAIL,
+          process.env.GMAIL_USER,
+        ].filter(Boolean) as string[],
 
         subject:
           `🐱 Nowe zgłoszenie — ${catName}`,
