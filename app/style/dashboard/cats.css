@@ -1,0 +1,2057 @@
+/* =========================================================
+   CATS ADMIN
+   Full width / single vertical scroll / horizontal table scroll
+   ========================================================= */
+
+.cats-admin-page {
+    width: 100%;
+    min-height: 100vh;
+    padding: 32px 0 60px;
+}
+
+.cats-admin-shell {
+    width: 100%;
+    padding: 0 24px;
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.cats-admin-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.cats-admin-eyebrow {
+    margin-bottom: 8px;
+    color: var(--color-primary, #3db7ad);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.cats-admin-header h1 {
+    margin: 0;
+    font-size: clamp(32px, 4vw, 48px);
+    line-height: 1;
+}
+
+.cats-admin-header p {
+    margin: 10px 0 0;
+    opacity: 0.65;
+}
+
+.cats-admin-header__actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* =========================================================
+   ADMIN AREA
+   ========================================================= */
+
+.cats-admin {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    /*
+   * Ważne:
+   * żadnego max-height tutaj.
+   * Strona ma mieć jeden pionowy scrollbar.
+   */
+    width: 100%;
+    min-width: 0;
+}
+
+/* =========================================================
+   TOOLBAR
+   ========================================================= */
+
+.cats-toolbar {
+    position: sticky;
+    top: 72px;
+    z-index: 40;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    width: 100%;
+    min-width: 0;
+
+    padding: 10px;
+
+    border: 1px solid var(--color-border, #e7e7e7);
+    border-radius: 14px;
+
+    background: rgba(255, 255, 255, 0.96);
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    box-shadow:
+        0 4px 18px rgba(0, 0, 0, 0.04);
+}
+
+.cats-filters {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+
+    min-width: 0;
+}
+
+.cats-search {
+    width: min(360px, 35vw);
+    min-width: 240px;
+
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    padding: 0 13px;
+
+    border: 1px solid #ddd;
+    border-radius: 9px;
+
+    background: #fff;
+}
+
+.cats-search svg {
+    flex: 0 0 auto;
+    opacity: 0.55;
+}
+
+.cats-search input {
+    width: 100%;
+    min-width: 0;
+
+    border: 0;
+    outline: 0;
+
+    background: transparent;
+}
+
+.cats-filters select,
+.cats-columns-button {
+    height: 40px;
+
+    padding: 0 12px;
+
+    border: 1px solid #ddd;
+    border-radius: 9px;
+
+    background: #fff;
+    color: inherit;
+
+    cursor: pointer;
+}
+
+.cats-columns-menu {
+    position: relative;
+    flex: 0 0 auto;
+}
+
+.cats-columns-button {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.cats-columns-popover {
+    position: absolute;
+    z-index: 100;
+
+    top: calc(100% + 8px);
+    right: 0;
+
+    width: 260px;
+    max-height: 520px;
+
+    overflow-y: auto;
+
+    padding: 12px;
+
+    border: 1px solid #ddd;
+    border-radius: 14px;
+
+    background: #fff;
+
+    box-shadow:
+        0 18px 50px rgba(0, 0, 0, 0.12);
+}
+
+.cats-columns-popover__header {
+    padding: 6px 8px 10px;
+
+    font-size: 12px;
+    font-weight: 800;
+
+    opacity: 0.55;
+
+    text-transform: uppercase;
+}
+
+.cats-column-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 8px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+}
+
+.cats-column-option:hover {
+    background: #f6f6f6;
+}
+
+.cats-column-option input {
+    accent-color: #3db7ad;
+}
+
+/* =========================================================
+   TABLE STATUS
+   ========================================================= */
+
+.cats-grid-status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    padding: 2px 4px;
+
+    font-size: 13px;
+    opacity: 0.58;
+}
+
+.cats-grid-status__left {
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+
+    min-width: 0;
+}
+
+.cats-select-all {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 7px;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+}
+
+.cats-select-all input {
+    width: 16px;
+    height: 16px;
+
+    margin: 0;
+
+    cursor: pointer;
+
+    accent-color: var(--color-primary, #3db7ad);
+}
+
+.cats-grid-selected {
+    padding: 4px 9px;
+
+    border-radius: 999px;
+
+    background: rgba(61, 183, 173, 0.12);
+
+    color: #187b73;
+
+    opacity: 1;
+}
+
+/* =========================================================
+   TABLE WRAPPER
+   ========================================================= */
+
+.cats-grid-wrapper {
+    /*
+   * TYLKO poziomy scroll.
+   *
+   * Usuwamy:
+   * max-height
+   * overflow: auto
+   *
+   * dzięki temu nie powstaje drugi pionowy scrollbar.
+   */
+    width: 100%;
+    min-width: 0;
+
+    overflow-x: auto;
+    overflow-y: visible;
+
+    border: 1px solid var(--color-border, #e7e7e7);
+    border-radius: 16px;
+
+    background: #fff;
+
+    box-shadow:
+        0 8px 30px rgba(0, 0, 0, 0.04);
+
+    /*
+   * Lepszy scrollbar poziomy.
+   */
+    scrollbar-width: thin;
+}
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.cats-grid {
+    width: max-content;
+    min-width: 100%;
+
+    border-collapse: separate;
+    border-spacing: 0;
+
+    table-layout: fixed;
+}
+
+.cats-grid th {
+    /*
+   * Sticky tylko w pionie.
+   * Przy poziomym scrollu cały wrapper przesuwa tabelę.
+   */
+    position: sticky;
+    top: 0;
+
+    z-index: 20;
+
+    height: 44px;
+
+    padding: 0 10px;
+
+    border-right: 1px solid #e8e8e8;
+    border-bottom: 1px solid #ddd;
+
+    background: #f7f7f7;
+
+    color: #555;
+
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+
+    text-align: left;
+    text-transform: uppercase;
+
+    white-space: nowrap;
+}
+
+.cats-grid td {
+    height: 54px;
+
+    padding: 0;
+
+    border-right: 1px solid #ededed;
+    border-bottom: 1px solid #ededed;
+
+    background: #fff;
+
+    vertical-align: middle;
+}
+
+.cats-grid tbody tr:hover td {
+    background: #fbfffe;
+}
+
+/* =========================================================
+   STICKY CHECKBOX + NAME COLUMN
+   ========================================================= */
+
+.cats-grid-select {
+    width: 44px;
+    min-width: 44px;
+    max-width: 44px;
+
+    padding: 0 !important;
+
+    text-align: center;
+    vertical-align: middle;
+
+    position: sticky !important;
+    left: 0;
+
+    z-index: 25;
+
+    background: #fff;
+
+    box-shadow:
+        2px 0 5px rgba(0, 0, 0, 0.025);
+}
+
+.cats-grid thead .cats-grid-select {
+    z-index: 35;
+
+    background: #f7f7f7;
+}
+
+.cats-grid-select input {
+    width: 16px;
+    height: 16px;
+
+    margin: 0;
+
+    cursor: pointer;
+
+    accent-color: var(--color-primary, #3db7ad);
+}
+
+/* =========================================================
+   STICKY NAME
+   ========================================================= */
+
+.cats-grid-sticky-name {
+    position: sticky !important;
+
+    left: 44px;
+
+    z-index: 20;
+
+    background: #fff;
+
+    box-shadow:
+        5px 0 10px rgba(0, 0, 0, 0.035);
+}
+
+.cats-grid th.cats-grid-sticky-name {
+    z-index: 30;
+
+    background: #f7f7f7;
+}
+
+/* =========================================================
+   SELECTED ROW
+   ========================================================= */
+
+.cats-grid-row-selected td {
+    background: rgba(61, 183, 173, 0.055);
+}
+
+.cats-grid-row-selected .cats-grid-sticky-name {
+    background: #f3fcfa;
+}
+
+.cats-grid-row-selected .cats-grid-select {
+    background: #f3fcfa;
+}
+
+.cats-grid tbody tr:hover .cats-grid-select {
+    background: #fbfffe;
+}
+
+.cats-grid tbody tr:hover .cats-grid-sticky-name {
+    background: #fbfffe;
+}
+
+/* =========================================================
+   PHOTO
+   ========================================================= */
+
+.cats-grid-photo {
+    width: 54px;
+    height: 54px;
+
+    padding: 7px;
+}
+
+.cats-grid-photo img {
+    display: block;
+
+    width: 40px;
+    height: 40px;
+
+    border-radius: 8px;
+
+    object-fit: cover;
+
+    background: #f2f2f2;
+}
+
+/* =========================================================
+   CELL
+   ========================================================= */
+
+.cats-cell {
+    width: 100%;
+    min-height: 53px;
+
+    border: 0;
+
+    background: transparent;
+
+    text-align: left;
+}
+
+.cats-cell--display {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 0 10px;
+
+    cursor: text;
+}
+
+.cats-cell--display:hover {
+    outline: 2px solid rgba(61, 183, 173, 0.25);
+    outline-offset: -2px;
+
+    background: rgba(61, 183, 173, 0.035);
+}
+
+.cats-cell-value {
+    display: block;
+
+    max-width: 100%;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+.cats-cell-success {
+    flex: 0 0 auto;
+    color: #19966c;
+}
+
+.cats-cell-error {
+    flex: 0 0 auto;
+    color: #d9534f;
+}
+
+.cats-cell--saving {
+    display: flex;
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 0 10px;
+
+    color: #777;
+
+    font-size: 12px;
+}
+
+.cats-cell-spinner {
+    width: 13px;
+    height: 13px;
+
+    border: 2px solid #ddd;
+    border-top-color: #3db7ad;
+
+    border-radius: 50%;
+
+    animation: cats-spin 0.7s linear infinite;
+}
+
+@keyframes cats-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* =========================================================
+   EDITOR
+   ========================================================= */
+
+.cats-cell-editor {
+    width: 100%;
+    height: 42px;
+
+    margin: 5px 0;
+
+    padding: 0 8px;
+
+    border: 2px solid #3db7ad;
+    border-radius: 7px;
+
+    outline: none;
+
+    background: #fff;
+    color: inherit;
+}
+
+.cats-cell-editor--textarea {
+    min-height: 90px;
+
+    padding: 8px;
+
+    resize: vertical;
+}
+
+.cats-cell-editor-wrap {
+    padding: 6px;
+}
+
+.cats-toggle {
+    width: calc(100% - 12px);
+
+    margin: 6px;
+
+    height: 40px;
+
+    border: 1px solid #ddd;
+    border-radius: 8px;
+
+    background: #f7f7f7;
+
+    cursor: pointer;
+}
+
+.cats-toggle.is-active {
+    border-color: #3db7ad;
+
+    background: rgba(61, 183, 173, 0.12);
+
+    color: #187b73;
+
+    font-weight: 700;
+}
+
+/* =========================================================
+   ACTIONS
+   ========================================================= */
+
+.cats-grid-actions {
+    display: flex;
+    align-items: center;
+
+    gap: 5px;
+
+    padding: 0 8px;
+}
+
+.cats-grid-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 5px;
+
+    min-height: 32px;
+
+    padding: 0 9px;
+
+    border: 1px solid #ddd;
+    border-radius: 7px;
+
+    background: #fff;
+
+    color: inherit;
+
+    font-size: 12px;
+
+    text-decoration: none;
+
+    cursor: pointer;
+}
+
+.cats-grid-action:hover {
+    border-color: #3db7ad;
+}
+
+.cats-grid-action--danger {
+    color: #b54848;
+}
+
+/* =========================================================
+   EMPTY / ERROR
+   ========================================================= */
+
+.cats-grid-empty {
+    height: 160px !important;
+
+    padding: 30px !important;
+
+    color: #777;
+
+    text-align: center !important;
+}
+
+.cats-admin-error {
+    padding: 20px;
+
+    border: 1px solid #f0c4c4;
+    border-radius: 14px;
+
+    background: #fff5f5;
+
+    color: #a33;
+}
+
+/* =========================================================
+   EDIT PAGE
+   ========================================================= */
+
+.cats-edit-page {
+    width: 100%;
+    min-height: 100vh;
+
+    padding: 32px 24px 80px;
+}
+
+.cats-edit-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 24px;
+
+    margin-bottom: 28px;
+}
+
+.cats-edit-header h1 {
+    margin: 0;
+
+    font-size: clamp(32px, 4vw, 48px);
+    line-height: 1;
+}
+
+.cats-edit-header p {
+    margin: 10px 0 0;
+
+    opacity: 0.65;
+}
+
+.cats-back-link {
+    display: inline-block;
+
+    margin-bottom: 12px;
+
+    color: inherit;
+
+    font-size: 14px;
+
+    opacity: 0.65;
+
+    text-decoration: none;
+}
+
+.cats-back-link:hover {
+    opacity: 1;
+}
+
+/* =========================================================
+   FULL CAT FORM
+   ========================================================= */
+
+.cat-full-form {
+    display: flex;
+    flex-direction: column;
+
+    gap: 20px;
+
+    max-width: 1100px;
+}
+
+.cat-full-form__section {
+    padding: 24px;
+
+    border: 1px solid var(--color-border, #e7e7e7);
+    border-radius: 20px;
+
+    background: #fff;
+}
+
+.cat-full-form__section h2 {
+    margin: 0 0 20px;
+
+    font-size: 20px;
+}
+
+.cat-full-form__grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 16px;
+}
+
+.cat-full-form__field {
+    display: flex;
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+.cat-full-form__field>span {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.cat-full-form__field input,
+.cat-full-form__field select,
+.cat-full-form__field textarea {
+    width: 100%;
+
+    min-height: 44px;
+
+    padding: 10px 12px;
+
+    border: 1px solid #ddd;
+    border-radius: 10px;
+
+    outline: none;
+
+    background: #fff;
+    color: inherit;
+}
+
+.cat-full-form__field textarea {
+    min-height: 180px;
+
+    resize: vertical;
+}
+
+.cat-full-form__field input:focus,
+.cat-full-form__field select:focus,
+.cat-full-form__field textarea:focus {
+    border-color: #3db7ad;
+
+    box-shadow:
+        0 0 0 3px rgba(61, 183, 173, 0.12);
+}
+
+.cat-full-form__checks {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 10px;
+
+    margin-bottom: 20px;
+}
+
+.cat-full-form__boolean {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    min-height: 48px;
+
+    padding: 0 14px;
+
+    border: 1px solid #e2e2e2;
+    border-radius: 10px;
+
+    cursor: pointer;
+}
+
+.cat-full-form__boolean input {
+    width: 18px;
+    height: 18px;
+
+    accent-color: #3db7ad;
+}
+
+.cat-full-form__footer {
+    display: flex;
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 10px 0;
+}
+
+/* =========================================================
+   MEDIA MANAGER
+   ========================================================= */
+
+.media-manager {
+    display: flex;
+    flex-direction: column;
+
+    gap: 20px;
+}
+
+.media-manager__upload {
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+
+    flex-wrap: wrap;
+
+    padding: 20px;
+
+    border: 1px dashed #ccc;
+    border-radius: 18px;
+
+    background: #fff;
+}
+
+.media-upload-button {
+    position: relative;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 44px;
+
+    padding: 0 16px;
+
+    border-radius: 10px;
+
+    background: #3db7ad;
+
+    color: #fff;
+
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.media-upload-button input {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    opacity: 0;
+
+    cursor: pointer;
+}
+
+.media-manager__upload>span {
+    color: #777;
+
+    font-size: 13px;
+}
+
+.media-manager__grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 18px;
+}
+
+.media-card {
+    overflow: hidden;
+
+    border: 1px solid #e2e2e2;
+    border-radius: 18px;
+
+    background: #fff;
+}
+
+.media-card__preview {
+    position: relative;
+
+    aspect-ratio: 1;
+
+    background: #f2f2f2;
+}
+
+.media-card__preview img,
+.media-card__preview video {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+.media-card__primary {
+    position: absolute;
+
+    top: 10px;
+    left: 10px;
+
+    padding: 6px 9px;
+
+    border-radius: 999px;
+
+    background: #3db7ad;
+
+    color: #fff;
+
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.media-card__body {
+    display: flex;
+    flex-direction: column;
+
+    gap: 12px;
+
+    padding: 14px;
+}
+
+.media-card__body label {
+    display: flex;
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+.media-card__body label span {
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.media-card__body input {
+    height: 38px;
+
+    padding: 0 10px;
+
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.media-card__actions {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 7px;
+}
+
+.media-order {
+    display: flex;
+    align-items: center;
+
+    border: 1px solid #ddd;
+    border-radius: 8px;
+
+    overflow: hidden;
+}
+
+.media-order button,
+.media-order span {
+    width: 32px;
+    height: 32px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 0;
+
+    background: #fff;
+}
+
+.media-order button {
+    cursor: pointer;
+}
+
+.media-order button:disabled {
+    opacity: 0.3;
+
+    cursor: default;
+}
+
+.media-delete {
+    height: 32px;
+
+    padding: 0 10px;
+
+    border: 1px solid #edcaca;
+    border-radius: 8px;
+
+    background: #fff7f7;
+
+    color: #a33;
+
+    cursor: pointer;
+}
+
+.media-manager__empty {
+    padding: 60px 20px;
+
+    border: 1px dashed #ddd;
+    border-radius: 18px;
+
+    background: #fff;
+
+    color: #777;
+
+    text-align: center;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+    .cats-admin-shell {
+        padding: 0 14px;
+    }
+
+    .cats-admin-header,
+    .cats-edit-header {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+    .cats-toolbar {
+        align-items: stretch;
+
+        flex-direction: column;
+
+        top: 64px;
+    }
+
+    .cats-search {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .cats-columns-menu {
+        align-self: flex-start;
+    }
+
+    .cat-full-form__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cat-full-form__checks {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .media-manager__grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .cats-admin-page {
+        padding-top: 20px;
+    }
+
+    .cats-admin-shell {
+        padding: 0 10px;
+    }
+
+    .cats-edit-page {
+        padding:
+            20px 10px 60px;
+    }
+
+    .cat-full-form__section {
+        padding: 16px;
+
+        border-radius: 15px;
+    }
+
+    .cat-full-form__checks {
+        grid-template-columns: 1fr;
+    }
+
+    .media-manager__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cats-grid-status {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+    .cats-grid-status__left {
+        width: 100%;
+
+        flex-wrap: wrap;
+    }
+
+    .cats-export__panel {
+        position: fixed;
+
+        left: 10px;
+        right: 10px;
+
+        top: 130px;
+
+        width: auto;
+    }
+}
+
+
+
+
+
+
+
+
+.cats-export {
+    position: relative;
+
+    flex: 0 0 auto;
+
+    margin-left: auto;
+}
+
+.cats-export__panel {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    z-index: 100;
+
+    width: 340px;
+    padding: 20px;
+
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+
+    box-shadow:
+        0 16px 40px rgba(0, 0, 0, 0.12);
+
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.cats-export__section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.cats-export__section>strong {
+    font-size: 14px;
+}
+
+.cats-export__section label {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.cats-export__section input {
+    accent-color: var(--color-primary);
+}
+
+.cats-export__count {
+    padding: 12px 14px;
+
+    border-radius: 10px;
+    background: var(--color-bg-alt);
+
+    font-size: 14px;
+}
+
+.cats-export__actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.cats-export__actions button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 7px;
+}
+
+.print-page {
+    min-height: 100vh;
+    padding: 32px;
+
+    background: #fff;
+    color: #111;
+
+    font-family: Arial, sans-serif;
+}
+
+.print-header {
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+
+    border-bottom: 2px solid #111;
+}
+
+.print-header h1 {
+    margin: 0;
+    font-size: 28px;
+}
+
+.print-header h2 {
+    margin: 6px 0;
+    font-size: 20px;
+}
+
+.print-header p {
+    margin: 0;
+    color: #666;
+    font-size: 12px;
+}
+
+.print-group {
+    margin-bottom: 28px;
+}
+
+.print-group>h3 {
+    margin: 0 0 14px;
+
+    padding-bottom: 6px;
+
+    border-bottom: 1px solid #999;
+
+    font-size: 17px;
+    text-transform: uppercase;
+}
+
+.print-name {
+    padding: 7px 0;
+
+    border-bottom: 1px solid #ddd;
+
+    font-size: 15px;
+}
+
+.print-cat {
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+
+    border-bottom: 1px solid #ddd;
+
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+.print-cat h4 {
+    margin: 0 0 9px;
+
+    font-size: 17px;
+}
+
+.print-cat__fields {
+    display: grid;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 5px 20px;
+
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+@media print {
+    @page {
+        size: A4;
+        margin: 15mm;
+    }
+
+    .print-page {
+        padding: 0;
+    }
+
+    .print-header {
+        break-after: avoid;
+    }
+
+    .print-group {
+        break-inside: auto;
+    }
+
+    .print-cat {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+}
+
+@media screen {
+    .print-page {
+        max-width: 900px;
+        margin: 40px auto;
+    }
+}
+
+
+
+/* =========================================================
+   PRINT / EXPORT
+   ========================================================= */
+
+.print-page {
+  min-height: 100vh;
+
+  padding: 32px;
+
+  background: #fff;
+  color: #111;
+
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.print-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 30px;
+
+  margin-bottom: 28px;
+  padding-bottom: 14px;
+
+  border-bottom: 2px solid #111;
+}
+
+.print-header h1 {
+  margin: 0;
+
+  font-size: 28px;
+}
+
+.print-header h2 {
+  margin: 6px 0 0;
+
+  font-size: 20px;
+}
+
+.print-header p {
+  margin: 4px 0 0;
+
+  color: #666;
+
+  font-size: 12px;
+}
+
+.print-header__meta {
+  flex: 0 0 auto;
+
+  color: #555;
+
+  font-size: 11px;
+
+  text-align: right;
+}
+
+.print-page--loading,
+.print-page--error {
+  max-width: 900px;
+
+  margin: 40px auto;
+}
+
+.print-group {
+  margin-bottom: 28px;
+}
+
+.print-group > h3 {
+  margin: 0 0 14px;
+
+  padding-bottom: 6px;
+
+  border-bottom: 1px solid #999;
+
+  font-size: 17px;
+
+  text-transform: uppercase;
+}
+
+.print-name {
+  padding: 7px 0;
+
+  border-bottom: 1px solid #ddd;
+
+  font-size: 15px;
+}
+
+.print-cat {
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+
+  border-bottom: 1px solid #ddd;
+
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.print-cat h4 {
+  margin: 0 0 9px;
+
+  font-size: 17px;
+}
+
+.print-cat__fields {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 5px 20px;
+
+  font-size: 12px;
+
+  line-height: 1.45;
+}
+
+/* =========================================================
+   ADMINISTRATIVE TABLE
+   ========================================================= */
+
+.print-admin-group {
+  margin-bottom: 22px;
+
+  break-inside: auto;
+  page-break-inside: auto;
+}
+
+.print-admin-group__title {
+  margin: 0 0 8px;
+
+  padding: 5px 7px;
+
+  background: #eeeeee;
+
+  border-bottom: 1px solid #999;
+
+  font-size: 12px;
+
+  font-weight: 800;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.04em;
+}
+
+.print-admin-table-wrap {
+  width: 100%;
+  max-width: 100%;
+
+  overflow: visible;
+}
+
+.print-admin-table {
+  width: 100%;
+  max-width: 100%;
+
+  border-collapse: collapse;
+
+  /*
+   * Kluczowe:
+   * przeglądarka nie może rozszerzyć tabeli
+   * poza szerokość strony.
+   */
+  table-layout: fixed;
+
+  font-size: 7.2px;
+
+  line-height: 1.15;
+}
+
+.print-admin-table th,
+.print-admin-table td {
+  box-sizing: border-box;
+
+  padding: 4px 3px;
+
+  border: 1px solid #aaa;
+
+  vertical-align: middle;
+
+  overflow-wrap: anywhere;
+  word-break: break-word;
+
+  text-align: center;
+}
+
+.print-admin-table th {
+  background: #eeeeee;
+
+  color: #111;
+
+  font-size: 7px;
+
+  font-weight: 800;
+
+  line-height: 1.1;
+
+  text-align: center;
+}
+
+.print-admin-table td {
+  background: #fff;
+}
+
+.print-admin-table__name {
+  font-weight: 700;
+
+  text-align: left !important;
+}
+
+/*
+ * 16 kolumn.
+ *
+ * Suma = 100%.
+ */
+
+.print-admin-table th:nth-child(1),
+.print-admin-table td:nth-child(1) {
+  width: 10%;
+}
+
+.print-admin-table th:nth-child(2),
+.print-admin-table td:nth-child(2) {
+  width: 9%;
+}
+
+.print-admin-table th:nth-child(3),
+.print-admin-table td:nth-child(3) {
+  width: 5%;
+}
+
+.print-admin-table th:nth-child(4),
+.print-admin-table td:nth-child(4) {
+  width: 5%;
+}
+
+.print-admin-table th:nth-child(5),
+.print-admin-table td:nth-child(5) {
+  width: 9%;
+}
+
+.print-admin-table th:nth-child(6),
+.print-admin-table td:nth-child(6) {
+  width: 7%;
+}
+
+.print-admin-table th:nth-child(7),
+.print-admin-table td:nth-child(7) {
+  width: 5%;
+}
+
+.print-admin-table th:nth-child(8),
+.print-admin-table td:nth-child(8) {
+  width: 5%;
+}
+
+.print-admin-table th:nth-child(9),
+.print-admin-table td:nth-child(9) {
+  width: 5%;
+}
+
+.print-admin-table th:nth-child(10),
+.print-admin-table td:nth-child(10) {
+  width: 5%;
+}
+
+.print-admin-table th:nth-child(11),
+.print-admin-table td:nth-child(11) {
+  width: 5%;
+}
+
+.print-admin-table th:nth-child(12),
+.print-admin-table td:nth-child(12) {
+  width: 5%;
+}
+
+.print-admin-table th:nth-child(13),
+.print-admin-table td:nth-child(13) {
+  width: 5%;
+}
+
+.print-admin-table th:nth-child(14),
+.print-admin-table td:nth-child(14) {
+  width: 5%;
+}
+
+.print-admin-table th:nth-child(15),
+.print-admin-table td:nth-child(15) {
+  width: 5%;
+}
+
+.print-admin-table th:nth-child(16),
+.print-admin-table td:nth-child(16) {
+  width: 5%;
+}
+
+/* =========================================================
+   SCREEN
+   ========================================================= */
+
+@media screen {
+  .print-page {
+    max-width: 1100px;
+
+    margin: 40px auto;
+  }
+
+  .print-page--admin {
+    max-width: 1400px;
+  }
+}
+
+/* =========================================================
+   PRINT
+   ========================================================= */
+
+@media print {
+  /*
+   * ADMINISTRACYJNA:
+   * A4 POZIOMO.
+   */
+  @page {
+    size: A4 landscape;
+    margin: 8mm;
+  }
+
+  html,
+  body {
+    width: 100%;
+
+    margin: 0;
+    padding: 0;
+
+    background: #fff;
+  }
+
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .print-page {
+    width: 100%;
+    max-width: none;
+
+    min-height: 0;
+
+    margin: 0;
+    padding: 0;
+
+    background: #fff;
+  }
+
+  /*
+   * Wydruk administracyjny wykorzystuje
+   * pełną szerokość A4 landscape.
+   */
+  .print-page--admin {
+    width: 100%;
+    max-width: none;
+  }
+
+  .print-header {
+    margin-bottom: 10px;
+    padding-bottom: 7px;
+
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  .print-header h1 {
+    font-size: 18px;
+  }
+
+  .print-header h2 {
+    margin-top: 3px;
+
+    font-size: 13px;
+  }
+
+  .print-header__meta {
+    font-size: 8px;
+  }
+
+  .print-admin-group {
+    margin-bottom: 12px;
+
+    break-inside: auto;
+    page-break-inside: auto;
+  }
+
+  .print-admin-group__title {
+    margin-bottom: 5px;
+
+    padding: 3px 5px;
+
+    font-size: 9px;
+  }
+
+  /*
+   * Najważniejsze ustawienia tabeli.
+   */
+  .print-admin-table {
+    width: 100%;
+    max-width: 100%;
+
+    table-layout: fixed;
+
+    border-collapse: collapse;
+
+    font-size: 6.8px;
+    line-height: 1.1;
+  }
+
+  .print-admin-table thead {
+    display: table-header-group;
+  }
+
+  .print-admin-table tbody {
+    display: table-row-group;
+  }
+
+  .print-admin-table tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .print-admin-table th,
+  .print-admin-table td {
+    padding: 3px 2px;
+
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .print-admin-table th {
+    font-size: 6.5px;
+
+    line-height: 1.05;
+  }
+
+  .print-admin-table__name {
+    font-weight: 700;
+  }
+
+  /*
+   * Pozostałe tryby mogą korzystać
+   * z normalnego układu dokumentu.
+   */
+  .print-group {
+    break-inside: auto;
+    page-break-inside: auto;
+  }
+
+  .print-cat {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
+
+
+
+
+/* =========================================================
+   TAGI — EDYCJA W TABELI
+   ========================================================= */
+
+.cats-tags-editor {
+  width: 330px;
+  max-width: min(330px, calc(100vw - 32px));
+  padding: 12px;
+  background: #fff;
+  border: 1px solid #dfe7e6;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(24, 45, 43, 0.12);
+  position: relative;
+  z-index: 50;
+}
+
+/* Aktualnie wybrane tagi */
+
+.cats-tags-editor__selected {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 34px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #edf1f0;
+}
+
+.cats-tags-editor__empty {
+  display: flex;
+  align-items: center;
+  min-height: 28px;
+  color: #98a5a3;
+  font-size: 12px;
+}
+
+/* Pojedynczy wybrany tag */
+
+.cats-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 27px;
+  padding: 4px 8px 4px 10px;
+  border: 1px solid #b9e2dc;
+  border-radius: 999px;
+  background: #eefaf8;
+  color: #277b71;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.cats-tag:hover {
+  background: #e1f5f1;
+  border-color: #91d2c8;
+  color: #1e675f;
+  transform: translateY(-1px);
+}
+
+.cats-tag svg {
+  opacity: 0.7;
+}
+
+/* Lista dostępnych tagów */
+
+.cats-tags-editor__options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+  max-height: 230px;
+  overflow-y: auto;
+  padding: 2px;
+}
+
+/* Pojedyncza opcja */
+
+.cats-tag-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 8px 9px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: #536260;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.cats-tag-option:hover {
+  background: #f4f8f7;
+  border-color: #e0e9e7;
+  color: #263d39;
+}
+
+.cats-tag-option.is-selected {
+  background: #f0faf8;
+  border-color: #c8e7e2;
+  color: #277b71;
+  font-weight: 600;
+}
+
+.cats-tag-option input {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
+  margin: 0;
+  cursor: pointer;
+  accent-color: var(--color-primary, #3db7ad);
+}
+
+.cats-tag-option span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Przycisk Gotowe */
+
+.cats-tags-editor__done {
+  width: 100%;
+  margin-top: 10px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--color-primary, #3db7ad);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.cats-tags-editor__done:hover {
+  background: #319f96;
+  box-shadow: 0 4px 12px rgba(61, 183, 173, 0.22);
+  transform: translateY(-1px);
+}
+
+.cats-tags-editor__done:active {
+  transform: translateY(0);
+}
+
+/* =========================================================
+   TAGI W ZWYKŁYM WIDOKU KOMÓRKI
+   ========================================================= */
+
+.cats-cell-value {
+  min-width: 0;
+}
+
+.cats-cell--display:has(.cats-cell-value) {
+  line-height: 1.45;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 600px) {
+  .cats-tags-editor {
+    width: 290px;
+    max-width: calc(100vw - 24px);
+  }
+
+  .cats-tags-editor__options {
+    grid-template-columns: 1fr;
+    max-height: 260px;
+  }
+}
