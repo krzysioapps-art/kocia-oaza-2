@@ -1318,9 +1318,7 @@ export default function PublicCatsGrid({
                                     applyMobileFilters
                                 }
                             >
-                                Pokaż{" "}
-                                {filteredCats.length}{" "}
-                                kotów
+                                Zapisz filtry
                             </button>
                         </div>
                     </div>
