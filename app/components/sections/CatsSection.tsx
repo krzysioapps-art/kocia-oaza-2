@@ -40,7 +40,8 @@ function getPrimaryImage(cat: any) {
 }
 
 function getStatusLabel(
-  status?: CatStatus | null
+  status?: CatStatus | null,
+  gender?: "male" | "female" | null
 ) {
   switch (status) {
     case "reserved":
@@ -50,6 +51,14 @@ function getStatusLabel(
       return "Mam już dom";
 
     case "deceased":
+      if (gender === "female") {
+        return "Odeszła";
+      }
+
+      if (gender === "male") {
+        return "Odszedł";
+      }
+
       return "Odszedł / odeszła";
 
     case "available":
@@ -98,7 +107,7 @@ export default function CatsSection() {
             (cat) =>
               (cat.media &&
                 cat.media.length >
-                  0) ||
+                0) ||
               cat.image_url
           )
           .slice(0, 8);
@@ -152,8 +161,8 @@ export default function CatsSection() {
 
     setCanRight(
       scrollLeft +
-        clientWidth <
-        scrollWidth - 2
+      clientWidth <
+      scrollWidth - 2
     );
   };
 
@@ -237,11 +246,10 @@ export default function CatsSection() {
               <Card
                 key={cat.id}
                 href={`/koty/${cat.slug}`}
-                className={`card card-base cats-section__card ${
-                  isDeceased
-                    ? "cats-section__card--deceased"
-                    : ""
-                }`}
+                className={`card card-base cats-section__card ${isDeceased
+                  ? "cats-section__card--deceased"
+                  : ""
+                  }`}
               >
                 <div className="cats-section__image-wrap">
                   <img
@@ -269,7 +277,8 @@ export default function CatsSection() {
                       <>
                         <span>
                           {getStatusLabel(
-                            status
+                            status,
+                            cat.gender
                           )}
                         </span>
 
@@ -279,7 +288,8 @@ export default function CatsSection() {
                       </>
                     ) : (
                       getStatusLabel(
-                        status
+                        status,
+                        cat.gender
                       )
                     )}
                   </div>
@@ -299,23 +309,23 @@ export default function CatsSection() {
                   <div className="cats-section__meta">
                     {cat.gender ===
                       "female" && (
-                      <span>
-                        <Venus
-                          size={15}
-                        />
-                        Kotka
-                      </span>
-                    )}
+                        <span>
+                          <Venus
+                            size={15}
+                          />
+                          Kotka
+                        </span>
+                      )}
 
                     {cat.gender ===
                       "male" && (
-                      <span>
-                        <Mars
-                          size={15}
-                        />
-                        Kocurek
-                      </span>
-                    )}
+                        <span>
+                          <Mars
+                            size={15}
+                          />
+                          Kocurek
+                        </span>
+                      )}
 
                     {age && (
                       <span>
@@ -337,7 +347,7 @@ export default function CatsSection() {
 
                   {cat.tags &&
                     cat.tags.length >
-                      0 && (
+                    0 && (
                       <div className="cats-section__tags">
                         {cat.tags
                           .slice(
