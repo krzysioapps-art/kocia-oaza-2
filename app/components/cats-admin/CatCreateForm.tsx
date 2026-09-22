@@ -12,9 +12,25 @@ import {
   CAT_STATUS_OPTIONS,
 } from "@/types/cat";
 
+function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/ł/g, "l")
+    .replace(/Ł/g, "l")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 export default function CatCreateForm() {
   const router =
     useRouter();
+
+  const [
+    slugManuallyEdited,
+    setSlugManuallyEdited,
+  ] = useState(false);
 
   const [
     form,
@@ -37,9 +53,173 @@ export default function CatCreateForm() {
   ] = useState(false);
 
   const [
+    checkingSlug,
+    setCheckingSlug,
+  ] = useState(false);
+
+  const [
     error,
     setError,
   ] = useState("");
+
+  async function checkSlugAvailability(
+    value: string
+  ) {
+    const normalizedSlug =
+      slugify(value);
+
+    if (!normalizedSlug) {
+      return "";
+    }
+
+    setCheckingSlug(true);
+
+    try {
+      const response =
+        await fetch(
+          `/api/cats?slug=${encodeURIComponent(
+            normalizedSlug
+          )}`,
+          {
+            method: "GET",
+            cache: "no-store",
+          }
+        );
+
+      const result =
+        await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          result.error ??
+            "Nie udało się sprawdzić sluga"
+        );
+      }
+
+      if (result.available) {
+        return normalizedSlug;
+      }
+
+      let suffix = 2;
+
+      while (true) {
+        const candidate =
+          `${normalizedSlug}-${suffix}`;
+
+        const candidateResponse =
+          await fetch(
+            `/api/cats?slug=${encodeURIComponent(
+              candidate
+            )}`,
+            {
+              method: "GET",
+              cache: "no-store",
+            }
+          );
+
+        const candidateResult =
+          await candidateResponse.json();
+
+        if (!candidateResponse.ok) {
+          throw new Error(
+            candidateResult.error ??
+              "Nie udało się sprawdzić sluga"
+          );
+        }
+
+        if (
+          candidateResult.available
+        ) {
+          return candidate;
+        }
+
+        suffix += 1;
+      }
+    } finally {
+      setCheckingSlug(false);
+    }
+  }
+
+  async function handleNameBlur() {
+    if (slugManuallyEdited) {
+      return;
+    }
+
+    const generatedSlug =
+      slugify(form.name);
+
+    if (!generatedSlug) {
+      return;
+    }
+
+    try {
+      const availableSlug =
+        await checkSlugAvailability(
+          generatedSlug
+        );
+
+      if (availableSlug) {
+        setForm(
+          (current) => ({
+            ...current,
+            slug: availableSlug,
+          })
+        );
+      }
+    } catch (error) {
+      console.error(error);
+
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Nie udało się sprawdzić sluga"
+      );
+    }
+  }
+
+  async function handleSlugBlur() {
+    if (!form.slug.trim()) {
+      return;
+    }
+
+    try {
+      const normalizedSlug =
+        slugify(form.slug);
+
+      if (!normalizedSlug) {
+        setForm(
+          (current) => ({
+            ...current,
+            slug: "",
+          })
+        );
+
+        return;
+      }
+
+      const availableSlug =
+        await checkSlugAvailability(
+          normalizedSlug
+        );
+
+      if (availableSlug) {
+        setForm(
+          (current) => ({
+            ...current,
+            slug: availableSlug,
+          })
+        );
+      }
+    } catch (error) {
+      console.error(error);
+
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Nie udało się sprawdzić sluga"
+      );
+    }
+  }
 
   function setField(
     field: string,
@@ -63,6 +243,29 @@ export default function CatCreateForm() {
     setError("");
 
     try {
+      let slug =
+        slugify(form.slug);
+
+      if (!slug) {
+        slug =
+          slugify(form.name);
+      }
+
+      if (!slug) {
+        throw new Error(
+          "Slug jest wymagany"
+        );
+      }
+
+      const availableSlug =
+        await checkSlugAvailability(
+          slug
+        );
+
+      if (availableSlug) {
+        slug = availableSlug;
+      }
+
       const response =
         await fetch(
           "/api/cats",
@@ -75,8 +278,7 @@ export default function CatCreateForm() {
             body: JSON.stringify({
               name:
                 form.name,
-              slug:
-                form.slug,
+              slug,
               status:
                 form.status,
               gender:
@@ -132,6 +334,7 @@ export default function CatCreateForm() {
       router.push(
         `/panel/koty/${result.cat.id}`
       );
+
       router.refresh();
     } catch (error) {
       console.error(error);
@@ -163,11 +366,19 @@ export default function CatCreateForm() {
             value={
               form.name
             }
-            onChange={(value) =>
-              setField(
-                "name",
-                value
-              )
+            onChange={(value) => {
+              setForm((current) => ({
+                ...current,
+                name: value,
+                slug: slugManuallyEdited
+                  ? current.slug
+                  : slugify(value),
+              }));
+
+              setError("");
+            }}
+            onBlur={
+              handleNameBlur
             }
           />
 
@@ -177,11 +388,20 @@ export default function CatCreateForm() {
             value={
               form.slug
             }
-            onChange={(value) =>
+            onChange={(value) => {
+              setSlugManuallyEdited(
+                true
+              );
+
               setField(
                 "slug",
                 value
-              )
+              );
+
+              setError("");
+            }}
+            onBlur={
+              handleSlugBlur
             }
           />
 
@@ -274,6 +494,18 @@ export default function CatCreateForm() {
             }
           />
         </div>
+
+        {checkingSlug && (
+          <div
+            style={{
+              marginTop: 8,
+              fontSize: 13,
+              opacity: 0.7,
+            }}
+          >
+            Sprawdzam dostępność sluga...
+          </div>
+        )}
       </section>
 
       <section className="cat-full-form__section">
@@ -311,7 +543,10 @@ export default function CatCreateForm() {
         <button
           type="submit"
           className="button button--primary"
-          disabled={saving}
+          disabled={
+            saving ||
+            checkingSlug
+          }
         >
           {saving
             ? "Tworzenie..."
@@ -326,6 +561,7 @@ function Field({
   label,
   value,
   onChange,
+  onBlur,
   type = "text",
   required = false,
 }: {
@@ -334,6 +570,7 @@ function Field({
   onChange: (
     value: string
   ) => void;
+  onBlur?: () => void;
   type?: string;
   required?: boolean;
 }) {
@@ -354,6 +591,7 @@ function Field({
             event.target.value
           )
         }
+        onBlur={onBlur}
       />
     </label>
   );

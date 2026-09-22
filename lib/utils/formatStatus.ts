@@ -18,6 +18,12 @@ export function getStatusMeta(status?: string) {
         className: "status status--adopted",
       };
 
+    case "deceased":
+      return {
+        label: "Odszedł za tęczowy most",
+        className: "status status--deceased",
+      };
+
     default:
       return {
         label: "",

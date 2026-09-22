@@ -1,7 +1,8 @@
 export type CatStatus =
   | "available"
   | "reserved"
-  | "adopted";
+  | "adopted"
+  | "deceased";
 
 export type CatGender =
   | "male"
@@ -92,43 +93,43 @@ export const CAT_LOCATIONS: {
   value: CatLocation;
   label: string;
 }[] = [
-  {
-    value: "kociarnia",
-    label: "Kociarnia",
-  },
-  {
-    value: "dt",
-    label: "Dom tymczasowy",
-  },
-  {
-    value: "cafe",
-    label: "Cafe",
-  },
-  {
-    value: "ds",
-    label: "DS",
-  },
-  {
-    value: "zytnia",
-    label: "Żytnia",
-  },
-  {
-    value: "zoska",
-    label: "Zośka",
-  },
-  {
-    value: "lecznica",
-    label: "Lecznica",
-  },
-  {
-    value: "piwnica",
-    label: "Piwnica",
-  },
-  {
-    value: "poczekalnia",
-    label: "Poczekalnia",
-  },
-];
+    {
+      value: "kociarnia",
+      label: "Kociarnia",
+    },
+    {
+      value: "dt",
+      label: "Dom tymczasowy",
+    },
+    {
+      value: "cafe",
+      label: "Cafe",
+    },
+    {
+      value: "ds",
+      label: "DS",
+    },
+    {
+      value: "zytnia",
+      label: "Żytnia",
+    },
+    {
+      value: "zoska",
+      label: "Zośka",
+    },
+    {
+      value: "lecznica",
+      label: "Lecznica",
+    },
+    {
+      value: "piwnica",
+      label: "Piwnica",
+    },
+    {
+      value: "poczekalnia",
+      label: "Poczekalnia",
+    },
+  ];
 
 export const CAT_STATUS_OPTIONS = [
   {
@@ -142,6 +143,10 @@ export const CAT_STATUS_OPTIONS = [
   {
     value: "adopted",
     label: "Mam już dom",
+  },
+  {
+    value: "deceased",
+    label: "Odszedł za tęczowy most",
   },
 ] as const;
 

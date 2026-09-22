@@ -601,101 +601,1256 @@ export default async function BazarekAdminPage() {
     );
 }
 ========================================
+FILE: ./app/(dashboard)/panel/koty/[id]/page.tsx
+========================================
+import Link from "next/link";
+import { notFound } from "next/navigation";
+
+import { createClient } from "@/lib/supabase/server";
+
+import CatEditForm from "@/app/components/cats-admin/CatEditForm";
+
+import "@/app/style/dashboard/cats.css";
+
+type Props = {
+  params: Promise<{
+    id: string;
+  }>;
+};
+
+export default async function EditCatPage({
+  params,
+}: Props) {
+  const { id } =
+    await params;
+
+  const supabase =
+    await createClient();
+
+  const {
+    data: cat,
+    error,
+  } = await supabase
+    .from("cats")
+    .select(`
+      *,
+      media:cat_media(*)
+    `)
+    .eq("id", id)
+    .single();
+
+  if (
+    error ||
+    !cat
+  ) {
+    notFound();
+  }
+
+  return (
+    <main className="cats-edit-page">
+      <div className="container">
+        <div className="cats-edit-header">
+          <div>
+            <Link
+              href="/panel/koty"
+              className="cats-back-link"
+            >
+              ← Wróć do tabeli
+            </Link>
+
+            <h1>
+              Edytuj:{" "}
+              {cat.name ??
+                "Kot"}
+            </h1>
+
+            <p>
+              Pełny widok danych
+              kota.
+            </p>
+          </div>
+
+          <Link
+            href={`/panel/koty/${cat.id}/zdjecia`}
+            className="button button--primary"
+          >
+            Zarządzaj zdjęciami
+          </Link>
+        </div>
+
+        <CatEditForm
+          cat={cat}
+        />
+      </div>
+    </main>
+  );
+}
+========================================
+FILE: ./app/(dashboard)/panel/koty/[id]/zdjecia/page.tsx
+========================================
+import Link from "next/link";
+import { notFound } from "next/navigation";
+
+import { createClient } from "@/lib/supabase/server";
+
+import CatMediaManager from "@/app/components/cats-admin/CatMediaManager";
+
+import "@/app/style/dashboard/cats.css";
+
+type Props = {
+  params: Promise<{
+    id: string;
+  }>;
+};
+
+export default async function CatMediaPage({
+  params,
+}: Props) {
+  const { id } =
+    await params;
+
+  const supabase =
+    await createClient();
+
+  const {
+    data: cat,
+  } = await supabase
+    .from("cats")
+    .select(
+      "id, name, slug"
+    )
+    .eq("id", id)
+    .single();
+
+  if (!cat) {
+    notFound();
+  }
+
+  const {
+    data: media,
+  } = await supabase
+    .from("cat_media")
+    .select("*")
+    .eq("cat_id", id)
+    .order("display_order", {
+      ascending: true,
+    });
+
+  return (
+    <main className="cats-edit-page">
+      <div className="container">
+        <div className="cats-edit-header">
+          <div>
+            <Link
+              href="/panel/koty"
+              className="cats-back-link"
+            >
+              ← Wróć do tabeli
+            </Link>
+
+            <h1>
+              Zdjęcia:{" "}
+              {cat.name}
+            </h1>
+
+            <p>
+              Zarządzaj zdjęciami
+              i materiałami kota.
+            </p>
+          </div>
+
+          <Link
+            href={`/panel/koty/${cat.id}`}
+            className="button button--outline-primary"
+          >
+            Edytuj kota
+          </Link>
+        </div>
+
+        <CatMediaManager
+          catId={cat.id}
+          initialMedia={
+            media ?? []
+          }
+        />
+      </div>
+    </main>
+  );
+}
+========================================
+FILE: ./app/(dashboard)/panel/koty/eksport/page.tsx
+========================================
+"use client";
+
+import {
+  useEffect,
+  useState,
+} from "react";
+
+type Cat = {
+  id: string;
+  name: string | null;
+  status: string | null;
+  gender: string | null;
+  birth_date: string | null;
+  arrival_date: string | null;
+  location: string | null;
+  weight: number | string | null;
+  adoption_priority:
+    | string
+    | number
+    | null;
+  sterilized: boolean | null;
+  vaccinated: boolean | null;
+  dewormed: boolean | null;
+  microchipped: boolean | null;
+  fiv_status: string | null;
+  felv_status: string | null;
+  fip_status: string | null;
+  good_with_children:
+    | boolean
+    | null;
+  good_with_cats:
+    | boolean
+    | null;
+  slug: string | null;
+};
+
+type ExportData = {
+  cats: Cat[];
+
+  mode:
+    | "full"
+    | "admin"
+    | "names";
+
+  groupBy:
+    | "none"
+    | "location";
+};
+
+function value(
+  input: unknown,
+) {
+  if (
+    input === null ||
+    input === undefined ||
+    input === ""
+  ) {
+    return "Brak danych";
+  }
+
+  return String(input);
+}
+
+function shortValue(
+  input: unknown,
+) {
+  if (
+    input === null ||
+    input === undefined ||
+    input === ""
+  ) {
+    return "—";
+  }
+
+  return String(input);
+}
+
+function yesNo(
+  input: boolean | null,
+) {
+  if (input === true) {
+    return "Tak";
+  }
+
+  if (input === false) {
+    return "Nie";
+  }
+
+  return "—";
+}
+
+function date(
+  valueDate: string | null,
+) {
+  if (!valueDate) {
+    return "—";
+  }
+
+  const valueObject =
+    new Date(valueDate);
+
+  if (
+    Number.isNaN(
+      valueObject.getTime(),
+    )
+  ) {
+    return valueDate;
+  }
+
+  return valueObject.toLocaleDateString(
+    "pl-PL",
+  );
+}
+
+function status(
+  valueStatus: string | null,
+) {
+  switch (valueStatus) {
+    case "available":
+      return "Szukam domu";
+
+    case "reserved":
+      return "Zarezerwowany";
+
+    case "adopted":
+      return "Mam już dom";
+
+    default:
+      return shortValue(
+        valueStatus,
+      );
+  }
+}
+
+function gender(
+  valueGender: string | null,
+) {
+  switch (valueGender) {
+    case "male":
+      return "Kocur";
+
+    case "female":
+      return "Kotka";
+
+    default:
+      return shortValue(
+        valueGender,
+      );
+  }
+}
+
+function age(
+  birthDate: string | null,
+) {
+  if (!birthDate) {
+    return "—";
+  }
+
+  const birth =
+    new Date(birthDate);
+
+  if (
+    Number.isNaN(
+      birth.getTime(),
+    )
+  ) {
+    return "—";
+  }
+
+  const now = new Date();
+
+  let years =
+    now.getFullYear() -
+    birth.getFullYear();
+
+  if (
+    now.getMonth() <
+      birth.getMonth() ||
+    (now.getMonth() ===
+      birth.getMonth() &&
+      now.getDate() <
+        birth.getDate())
+  ) {
+    years--;
+  }
+
+  if (years <= 0) {
+    return "<1 r.";
+  }
+
+  if (years === 1) {
+    return "1 rok";
+  }
+
+  if (
+    years >= 2 &&
+    years <= 4
+  ) {
+    return `${years} lata`;
+  }
+
+  return `${years} lat`;
+}
+
+/* =========================================================
+   ADMIN TABLE
+   ========================================================= */
+
+function AdminTable({
+  cats,
+}: {
+  cats: Cat[];
+}) {
+  return (
+    <div className="print-admin-table-wrap">
+      <table className="print-admin-table">
+        <thead>
+          <tr>
+            <th>Kot</th>
+            <th>Status</th>
+            <th>Płeć</th>
+            <th>Wiek</th>
+            <th>Lokalizacja</th>
+            <th>Przyjęty</th>
+            <th>Priorytet</th>
+            <th>Ster.</th>
+            <th>Szczep.</th>
+            <th>Odrob.</th>
+            <th>Chip</th>
+            <th>FIV</th>
+            <th>FeLV</th>
+            <th>FIP</th>
+            <th>Dzieci</th>
+            <th>Koty</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {cats.map((cat) => (
+            <tr key={cat.id}>
+              <td className="print-admin-table__name">
+                {value(cat.name)}
+              </td>
+
+              <td>
+                {status(cat.status)}
+              </td>
+
+              <td>
+                {gender(cat.gender)}
+              </td>
+
+              <td>
+                {age(cat.birth_date)}
+              </td>
+
+              <td>
+                {shortValue(
+                  cat.location,
+                )}
+              </td>
+
+              <td>
+                {date(
+                  cat.arrival_date,
+                )}
+              </td>
+
+              <td>
+                {shortValue(
+                  cat.adoption_priority,
+                )}
+              </td>
+
+              <td>
+                {yesNo(
+                  cat.sterilized,
+                )}
+              </td>
+
+              <td>
+                {yesNo(
+                  cat.vaccinated,
+                )}
+              </td>
+
+              <td>
+                {yesNo(
+                  cat.dewormed,
+                )}
+              </td>
+
+              <td>
+                {yesNo(
+                  cat.microchipped,
+                )}
+              </td>
+
+              <td>
+                {shortValue(
+                  cat.fiv_status,
+                )}
+              </td>
+
+              <td>
+                {shortValue(
+                  cat.felv_status,
+                )}
+              </td>
+
+              <td>
+                {shortValue(
+                  cat.fip_status,
+                )}
+              </td>
+
+              <td>
+                {yesNo(
+                  cat.good_with_children,
+                )}
+              </td>
+
+              <td>
+                {yesNo(
+                  cat.good_with_cats,
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+/* =========================================================
+   FULL VIEW
+   ========================================================= */
+
+function FullFields({
+  cat,
+}: {
+  cat: Cat;
+}) {
+  return (
+    <div className="print-cat__fields">
+      <div>
+        <strong>
+          Status:
+        </strong>{" "}
+        {status(cat.status)}
+      </div>
+
+      <div>
+        <strong>
+          Płeć:
+        </strong>{" "}
+        {gender(cat.gender)}
+      </div>
+
+      <div>
+        <strong>
+          Wiek:
+        </strong>{" "}
+        {age(cat.birth_date)}
+      </div>
+
+      <div>
+        <strong>
+          Data urodzenia:
+        </strong>{" "}
+        {date(cat.birth_date)}
+      </div>
+
+      <div>
+        <strong>
+          Lokalizacja:
+        </strong>{" "}
+        {value(cat.location)}
+      </div>
+
+      <div>
+        <strong>
+          Przyjęty:
+        </strong>{" "}
+        {date(cat.arrival_date)}
+      </div>
+
+      <div>
+        <strong>
+          Waga:
+        </strong>{" "}
+        {value(cat.weight)}
+      </div>
+
+      <div>
+        <strong>
+          Priorytet:
+        </strong>{" "}
+        {value(
+          cat.adoption_priority,
+        )}
+      </div>
+
+      <div>
+        <strong>
+          Sterylizacja:
+        </strong>{" "}
+        {yesNo(cat.sterilized)}
+      </div>
+
+      <div>
+        <strong>
+          Szczepienie:
+        </strong>{" "}
+        {yesNo(cat.vaccinated)}
+      </div>
+
+      <div>
+        <strong>
+          Odrobaczenie:
+        </strong>{" "}
+        {yesNo(cat.dewormed)}
+      </div>
+
+      <div>
+        <strong>
+          Chip:
+        </strong>{" "}
+        {yesNo(
+          cat.microchipped,
+        )}
+      </div>
+
+      <div>
+        <strong>
+          FIV:
+        </strong>{" "}
+        {value(cat.fiv_status)}
+      </div>
+
+      <div>
+        <strong>
+          FeLV:
+        </strong>{" "}
+        {value(cat.felv_status)}
+      </div>
+
+      <div>
+        <strong>
+          FIP:
+        </strong>{" "}
+        {value(cat.fip_status)}
+      </div>
+
+      <div>
+        <strong>
+          Dzieci:
+        </strong>{" "}
+        {yesNo(
+          cat.good_with_children,
+        )}
+      </div>
+
+      <div>
+        <strong>
+          Koty:
+        </strong>{" "}
+        {yesNo(
+          cat.good_with_cats,
+        )}
+      </div>
+
+      {cat.slug && (
+        <div>
+          <strong>
+            Profil:
+          </strong>{" "}
+          /koty/{cat.slug}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* =========================================================
+   PAGE
+   ========================================================= */
+
+export default function CatsExportPage() {
+  const [data, setData] =
+    useState<ExportData | null>(
+      null,
+    );
+
+  const [
+    loading,
+    setLoading,
+  ] = useState(true);
+
+  useEffect(() => {
+    try {
+      const raw =
+        localStorage.getItem(
+          "cats-export",
+        );
+
+      if (!raw) {
+        setLoading(false);
+        return;
+      }
+
+      const parsed =
+        JSON.parse(raw) as ExportData;
+
+      if (
+        !parsed ||
+        !Array.isArray(
+          parsed.cats,
+        )
+      ) {
+        throw new Error(
+          "Nieprawidłowe dane eksportu.",
+        );
+      }
+
+      setData(parsed);
+
+      /*
+       * Dane są już w React state,
+       * więc możemy usunąć je z localStorage.
+       */
+      localStorage.removeItem(
+        "cats-export",
+      );
+
+      setLoading(false);
+
+      /*
+       * Czekamy aż tabela zostanie
+       * faktycznie wyrenderowana.
+       */
+      window.setTimeout(() => {
+        window.print();
+      }, 700);
+    } catch (error) {
+      console.error(
+        "Błąd eksportu:",
+        error,
+      );
+
+      localStorage.removeItem(
+        "cats-export",
+      );
+
+      setData(null);
+      setLoading(false);
+    }
+  }, []);
+
+  if (loading) {
+    return (
+      <main className="print-page print-page--loading">
+        <p>
+          Przygotowywanie eksportu...
+        </p>
+      </main>
+    );
+  }
+
+  if (!data) {
+    return (
+      <main className="print-page print-page--error">
+        <header className="print-header">
+          <h1>
+            Kocia Oaza
+          </h1>
+
+          <h2>
+            Eksport kotów
+          </h2>
+        </header>
+
+        <p>
+          Brak danych eksportu.
+        </p>
+
+        <p>
+          Zamknij tę kartę i uruchom
+          eksport ponownie z panelu
+          administracyjnego.
+        </p>
+      </main>
+    );
+  }
+
+  /*
+   * ---------------------------------------------------------
+   * ADMINISTRACYJNA
+   * ---------------------------------------------------------
+   *
+   * Cała administracyjna lista jest jedną tabelą.
+   * Jeżeli wybrano grupowanie po lokalizacji,
+   * przed każdą tabelą pojawia się nagłówek lokalizacji.
+   */
+
+  if (data.mode === "admin") {
+    const groups =
+      new Map<string, Cat[]>();
+
+    if (
+      data.groupBy ===
+      "location"
+    ) {
+      for (const cat of data.cats) {
+        const location =
+          cat.location?.trim() ||
+          "Brak lokalizacji";
+
+        if (
+          !groups.has(
+            location,
+          )
+        ) {
+          groups.set(
+            location,
+            [],
+          );
+        }
+
+        groups
+          .get(location)!
+          .push(cat);
+      }
+    } else {
+      groups.set(
+        "",
+        data.cats,
+      );
+    }
+
+    const entries =
+      [...groups.entries()].sort(
+        ([a], [b]) =>
+          a.localeCompare(
+            b,
+            "pl",
+          ),
+      );
+
+    return (
+      <main className="print-page print-page--admin">
+        <header className="print-header print-header--admin">
+          <div>
+            <h1>
+              Kocia Oaza
+            </h1>
+
+            <h2>
+              Lista administracyjna kotów
+            </h2>
+          </div>
+
+          <div className="print-header__meta">
+            <div>
+              Liczba kotów:{" "}
+              <strong>
+                {data.cats.length}
+              </strong>
+            </div>
+
+            <div>
+              Data eksportu:{" "}
+              {new Date().toLocaleDateString(
+                "pl-PL",
+              )}
+            </div>
+          </div>
+        </header>
+
+        {entries.map(
+          ([location, cats]) => (
+            <section
+              key={location}
+              className="print-admin-group"
+            >
+              {data.groupBy ===
+                "location" && (
+                <h3 className="print-admin-group__title">
+                  {location}
+                </h3>
+              )}
+
+              <AdminTable
+                cats={cats}
+              />
+            </section>
+          ),
+        )}
+      </main>
+    );
+  }
+
+  /*
+   * ---------------------------------------------------------
+   * POZOSTAŁE FORMATY
+   * ---------------------------------------------------------
+   */
+
+  const groups =
+    new Map<string, Cat[]>();
+
+  if (
+    data.groupBy ===
+    "location"
+  ) {
+    for (const cat of data.cats) {
+      const location =
+        cat.location?.trim() ||
+        "Brak lokalizacji";
+
+      if (
+        !groups.has(
+          location,
+        )
+      ) {
+        groups.set(
+          location,
+          [],
+        );
+      }
+
+      groups
+        .get(location)!
+        .push(cat);
+    }
+  } else {
+    groups.set(
+      "",
+      data.cats,
+    );
+  }
+
+  const entries =
+    [...groups.entries()].sort(
+      ([a], [b]) =>
+        a.localeCompare(
+          b,
+          "pl",
+        ),
+    );
+
+  return (
+    <main className="print-page">
+      <header className="print-header">
+        <h1>
+          Kocia Oaza
+        </h1>
+
+        <h2>
+          {data.mode ===
+          "names"
+            ? "Lista kotów"
+            : "Pełna lista kotów"}
+        </h2>
+
+        <p>
+          Liczba kotów:{" "}
+          <strong>
+            {data.cats.length}
+          </strong>
+        </p>
+
+        <p>
+          Data eksportu:{" "}
+          {new Date().toLocaleDateString(
+            "pl-PL",
+          )}
+        </p>
+      </header>
+
+      {entries.map(
+        ([location, cats]) => (
+          <section
+            key={location}
+            className="print-group"
+          >
+            {data.groupBy ===
+              "location" && (
+              <h3>
+                {location}
+              </h3>
+            )}
+
+            {data.mode ===
+            "names" ? (
+              cats.map(
+                (cat) => (
+                  <div
+                    key={cat.id}
+                    className="print-name"
+                  >
+                    {value(
+                      cat.name,
+                    )}
+                  </div>
+                ),
+              )
+            ) : (
+              cats.map(
+                (cat) => (
+                  <article
+                    key={cat.id}
+                    className="print-cat"
+                  >
+                    <h4>
+                      {value(
+                        cat.name,
+                      )}
+                    </h4>
+
+                    <FullFields
+                      cat={cat}
+                    />
+                  </article>
+                ),
+              )
+            )}
+          </section>
+        ),
+      )}
+    </main>
+  );
+}
+========================================
+FILE: ./app/(dashboard)/panel/koty/nowy/page.tsx
+========================================
+import Link from "next/link";
+
+import CatCreateForm from "@/app/components/cats-admin/CatCreateForm";
+
+import "@/app/style/dashboard/cats.css";
+
+export default function NewCatPage() {
+  return (
+    <main className="cats-edit-page">
+      <div className="container">
+        <div className="cats-edit-header">
+          <div>
+            <Link
+              href="/panel/koty"
+              className="cats-back-link"
+            >
+              ← Wróć do tabeli
+            </Link>
+
+            <h1>
+              Dodaj kota
+            </h1>
+
+            <p>
+              Utwórz nowy rekord w bazie.
+            </p>
+          </div>
+        </div>
+
+        <CatCreateForm />
+      </div>
+    </main>
+  );
+}
+========================================
+FILE: ./app/(dashboard)/panel/koty/page.tsx
+========================================
+import Link from "next/link";
+
+import { createClient } from "@/lib/supabase/server";
+
+import CatsDataGrid from "@/app/components/cats-admin/CatsDataGrid";
+
+import "@/app/style/dashboard/cats.css";
+
+export default async function CatsAdminPage() {
+  const supabase =
+    await createClient();
+
+  const {
+    data: cats,
+    error,
+  } = await supabase
+    .from("cats")
+    .select(`
+      *,
+      media:cat_media(*)
+    `)
+    .is("deleted_at", null)
+    .order("created_at", {
+      ascending: false,
+    });
+
+  if (error) {
+    return (
+      <main className="cats-admin-page">
+        <div className="cats-admin-shell">
+          <div className="cats-admin-error">
+            <h1>
+              Nie udało się załadować kotów
+            </h1>
+
+            <p>
+              {error.message}
+            </p>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  return (
+    <main className="cats-admin-page">
+      <div className="cats-admin-shell">
+        <div className="cats-admin-header">
+          <div>
+            <div className="cats-admin-eyebrow">
+              CMS / Baza kotów
+            </div>
+
+            <h1>Koty</h1>
+
+            <p>
+              Edytuj dane bezpośrednio
+              w tabeli.
+            </p>
+          </div>
+
+          <div className="cats-admin-header__actions">
+            <Link
+              href="/panel"
+              className="button button--outline-primary"
+            >
+              Panel
+            </Link>
+
+            <Link
+              href="/panel/koty/nowy"
+              className="button button--primary"
+            >
+              + Dodaj kota
+            </Link>
+          </div>
+        </div>
+
+        <CatsDataGrid
+          initialCats={
+            cats ?? []
+          }
+        />
+      </div>
+    </main>
+  );
+}
+========================================
 FILE: ./app/(dashboard)/panel/layout.tsx
 ========================================
-// app/(dashboard)/panel/layout.tsx
-
 import Link from "next/link";
+
 import "@/app/style/bazarek/dashboard-bazarek.css";
+
 type NavItem = {
-    href: string;
-    label: string;
+  href: string;
+  label: string;
 };
 
 const navItems: NavItem[] = [
-    {
-        href: "/panel/zgloszenia",
-        label: "Zgłoszenia",
-    },
-    {
-        href: "/panel/zbiorki",
-        label: "Zbiórki",
-    },
-    {
-        href: "/panel/bazarek",
-        label: "Bazarek",
-    },
+  {
+    href: "/panel/koty",
+    label: "🐱 Koty",
+  },
+  {
+    href: "/panel/zgloszenia",
+    label: "Zgłoszenia",
+  },
+  {
+    href: "/panel/zbiorki",
+    label: "Zbiórki",
+  }
 ];
 
 export default function DashboardLayout({
-    children,
+  children,
 }: {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }) {
-    return (
+  return (
+    <div
+      style={{
+        minHeight: "100vh",
+        background:
+          "var(--color-bg-alt)",
+      }}
+    >
+      <div
+        style={{
+          position:
+            "sticky",
+          top: 0,
+          zIndex: 50,
+          background:
+            "rgba(255,255,255,0.9)",
+          backdropFilter:
+            "blur(12px)",
+          borderBottom:
+            "1px solid var(--color-border)",
+        }}
+      >
         <div
-            style={{
-                minHeight: "100vh",
-                background: "var(--color-bg-alt)",
-            }}
+          className="container"
+          style={{
+            minHeight: 72,
+            display: "flex",
+            alignItems:
+              "center",
+            justifyContent:
+              "space-between",
+            gap: 24,
+          }}
         >
-            <div
-                style={{
-                    position: "sticky",
-                    top: 0,
-                    zIndex: 50,
+          <Link
+            href="/"
+            style={{
+              fontWeight: 700,
+              fontSize: 18,
+            }}
+          >
+            Kocia Oaza
+          </Link>
 
-                    background: "rgba(255,255,255,0.9)",
-                    backdropFilter: "blur(12px)",
-
-                    borderBottom: "1px solid var(--color-border)",
-                }}
-            >
-                <div
-                    className="container"
-                    style={{
-                        height: 72,
-
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        gap: 24,
-                    }}
+          <nav
+            style={{
+              display: "flex",
+              alignItems:
+                "center",
+              gap: 8,
+              flexWrap:
+                "wrap",
+            }}
+          >
+            {navItems.map(
+              (item) => (
+                <Link
+                  key={
+                    item.href
+                  }
+                  href={
+                    item.href
+                  }
+                  className="button button--outline-primary"
                 >
-                    <Link
-                        href="/"
-                        style={{
-                            fontWeight: 700,
-                            fontSize: 18,
-                        }}
-                    >
-                        Kocia Oaza
-                    </Link>
-
-                    <nav
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 12,
-                            flexWrap: "wrap",
-                        }}
-                    >
-                        {navItems.map((item) => (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                className="button button--outline-primary"
-                            >
-                                {item.label}
-                            </Link>
-                        ))}
-                    </nav>
-                </div>
-            </div>
-
-            {children}
+                  {
+                    item.label
+                  }
+                </Link>
+              )
+            )}
+          </nav>
         </div>
-    );
+      </div>
+
+      {children}
+    </div>
+  );
 }
 ========================================
 FILE: ./app/(dashboard)/panel/page.tsx
@@ -4731,6 +5886,16 @@ export default function AdvicePage() {
 FILE: ./app/api/adoption/route.ts
 ========================================
 import { createClient } from "@/lib/supabase/server";
+import { sendEmail } from "@/lib/email";
+
+function escapeHtml(value: unknown) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
 
 export async function POST(req: Request) {
   try {
@@ -4738,9 +5903,27 @@ export async function POST(req: Request) {
 
     const body = await req.json();
 
-    const { cat_id, data, form_type } = body;
+    const {
+      cat_id,
+      data,
+      form_type,
+    } = body;
 
-    const { error } = await supabase
+    if (!data) {
+      return Response.json(
+        { error: "Brak danych formularza" },
+        { status: 400 }
+      );
+    }
+
+    // =========================
+    // 1. ZAPIS ZGŁOSZENIA
+    // =========================
+
+    const {
+      data: savedForm,
+      error,
+    } = await supabase
       .from("adoption_forms")
       .insert([
         {
@@ -4749,14 +5932,303 @@ export async function POST(req: Request) {
           form_type,
           status: "new",
         },
-      ]);
+      ])
+      .select("id")
+      .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
-    return Response.json({ success: true });
-  } catch (err) {
-    console.error(err);
-    return Response.json({ error: "Błąd zapisu" }, { status: 500 });
+    // =========================
+    // 2. POBIERZ NAZWĘ KOTA
+    // =========================
+
+    let catName = "Nie wskazano";
+
+    if (cat_id) {
+      const { data: cat } = await supabase
+        .from("cats")
+        .select("name")
+        .eq("id", cat_id)
+        .maybeSingle();
+
+      if (cat?.name) {
+        catName = cat.name;
+      }
+    }
+
+    // =========================
+    // 3. TYP ZGŁOSZENIA
+    // =========================
+
+    const formTypeLabel =
+      form_type === "temporary"
+        ? "Dom tymczasowy"
+        : form_type === "adoption"
+          ? "Adopcja"
+          : form_type || "Nie określono";
+
+    // =========================
+    // 4. NAZWY PÓL
+    // =========================
+
+    const labels: Record<string, string> = {
+      name: "Imię i nazwisko",
+      email: "Email",
+      phone: "Telefon",
+      homeType: "Typ mieszkania",
+      balcony: "Balkon",
+      secured: "Zabezpieczenie balkonu",
+      people: "Liczba osób",
+      children: "Dzieci",
+      childrenAge: "Wiek dzieci",
+      agreement: "Zgoda domowników",
+      aloneTime: "Czas samotności kota",
+      experience: "Doświadczenie z kotami",
+      experienceDesc: "Opis doświadczenia",
+      reason: "Powód adopcji",
+    };
+
+    const rows = Object.entries(data)
+      .map(([key, value]) => {
+        let displayValue = value;
+
+        // Czytelniejsze wartości w mailu
+        if (key === "homeType") {
+          displayValue =
+            value === "flat"
+              ? "Mieszkanie"
+              : value === "house"
+                ? "Dom"
+                : value;
+        }
+
+        if (key === "balcony") {
+          displayValue =
+            value === "yes"
+              ? "Tak"
+              : value === "no"
+                ? "Nie"
+                : value;
+        }
+
+        if (key === "secured") {
+          displayValue =
+            value === "yes"
+              ? "Tak"
+              : value === "no"
+                ? "Zabezpieczę"
+                : value;
+        }
+
+        if (key === "children") {
+          displayValue =
+            value === "yes"
+              ? "Tak"
+              : value === "no"
+                ? "Nie"
+                : value;
+        }
+
+        if (key === "agreement") {
+          displayValue =
+            value === "yes"
+              ? "Tak"
+              : value === "no"
+                ? "Nie"
+                : value;
+        }
+
+        if (key === "experience") {
+          displayValue =
+            value === "yes"
+              ? "Tak, ma doświadczenie"
+              : value === "no"
+                ? "Nie, pierwszy kot"
+                : value;
+        }
+
+        if (key === "aloneTime" && value) {
+          displayValue = `${value} h`;
+        }
+
+        return `
+          <tr>
+            <td style="
+              padding:10px;
+              border-bottom:1px solid #eee;
+              font-weight:600;
+              vertical-align:top;
+              width:35%;
+            ">
+              ${escapeHtml(labels[key] ?? key)}
+            </td>
+
+            <td style="
+              padding:10px;
+              border-bottom:1px solid #eee;
+              white-space:pre-wrap;
+            ">
+              ${escapeHtml(displayValue)}
+            </td>
+          </tr>
+        `;
+      })
+      .join("");
+
+    // =========================
+    // 5. LINK DO PANELU
+    // =========================
+
+    const siteUrl =
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      "http://localhost:3000";
+
+    const panelUrl =
+      `${siteUrl}/panel/zgloszenia`;
+
+    // =========================
+    // 6. WYŚLIJ MAIL
+    // =========================
+
+    try {
+      await sendEmail({
+        to: [
+          process.env.ADMIN_EMAIL,
+          process.env.GMAIL_USER,
+        ].filter(Boolean) as string[],
+
+        subject:
+          `🐱 Nowe zgłoszenie — ${catName}`,
+
+        html: `
+          <div style="
+            font-family:Arial,sans-serif;
+            max-width:700px;
+            margin:0 auto;
+            color:#333;
+          ">
+
+            <div style="
+              background:#3db7ad;
+              padding:24px;
+              border-radius:12px 12px 0 0;
+              color:white;
+            ">
+              <h1 style="
+                margin:0;
+                font-size:24px;
+              ">
+                🐱 Nowe zgłoszenie
+              </h1>
+
+              <p style="
+                margin:8px 0 0;
+              ">
+                Kocia Oaza
+              </p>
+            </div>
+
+            <div style="
+              padding:24px;
+              border:1px solid #eee;
+              border-top:0;
+              border-radius:0 0 12px 12px;
+            ">
+
+              <div style="
+                background:#f7f7f7;
+                padding:16px;
+                border-radius:10px;
+                margin-bottom:24px;
+              ">
+
+                <p style="margin:4px 0;">
+                  <strong>Kot:</strong>
+                  ${escapeHtml(catName)}
+                </p>
+
+                <p style="margin:4px 0;">
+                  <strong>Typ zgłoszenia:</strong>
+                  ${escapeHtml(formTypeLabel)}
+                </p>
+
+                <p style="margin:4px 0;">
+                  <strong>ID zgłoszenia:</strong>
+                  ${escapeHtml(savedForm?.id)}
+                </p>
+
+              </div>
+
+              <h2>
+                Dane zgłoszenia
+              </h2>
+
+              <table style="
+                width:100%;
+                border-collapse:collapse;
+                font-size:14px;
+              ">
+                ${rows}
+              </table>
+
+              <div style="
+                margin-top:28px;
+              ">
+                <a
+                  href="${escapeHtml(panelUrl)}"
+                  style="
+                    display:inline-block;
+                    background:#3db7ad;
+                    color:white;
+                    text-decoration:none;
+                    padding:12px 20px;
+                    border-radius:8px;
+                    font-weight:600;
+                  "
+                >
+                  Otwórz panel zgłoszeń
+                </a>
+              </div>
+
+            </div>
+          </div>
+        `,
+      });
+    } catch (emailError) {
+      // Zgłoszenie jest już zapisane w Supabase.
+      // Błąd maila nie może spowodować
+      // ponownego wysłania formularza.
+      console.error(
+        "EMAIL SEND ERROR:",
+        emailError
+      );
+    }
+
+    // =========================
+    // 7. SUKCES
+    // =========================
+
+    return Response.json({
+      success: true,
+      id: savedForm?.id,
+    });
+
+  } catch (error) {
+    console.error(
+      "ADOPTION API ERROR:",
+      error
+    );
+
+    return Response.json(
+      {
+        error: "Błąd zapisu",
+      },
+      {
+        status: 500,
+      }
+    );
   }
 }
 ========================================
@@ -5243,6 +6715,1301 @@ export async function POST(
     }
 }
 ========================================
+FILE: ./app/api/cat-media/[id]/route.ts
+========================================
+import { NextResponse } from "next/server";
+
+import { createClient } from "@/lib/supabase/server";
+import { isAdminAuthenticated } from "@/lib/auth/admin";
+
+type Props = {
+  params: Promise<{
+    id: string;
+  }>;
+};
+
+export async function PATCH(
+  request: Request,
+  { params }: Props
+) {
+  const authenticated =
+    await isAdminAuthenticated();
+
+  if (!authenticated) {
+    return NextResponse.json(
+      {
+        error: "Brak autoryzacji",
+      },
+      {
+        status: 401,
+      }
+    );
+  }
+
+  try {
+    const { id } =
+      await params;
+
+    const body =
+      await request.json();
+
+    const supabase =
+      await createClient();
+
+    const update: Record<
+      string,
+      unknown
+    > = {};
+
+    if (
+      "is_primary" in body
+    ) {
+      update.is_primary =
+        Boolean(body.is_primary);
+    }
+
+    if (
+      "display_order" in body
+    ) {
+      update.display_order =
+        Number(body.display_order);
+    }
+
+    if (
+      "alt_text" in body
+    ) {
+      update.alt_text =
+        body.alt_text;
+    }
+
+    if (
+      "media_type" in body
+    ) {
+      update.media_type =
+        body.media_type;
+    }
+
+    update.updated_at =
+      new Date().toISOString();
+
+    if (
+      update.is_primary === true
+    ) {
+      const {
+        data: current,
+        error: currentError,
+      } = await supabase
+        .from("cat_media")
+        .select("cat_id")
+        .eq("id", id)
+        .single();
+
+      if (currentError) {
+        return NextResponse.json(
+          {
+            error:
+              currentError.message,
+          },
+          {
+            status: 404,
+          }
+        );
+      }
+
+      await supabase
+        .from("cat_media")
+        .update({
+          is_primary: false,
+        })
+        .eq(
+          "cat_id",
+          current.cat_id
+        );
+    }
+
+    const {
+      data,
+      error,
+    } = await supabase
+      .from("cat_media")
+      .update(update)
+      .eq("id", id)
+      .select("*")
+      .single();
+
+    if (error) {
+      return NextResponse.json(
+        {
+          error: error.message,
+        },
+        {
+          status: 500,
+        }
+      );
+    }
+
+    return NextResponse.json({
+      media: data,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        error: "Błąd zapisu",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
+}
+
+export async function DELETE(
+  request: Request,
+  { params }: Props
+) {
+  const authenticated =
+    await isAdminAuthenticated();
+
+  if (!authenticated) {
+    return NextResponse.json(
+      {
+        error: "Brak autoryzacji",
+      },
+      {
+        status: 401,
+      }
+    );
+  }
+
+  try {
+    const { id } =
+      await params;
+
+    const supabase =
+      await createClient();
+
+    const {
+      data: media,
+    } = await supabase
+      .from("cat_media")
+      .select(
+        "cloudinary_public_id"
+      )
+      .eq("id", id)
+      .single();
+
+    const {
+      error,
+    } = await supabase
+      .from("cat_media")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      return NextResponse.json(
+        {
+          error: error.message,
+        },
+        {
+          status: 500,
+        }
+      );
+    }
+
+    /*
+     * Usuwamy również asset z Cloudinary.
+     *
+     * Wykorzystujemy istniejący endpoint
+     * /api/upload/delete.
+     */
+    if (
+      media?.cloudinary_public_id
+    ) {
+      try {
+        await fetch(
+          new URL(
+            "/api/upload/delete",
+            request.url
+          ),
+          {
+            method: "POST",
+            headers: {
+              "content-type":
+                "application/json",
+            },
+            body: JSON.stringify({
+              public_id:
+                media.cloudinary_public_id,
+            }),
+          }
+        );
+      } catch {
+        /*
+         * Usunięcie rekordu z DB
+         * pozostaje sukcesem nawet jeśli
+         * Cloudinary chwilowo nie odpowie.
+         */
+      }
+    }
+
+    return NextResponse.json({
+      success: true,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        error: "Błąd usuwania",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
+}
+========================================
+FILE: ./app/api/cat-media/route.ts
+========================================
+import { NextResponse } from "next/server";
+
+import { createClient } from "@/lib/supabase/server";
+import { isAdminAuthenticated } from "@/lib/auth/admin";
+
+export async function GET(
+  request: Request
+) {
+  const authenticated =
+    await isAdminAuthenticated();
+
+  if (!authenticated) {
+    return NextResponse.json(
+      {
+        error: "Brak autoryzacji",
+      },
+      {
+        status: 401,
+      }
+    );
+  }
+
+  const url =
+    new URL(request.url);
+
+  const catId =
+    url.searchParams.get(
+      "cat_id"
+    );
+
+  if (!catId) {
+    return NextResponse.json(
+      {
+        error: "Brak cat_id",
+      },
+      {
+        status: 400,
+      }
+    );
+  }
+
+  const supabase =
+    await createClient();
+
+  const {
+    data,
+    error,
+  } = await supabase
+    .from("cat_media")
+    .select("*")
+    .eq("cat_id", catId)
+    .order("display_order", {
+      ascending: true,
+    })
+    .order("created_at", {
+      ascending: true,
+    });
+
+  if (error) {
+    return NextResponse.json(
+      {
+        error: error.message,
+      },
+      {
+        status: 500,
+      }
+    );
+  }
+
+  return NextResponse.json({
+    media: data ?? [],
+  });
+}
+
+export async function POST(
+  request: Request
+) {
+  const authenticated =
+    await isAdminAuthenticated();
+
+  if (!authenticated) {
+    return NextResponse.json(
+      {
+        error: "Brak autoryzacji",
+      },
+      {
+        status: 401,
+      }
+    );
+  }
+
+  try {
+    const body =
+      await request.json();
+
+    if (
+      !body.cat_id ||
+      !body.url
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "cat_id i url są wymagane",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    const supabase =
+      await createClient();
+
+    const {
+      data: latest,
+    } = await supabase
+      .from("cat_media")
+      .select("display_order")
+      .eq(
+        "cat_id",
+        body.cat_id
+      )
+      .order("display_order", {
+        ascending: false,
+      })
+      .limit(1)
+      .maybeSingle();
+
+    const nextOrder =
+      (latest?.display_order ?? -1) + 1;
+
+    const {
+      data,
+      error,
+    } = await supabase
+      .from("cat_media")
+      .insert({
+        cat_id: body.cat_id,
+        media_type:
+          body.media_type ??
+          "image",
+        url: body.url,
+        cloudinary_public_id:
+          body.cloudinary_public_id ??
+          null,
+        is_primary:
+          body.is_primary ??
+          false,
+        display_order:
+          body.display_order ??
+          nextOrder,
+        alt_text:
+          body.alt_text ??
+          null,
+      })
+      .select("*")
+      .single();
+
+    if (error) {
+      return NextResponse.json(
+        {
+          error: error.message,
+        },
+        {
+          status: 500,
+        }
+      );
+    }
+
+    return NextResponse.json({
+      media: data,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        error: "Błąd dodawania medium",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
+}
+========================================
+FILE: ./app/api/cats/[id]/route.ts
+========================================
+import { NextResponse } from "next/server";
+
+import { createClient } from "@/lib/supabase/server";
+import { isAdminAuthenticated } from "@/lib/auth/admin";
+
+import {
+  EDITABLE_CAT_FIELDS,
+  type EditableCatField,
+} from "@/types/cat";
+
+type Props = {
+  params: Promise<{
+    id: string;
+  }>;
+};
+
+function isEditableField(
+  value: unknown
+): value is EditableCatField {
+  return (
+    typeof value === "string" &&
+    EDITABLE_CAT_FIELDS.includes(
+      value as EditableCatField
+    )
+  );
+}
+
+function validateValue(
+  field: EditableCatField,
+  value: unknown
+) {
+  switch (field) {
+    case "name":
+    case "slug":
+    case "description":
+    case "image_url":
+    case "weight":
+    case "virtual_adoption_url":
+      return (
+        value === null ||
+        typeof value === "string"
+      );
+
+    case "gender":
+    case "status":
+    case "location":
+    case "fiv_status":
+    case "felv_status":
+    case "fip_status":
+      return (
+        value === null ||
+        typeof value === "string"
+      );
+
+    case "birth_date":
+    case "arrival_date":
+      return (
+        value === null ||
+        typeof value === "string"
+      );
+
+    case "tags":
+      return (
+        value === null ||
+        Array.isArray(value)
+      );
+
+    case "adoption_priority":
+      return (
+        value === null ||
+        (
+          typeof value === "number" &&
+          Number.isInteger(value)
+        )
+      );
+
+    case "sterilized":
+    case "vaccinated":
+    case "dewormed":
+    case "good_with_children":
+    case "good_with_cats":
+    case "is_featured":
+    case "microchipped":
+      return (
+        value === null ||
+        typeof value === "boolean"
+      );
+
+    default:
+      return false;
+  }
+}
+
+export async function GET(
+  request: Request,
+  { params }: Props
+) {
+  const authenticated =
+    await isAdminAuthenticated();
+
+  if (!authenticated) {
+    return NextResponse.json(
+      {
+        error: "Brak autoryzacji",
+      },
+      {
+        status: 401,
+      }
+    );
+  }
+
+  const { id } =
+    await params;
+
+  const supabase =
+    await createClient();
+
+  const {
+    data,
+    error,
+  } = await supabase
+    .from("cats")
+    .select(`
+      *,
+      media:cat_media(*)
+    `)
+    .eq("id", id)
+    .single();
+
+  if (error) {
+    return NextResponse.json(
+      {
+        error: error.message,
+      },
+      {
+        status: 404,
+      }
+    );
+  }
+
+  return NextResponse.json({
+    cat: data,
+  });
+}
+
+export async function PATCH(
+  request: Request,
+  { params }: Props
+) {
+  const authenticated =
+    await isAdminAuthenticated();
+
+  if (!authenticated) {
+    return NextResponse.json(
+      {
+        error: "Brak autoryzacji",
+      },
+      {
+        status: 401,
+      }
+    );
+  }
+
+  try {
+    const { id } =
+      await params;
+
+    const body =
+      await request.json();
+
+    const field =
+      body.field;
+
+    const value =
+      body.value;
+
+    if (!isEditableField(field)) {
+      return NextResponse.json(
+        {
+          error:
+            "To pole nie może być edytowane.",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    if (
+      !validateValue(
+        field,
+        value
+      )
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "Nieprawidłowa wartość pola.",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    const supabase =
+      await createClient();
+
+    const { data, error } =
+      await supabase
+        .from("cats")
+        .update({
+          [field]: value,
+          updated_at:
+            new Date().toISOString(),
+        })
+        .eq("id", id)
+        .select("*")
+        .single();
+
+    if (error) {
+      console.error(error);
+
+      return NextResponse.json(
+        {
+          error: error.message,
+        },
+        {
+          status: 500,
+        }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      cat: data,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        error: "Błąd zapisu",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
+}
+
+export async function DELETE(
+  request: Request,
+  { params }: Props
+) {
+  const authenticated =
+    await isAdminAuthenticated();
+
+  if (!authenticated) {
+    return NextResponse.json(
+      {
+        error: "Brak autoryzacji",
+      },
+      {
+        status: 401,
+      }
+    );
+  }
+
+  try {
+    const { id } =
+      await params;
+
+    const supabase =
+      await createClient();
+
+    const {
+      error,
+    } = await supabase
+      .from("cats")
+      .update({
+        deleted_at:
+          new Date().toISOString(),
+        updated_at:
+          new Date().toISOString(),
+      })
+      .eq("id", id);
+
+    if (error) {
+      return NextResponse.json(
+        {
+          error: error.message,
+        },
+        {
+          status: 500,
+        }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        error: "Błąd archiwizacji",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
+}
+========================================
+FILE: ./app/api/cats/export/route.ts
+========================================
+import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
+
+type ExportScope = "all" | "selected";
+type ExportMode = "full" | "admin" | "names";
+type GroupMode = "none" | "location";
+
+type ExportRequest = {
+  scope: ExportScope;
+  mode: ExportMode;
+  groupBy: GroupMode;
+  format: "txt" | "pdf";
+  ids?: string[];
+};
+
+type Cat = {
+  id: string;
+  name: string | null;
+  status: string | null;
+  gender: string | null;
+  birth_date: string | null;
+  arrival_date: string | null;
+  location: string | null;
+  weight: number | string | null;
+  adoption_priority: string | number | null;
+
+  sterilized: boolean | null;
+  vaccinated: boolean | null;
+  dewormed: boolean | null;
+  microchipped: boolean | null;
+
+  fiv_status: string | null;
+  felv_status: string | null;
+  fip_status: string | null;
+
+  good_with_children: boolean | null;
+  good_with_cats: boolean | null;
+
+  slug: string | null;
+};
+
+function value(value: unknown, fallback = "Brak danych") {
+  if (value === null || value === undefined || value === "") {
+    return fallback;
+  }
+
+  return String(value);
+}
+
+function yesNo(value: boolean | null) {
+  if (value === true) return "Tak";
+  if (value === false) return "Nie";
+  return "Brak danych";
+}
+
+function formatDate(date: string | null) {
+  if (!date) return "Brak danych";
+
+  const parsed = new Date(date);
+
+  if (Number.isNaN(parsed.getTime())) {
+    return date;
+  }
+
+  return parsed.toLocaleDateString("pl-PL");
+}
+
+function statusLabel(status: string | null) {
+  switch (status) {
+    case "available":
+      return "Szukam domu";
+    case "reserved":
+      return "Zarezerwowany";
+    case "adopted":
+      return "Mam już dom";
+    default:
+      return value(status);
+  }
+}
+
+function genderLabel(gender: string | null) {
+  switch (gender) {
+    case "male":
+      return "Kocur";
+    case "female":
+      return "Kotka";
+    default:
+      return value(gender);
+  }
+}
+
+function ageFromBirthDate(date: string | null) {
+  if (!date) return "Brak danych";
+
+  const birth = new Date(date);
+
+  if (Number.isNaN(birth.getTime())) {
+    return "Brak danych";
+  }
+
+  const now = new Date();
+
+  let years = now.getFullYear() - birth.getFullYear();
+  let months = now.getMonth() - birth.getMonth();
+
+  if (
+    months < 0 ||
+    (months === 0 && now.getDate() < birth.getDate())
+  ) {
+    years--;
+    months += 12;
+  }
+
+  if (years > 0) {
+    return `${years} ${years === 1 ? "rok" : years < 5 ? "lata" : "lat"}`;
+  }
+
+  if (months === 0) {
+    return "poniżej miesiąca";
+  }
+
+  return `${months} ${
+    months === 1
+      ? "miesiąc"
+      : months < 5
+        ? "miesiące"
+        : "miesięcy"
+  }`;
+}
+
+function renderCatFull(cat: Cat) {
+  return [
+    `Imię: ${value(cat.name)}`,
+    `Status: ${statusLabel(cat.status)}`,
+    `Płeć: ${genderLabel(cat.gender)}`,
+    `Wiek: ${ageFromBirthDate(cat.birth_date)}`,
+    `Data urodzenia: ${formatDate(cat.birth_date)}`,
+    `Data przyjęcia: ${formatDate(cat.arrival_date)}`,
+    `Lokalizacja: ${value(cat.location)}`,
+    `Waga: ${value(cat.weight)}`,
+    `Priorytet adopcyjny: ${value(cat.adoption_priority)}`,
+    `Sterylizacja: ${yesNo(cat.sterilized)}`,
+    `Szczepienie: ${yesNo(cat.vaccinated)}`,
+    `Odrobaczenie: ${yesNo(cat.dewormed)}`,
+    `Chip: ${yesNo(cat.microchipped)}`,
+    `FIV: ${value(cat.fiv_status)}`,
+    `FeLV: ${value(cat.felv_status)}`,
+    `FIP: ${value(cat.fip_status)}`,
+    `Dobrze z dziećmi: ${yesNo(cat.good_with_children)}`,
+    `Dobrze z kotami: ${yesNo(cat.good_with_cats)}`,
+    cat.slug
+      ? `Profil: /koty/${cat.slug}`
+      : null,
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
+function renderCatAdmin(cat: Cat) {
+  return [
+    `Imię: ${value(cat.name)}`,
+    `Status: ${statusLabel(cat.status)}`,
+    `Płeć: ${genderLabel(cat.gender)}`,
+    `Wiek: ${ageFromBirthDate(cat.birth_date)}`,
+    `Lokalizacja: ${value(cat.location)}`,
+    `Przyjęty: ${formatDate(cat.arrival_date)}`,
+    `Priorytet: ${value(cat.adoption_priority)}`,
+    `Sterylizacja: ${yesNo(cat.sterilized)}`,
+    `Szczepienie: ${yesNo(cat.vaccinated)}`,
+    `Odrobaczenie: ${yesNo(cat.dewormed)}`,
+    `Chip: ${yesNo(cat.microchipped)}`,
+    `FIV: ${value(cat.fiv_status)}`,
+    `FeLV: ${value(cat.felv_status)}`,
+    `FIP: ${value(cat.fip_status)}`,
+    `Dzieci: ${yesNo(cat.good_with_children)}`,
+    `Koty: ${yesNo(cat.good_with_cats)}`,
+  ].join("\n");
+}
+
+function renderCat(cat: Cat, mode: ExportMode) {
+  if (mode === "names") {
+    return value(cat.name);
+  }
+
+  if (mode === "admin") {
+    return renderCatAdmin(cat);
+  }
+
+  return renderCatFull(cat);
+}
+
+function buildText(
+  cats: Cat[],
+  mode: ExportMode,
+  groupBy: GroupMode,
+) {
+  const title =
+    mode === "names"
+      ? "LISTA KOTÓW"
+      : mode === "admin"
+        ? "LISTA ADMINISTRACYJNA KOTÓW"
+        : "PEŁNA LISTA KOTÓW";
+
+  const lines: string[] = [
+    "KOCIA OAZA",
+    title,
+    `Data eksportu: ${new Date().toLocaleDateString("pl-PL")}`,
+    "",
+  ];
+
+  if (groupBy === "location") {
+    const groups = new Map<string, Cat[]>();
+
+    for (const cat of cats) {
+      const location = cat.location?.trim() || "Brak lokalizacji";
+
+      if (!groups.has(location)) {
+        groups.set(location, []);
+      }
+
+      groups.get(location)!.push(cat);
+    }
+
+    const sortedGroups = [...groups.entries()].sort(
+      ([a], [b]) => a.localeCompare(b, "pl"),
+    );
+
+    for (const [location, locationCats] of sortedGroups) {
+      lines.push(`=== ${location.toUpperCase()} ===`);
+      lines.push("");
+
+      for (const cat of locationCats) {
+        lines.push(renderCat(cat, mode));
+        lines.push("");
+      }
+    }
+  } else {
+    for (const cat of cats) {
+      lines.push(renderCat(cat, mode));
+      lines.push("");
+    }
+  }
+
+  return lines.join("\n").trim() + "\n";
+}
+
+export async function POST(request: Request) {
+  try {
+    const body =
+      (await request.json()) as ExportRequest;
+
+    const {
+      scope,
+      mode,
+      groupBy,
+      format,
+      ids = [],
+    } = body;
+
+    if (
+      !["all", "selected"].includes(scope) ||
+      !["full", "admin", "names"].includes(mode) ||
+      !["none", "location"].includes(groupBy) ||
+      !["txt", "pdf"].includes(format)
+    ) {
+      return NextResponse.json(
+        { error: "Nieprawidłowe parametry eksportu." },
+        { status: 400 },
+      );
+    }
+
+    if (
+      scope === "selected" &&
+      ids.length === 0
+    ) {
+      return NextResponse.json(
+        { error: "Nie zaznaczono żadnego kota." },
+        { status: 400 },
+      );
+    }
+
+    const supabase = await createClient();
+
+    let query = supabase
+      .from("cats")
+      .select(`
+        id,
+        name,
+        status,
+        gender,
+        birth_date,
+        arrival_date,
+        location,
+        weight,
+        adoption_priority,
+        sterilized,
+        vaccinated,
+        dewormed,
+        microchipped,
+        fiv_status,
+        felv_status,
+        fip_status,
+        good_with_children,
+        good_with_cats,
+        slug
+      `)
+      .is("deleted_at", null)
+      .order("name", {
+        ascending: true,
+      });
+
+    if (scope === "selected") {
+      query = query.in("id", ids);
+    }
+
+    const {
+      data,
+      error,
+    } = await query;
+
+    if (error) {
+      console.error(error);
+
+      return NextResponse.json(
+        {
+          error:
+            "Nie udało się pobrać kotów do eksportu.",
+        },
+        { status: 500 },
+      );
+    }
+
+    const cats = (data ?? []) as Cat[];
+
+    if (format === "txt") {
+      const content = buildText(
+        cats,
+        mode,
+        groupBy,
+      );
+
+      return new NextResponse(content, {
+        headers: {
+          "Content-Type":
+            "text/plain; charset=utf-8",
+          "Content-Disposition":
+            `attachment; filename="kocia-oaza-koty.txt"`,
+        },
+      });
+    }
+
+    /*
+     * PDF nie jest generowany tutaj.
+     *
+     * Zwracamy dane do widoku drukowania.
+     * Frontend otworzy stronę /panel/koty/eksport
+     * i wywoła window.print().
+     */
+    return NextResponse.json({
+      cats,
+      mode,
+      groupBy,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        error: "Błąd eksportu.",
+      },
+      { status: 500 },
+    );
+  }
+}
+========================================
+FILE: ./app/api/cats/route.ts
+========================================
+import { NextResponse } from "next/server";
+
+import { createClient } from "@/lib/supabase/server";
+import { isAdminAuthenticated } from "@/lib/auth/admin";
+
+export async function GET() {
+  const authenticated =
+    await isAdminAuthenticated();
+
+  if (!authenticated) {
+    return NextResponse.json(
+      {
+        error: "Brak autoryzacji",
+      },
+      {
+        status: 401,
+      }
+    );
+  }
+
+  const supabase =
+    await createClient();
+
+  const {
+    data,
+    error,
+  } = await supabase
+    .from("cats")
+    .select(`
+      *,
+      media:cat_media(*)
+    `)
+    .order("created_at", {
+      ascending: false,
+    });
+
+  if (error) {
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        error: error.message,
+      },
+      {
+        status: 500,
+      }
+    );
+  }
+
+  return NextResponse.json({
+    cats: data ?? [],
+  });
+}
+
+export async function POST(
+  request: Request
+) {
+  const authenticated =
+    await isAdminAuthenticated();
+
+  if (!authenticated) {
+    return NextResponse.json(
+      {
+        error: "Brak autoryzacji",
+      },
+      {
+        status: 401,
+      }
+    );
+  }
+
+  try {
+    const body =
+      await request.json();
+
+    const supabase =
+      await createClient();
+
+    const name =
+      typeof body.name === "string"
+        ? body.name.trim()
+        : "";
+
+    const slug =
+      typeof body.slug === "string"
+        ? body.slug.trim()
+        : "";
+
+    if (!name) {
+      return NextResponse.json(
+        {
+          error: "Imię kota jest wymagane",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    if (!slug) {
+      return NextResponse.json(
+        {
+          error: "Slug jest wymagany",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    const { data, error } =
+      await supabase
+        .from("cats")
+        .insert({
+          ...body,
+          name,
+          slug,
+        })
+        .select(`
+          *,
+          media:cat_media(*)
+        `)
+        .single();
+
+    if (error) {
+      console.error(error);
+
+      return NextResponse.json(
+        {
+          error: error.message,
+        },
+        {
+          status: 500,
+        }
+      );
+    }
+
+    return NextResponse.json({
+      cat: data,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        error: "Błąd tworzenia kota",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
+}
+========================================
 FILE: ./app/api/fundraisers/create/route.ts
 ========================================
 // app/api/fundraisers/create/route.ts
@@ -5360,6 +8127,112 @@ export async function POST(req: Request) {
     );
 
     return response;
+}
+========================================
+FILE: ./app/api/upload/cats/route.ts
+========================================
+import { NextResponse } from "next/server";
+
+import { v2 as cloudinary } from "cloudinary";
+
+cloudinary.config({
+  cloud_name:
+    process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+
+  api_key:
+    process.env.CLOUDINARY_API_KEY,
+
+  api_secret:
+    process.env.CLOUDINARY_API_SECRET,
+});
+
+export async function POST(
+  request: Request,
+) {
+  try {
+    const formData =
+      await request.formData();
+
+    const file =
+      formData.get("file");
+
+    if (!(file instanceof File)) {
+      return NextResponse.json(
+        {
+          error: "Brak pliku",
+        },
+        {
+          status: 400,
+        },
+      );
+    }
+
+    if (file.size === 0) {
+      return NextResponse.json(
+        {
+          error: "Plik jest pusty",
+        },
+        {
+          status: 400,
+        },
+      );
+    }
+
+    const bytes =
+      await file.arrayBuffer();
+
+    const buffer =
+      Buffer.from(bytes);
+
+    const result =
+      await new Promise<any>(
+        (
+          resolve,
+          reject,
+        ) => {
+          cloudinary.uploader.upload_stream(
+            {
+              folder: "cats",
+              resource_type: "auto",
+            },
+            (
+              error,
+              uploadResult,
+            ) => {
+              if (error) {
+                reject(error);
+              } else {
+                resolve(uploadResult);
+              }
+            },
+          ).end(buffer);
+        },
+      );
+
+    return NextResponse.json({
+      url: result.secure_url,
+      public_id: result.public_id,
+      resource_type:
+        result.resource_type,
+    });
+  } catch (error) {
+    console.error(
+      "CAT MEDIA UPLOAD ERROR:",
+      error,
+    );
+
+    return NextResponse.json(
+      {
+        error:
+          error instanceof Error
+            ? error.message
+            : "Upload error",
+      },
+      {
+        status: 500,
+      },
+    );
+  }
 }
 ========================================
 FILE: ./app/api/upload/delete/route.ts
@@ -6686,6 +9559,3721 @@ export default function CurrentBid({
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+========================================
+FILE: ./app/components/cats-admin/CatCreateForm.tsx
+========================================
+"use client";
+
+import {
+  useState,
+} from "react";
+
+import { useRouter } from "next/navigation";
+
+import {
+  CAT_GENDER_OPTIONS,
+  CAT_LOCATIONS,
+  CAT_STATUS_OPTIONS,
+} from "@/types/cat";
+
+export default function CatCreateForm() {
+  const router =
+    useRouter();
+
+  const [
+    form,
+    setForm,
+  ] = useState({
+    name: "",
+    slug: "",
+    status: "available",
+    gender: "",
+    description: "",
+    birth_date: "",
+    arrival_date: "",
+    location: "",
+    weight: "",
+  });
+
+  const [
+    saving,
+    setSaving,
+  ] = useState(false);
+
+  const [
+    error,
+    setError,
+  ] = useState("");
+
+  function setField(
+    field: string,
+    value: string
+  ) {
+    setForm(
+      (current) => ({
+        ...current,
+        [field]:
+          value,
+      })
+    );
+  }
+
+  async function submit(
+    event: React.FormEvent
+  ) {
+    event.preventDefault();
+
+    setSaving(true);
+    setError("");
+
+    try {
+      const response =
+        await fetch(
+          "/api/cats",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+            body: JSON.stringify({
+              name:
+                form.name,
+              slug:
+                form.slug,
+              status:
+                form.status,
+              gender:
+                form.gender ||
+                null,
+              description:
+                form.description ||
+                null,
+              birth_date:
+                form.birth_date ||
+                null,
+              arrival_date:
+                form.arrival_date ||
+                null,
+              location:
+                form.location ||
+                null,
+              weight:
+                form.weight ||
+                null,
+              tags: [],
+              adoption_priority: 0,
+              is_featured: false,
+              sterilized: null,
+              vaccinated: null,
+              dewormed: null,
+              good_with_children:
+                null,
+              good_with_cats:
+                null,
+              microchipped:
+                false,
+              fiv_status:
+                "unknown",
+              felv_status:
+                "unknown",
+              fip_status:
+                "none",
+            }),
+          }
+        );
+
+      const result =
+        await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          result.error ??
+            "Błąd tworzenia"
+        );
+      }
+
+      router.push(
+        `/panel/koty/${result.cat.id}`
+      );
+      router.refresh();
+    } catch (error) {
+      console.error(error);
+
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Błąd tworzenia kota"
+      );
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <form
+      className="cat-full-form"
+      onSubmit={submit}
+    >
+      <section className="cat-full-form__section">
+        <h2>
+          Podstawowe dane
+        </h2>
+
+        <div className="cat-full-form__grid">
+          <Field
+            label="Imię"
+            required
+            value={
+              form.name
+            }
+            onChange={(value) =>
+              setField(
+                "name",
+                value
+              )
+            }
+          />
+
+          <Field
+            label="Slug"
+            required
+            value={
+              form.slug
+            }
+            onChange={(value) =>
+              setField(
+                "slug",
+                value
+              )
+            }
+          />
+
+          <SelectField
+            label="Status"
+            value={
+              form.status
+            }
+            options={
+              CAT_STATUS_OPTIONS
+            }
+            onChange={(value) =>
+              setField(
+                "status",
+                value
+              )
+            }
+          />
+
+          <SelectField
+            label="Płeć"
+            value={
+              form.gender
+            }
+            options={
+              CAT_GENDER_OPTIONS
+            }
+            onChange={(value) =>
+              setField(
+                "gender",
+                value
+              )
+            }
+          />
+
+          <Field
+            label="Data urodzenia"
+            type="date"
+            value={
+              form.birth_date
+            }
+            onChange={(value) =>
+              setField(
+                "birth_date",
+                value
+              )
+            }
+          />
+
+          <Field
+            label="Data przyjęcia"
+            type="date"
+            value={
+              form.arrival_date
+            }
+            onChange={(value) =>
+              setField(
+                "arrival_date",
+                value
+              )
+            }
+          />
+
+          <SelectField
+            label="Lokalizacja"
+            value={
+              form.location
+            }
+            options={
+              CAT_LOCATIONS
+            }
+            onChange={(value) =>
+              setField(
+                "location",
+                value
+              )
+            }
+          />
+
+          <Field
+            label="Waga"
+            value={
+              form.weight
+            }
+            onChange={(value) =>
+              setField(
+                "weight",
+                value
+              )
+            }
+          />
+        </div>
+      </section>
+
+      <section className="cat-full-form__section">
+        <h2>
+          Opis
+        </h2>
+
+        <label className="cat-full-form__field">
+          <span>
+            Opis kota
+          </span>
+
+          <textarea
+            value={
+              form.description
+            }
+            onChange={(event) =>
+              setField(
+                "description",
+                event.target
+                  .value
+              )
+            }
+          />
+        </label>
+      </section>
+
+      {error && (
+        <div className="cats-admin-error">
+          {error}
+        </div>
+      )}
+
+      <div className="cat-full-form__footer">
+        <button
+          type="submit"
+          className="button button--primary"
+          disabled={saving}
+        >
+          {saving
+            ? "Tworzenie..."
+            : "Dodaj kota"}
+        </button>
+      </div>
+    </form>
+  );
+}
+
+function Field({
+  label,
+  value,
+  onChange,
+  type = "text",
+  required = false,
+}: {
+  label: string;
+  value: string;
+  onChange: (
+    value: string
+  ) => void;
+  type?: string;
+  required?: boolean;
+}) {
+  return (
+    <label className="cat-full-form__field">
+      <span>
+        {label}
+        {required &&
+          " *"}
+      </span>
+
+      <input
+        type={type}
+        required={required}
+        value={value}
+        onChange={(event) =>
+          onChange(
+            event.target.value
+          )
+        }
+      />
+    </label>
+  );
+}
+
+function SelectField({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  options: readonly {
+    value: string;
+    label: string;
+  }[];
+  onChange: (
+    value: string
+  ) => void;
+}) {
+  return (
+    <label className="cat-full-form__field">
+      <span>{label}</span>
+
+      <select
+        value={value}
+        onChange={(event) =>
+          onChange(
+            event.target.value
+          )
+        }
+      >
+        <option value="">
+          —
+        </option>
+
+        {options.map(
+          (option) => (
+            <option
+              key={
+                option.value
+              }
+              value={
+                option.value
+              }
+            >
+              {
+                option.label
+              }
+            </option>
+          )
+        )}
+      </select>
+    </label>
+  );
+}
+========================================
+FILE: ./app/components/cats-admin/CatEditForm.tsx
+========================================
+"use client";
+
+import {
+  useState,
+} from "react";
+
+import type {
+  Cat,
+  EditableCatField,
+} from "@/types/cat";
+
+import {
+  CAT_FELV_OPTIONS,
+  CAT_FIP_OPTIONS,
+  CAT_FIV_OPTIONS,
+  CAT_GENDER_OPTIONS,
+  CAT_LOCATIONS,
+  CAT_STATUS_OPTIONS,
+} from "@/types/cat";
+
+type Props = {
+  cat: Cat;
+};
+
+export default function CatEditForm({
+  cat: initialCat,
+}: Props) {
+  const [cat, setCat] =
+    useState<Cat>(
+      initialCat
+    );
+
+  const [
+    saving,
+    setSaving,
+  ] = useState(false);
+
+  const [
+    message,
+    setMessage,
+  ] = useState("");
+
+  function setField(
+    field: EditableCatField,
+    value: unknown
+  ) {
+    setCat(
+      (current) => ({
+        ...current,
+        [field]:
+          value,
+      })
+    );
+  }
+
+  async function save(
+    event: React.FormEvent
+  ) {
+    event.preventDefault();
+
+    setSaving(true);
+    setMessage("");
+
+    try {
+      const fields = [
+        "name",
+        "gender",
+        "description",
+        "image_url",
+        "status",
+        "tags",
+        "location",
+        "sterilized",
+        "vaccinated",
+        "dewormed",
+        "good_with_children",
+        "weight",
+        "adoption_priority",
+        "is_featured",
+        "good_with_cats",
+        "birth_date",
+        "slug",
+        "fiv_status",
+        "felv_status",
+        "fip_status",
+        "virtual_adoption_url",
+        "microchipped",
+        "arrival_date",
+      ] as EditableCatField[];
+
+      for (
+        const field of fields
+      ) {
+        const response =
+          await fetch(
+            `/api/cats/${cat.id}`,
+            {
+              method:
+                "PATCH",
+              headers: {
+                "Content-Type":
+                  "application/json",
+              },
+              body: JSON.stringify({
+                field,
+                value:
+                  cat[field],
+              }),
+            }
+          );
+
+        if (
+          !response.ok
+        ) {
+          const result =
+            await response.json();
+
+          throw new Error(
+            result.error ??
+              "Błąd zapisu"
+          );
+        }
+      }
+
+      setMessage(
+        "✓ Wszystkie zmiany zapisane."
+      );
+    } catch (error) {
+      console.error(error);
+
+      setMessage(
+        "Nie udało się zapisać zmian."
+      );
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <form
+      className="cat-full-form"
+      onSubmit={save}
+    >
+      <section className="cat-full-form__section">
+        <h2>
+          Podstawowe dane
+        </h2>
+
+        <div className="cat-full-form__grid">
+          <Field
+            label="Imię"
+            value={
+              cat.name ?? ""
+            }
+            onChange={(value) =>
+              setField(
+                "name",
+                value
+              )
+            }
+          />
+
+          <Field
+            label="Slug"
+            value={
+              cat.slug
+            }
+            onChange={(value) =>
+              setField(
+                "slug",
+                value
+              )
+            }
+          />
+
+          <SelectField
+            label="Status"
+            value={
+              cat.status ??
+              ""
+            }
+            options={
+              CAT_STATUS_OPTIONS
+            }
+            onChange={(value) =>
+              setField(
+                "status",
+                value
+              )
+            }
+          />
+
+          <SelectField
+            label="Płeć"
+            value={
+              cat.gender ??
+              ""
+            }
+            options={
+              CAT_GENDER_OPTIONS
+            }
+            onChange={(value) =>
+              setField(
+                "gender",
+                value
+              )
+            }
+          />
+
+          <Field
+            label="Data urodzenia"
+            type="date"
+            value={
+              cat.birth_date ??
+              ""
+            }
+            onChange={(value) =>
+              setField(
+                "birth_date",
+                value ||
+                  null
+              )
+            }
+          />
+
+          <Field
+            label="Data przyjęcia"
+            type="date"
+            value={
+              cat.arrival_date ??
+              ""
+            }
+            onChange={(value) =>
+              setField(
+                "arrival_date",
+                value ||
+                  null
+              )
+            }
+          />
+
+          <SelectField
+            label="Lokalizacja"
+            value={
+              cat.location ??
+              ""
+            }
+            options={
+              CAT_LOCATIONS
+            }
+            onChange={(value) =>
+              setField(
+                "location",
+                value ||
+                  null
+              )
+            }
+          />
+
+          <Field
+            label="Waga"
+            value={
+              cat.weight ??
+              ""
+            }
+            onChange={(value) =>
+              setField(
+                "weight",
+                value ||
+                  null
+              )
+            }
+          />
+        </div>
+      </section>
+
+      <section className="cat-full-form__section">
+        <h2>
+          Zdrowie
+        </h2>
+
+        <div className="cat-full-form__checks">
+          <BooleanField
+            label="Sterylizowany"
+            value={
+              cat.sterilized
+            }
+            onChange={(value) =>
+              setField(
+                "sterilized",
+                value
+              )
+            }
+          />
+
+          <BooleanField
+            label="Szczepiony"
+            value={
+              cat.vaccinated
+            }
+            onChange={(value) =>
+              setField(
+                "vaccinated",
+                value
+              )
+            }
+          />
+
+          <BooleanField
+            label="Odrobaczony"
+            value={
+              cat.dewormed
+            }
+            onChange={(value) =>
+              setField(
+                "dewormed",
+                value
+              )
+            }
+          />
+
+          <BooleanField
+            label="Mikrochip"
+            value={
+              cat.microchipped
+            }
+            onChange={(value) =>
+              setField(
+                "microchipped",
+                value
+              )
+            }
+          />
+
+          <BooleanField
+            label="Dobry dla dzieci"
+            value={
+              cat.good_with_children
+            }
+            onChange={(value) =>
+              setField(
+                "good_with_children",
+                value
+              )
+            }
+          />
+
+          <BooleanField
+            label="Dobry dla kotów"
+            value={
+              cat.good_with_cats
+            }
+            onChange={(value) =>
+              setField(
+                "good_with_cats",
+                value
+              )
+            }
+          />
+        </div>
+
+        <div className="cat-full-form__grid">
+          <SelectField
+            label="FIV"
+            value={
+              cat.fiv_status ??
+              "unknown"
+            }
+            options={
+              CAT_FIV_OPTIONS
+            }
+            onChange={(value) =>
+              setField(
+                "fiv_status",
+                value
+              )
+            }
+          />
+
+          <SelectField
+            label="FeLV"
+            value={
+              cat.felv_status ??
+              "unknown"
+            }
+            options={
+              CAT_FELV_OPTIONS
+            }
+            onChange={(value) =>
+              setField(
+                "felv_status",
+                value
+              )
+            }
+          />
+
+          <SelectField
+            label="FIP"
+            value={
+              cat.fip_status ??
+              "none"
+            }
+            options={
+              CAT_FIP_OPTIONS
+            }
+            onChange={(value) =>
+              setField(
+                "fip_status",
+                value
+              )
+            }
+          />
+        </div>
+      </section>
+
+      <section className="cat-full-form__section">
+        <h2>
+          Adopcja
+        </h2>
+
+        <div className="cat-full-form__grid">
+          <Field
+            label="Priorytet adopcji"
+            type="number"
+            value={String(
+              cat.adoption_priority ??
+                0
+            )}
+            onChange={(value) =>
+              setField(
+                "adoption_priority",
+                Number(value)
+              )
+            }
+          />
+
+          <BooleanField
+            label="Wyróżniony"
+            value={
+              cat.is_featured
+            }
+            onChange={(value) =>
+              setField(
+                "is_featured",
+                value
+              )
+            }
+          />
+
+          <Field
+            label="Link do adopcji wirtualnej"
+            value={
+              cat.virtual_adoption_url ??
+              ""
+            }
+            onChange={(value) =>
+              setField(
+                "virtual_adoption_url",
+                value ||
+                  null
+              )
+            }
+          />
+
+          <Field
+            label="Image URL"
+            value={
+              cat.image_url ??
+              ""
+            }
+            onChange={(value) =>
+              setField(
+                "image_url",
+                value ||
+                  null
+              )
+            }
+          />
+        </div>
+      </section>
+
+      <section className="cat-full-form__section">
+        <h2>
+          Treść
+        </h2>
+
+        <label className="cat-full-form__field">
+          <span>Opis</span>
+
+          <textarea
+            value={
+              cat.description ??
+              ""
+            }
+            onChange={(event) =>
+              setField(
+                "description",
+                event.target
+                  .value
+              )
+            }
+          />
+        </label>
+
+        <label className="cat-full-form__field">
+          <span>
+            Tagi — oddziel przecinkami
+          </span>
+
+          <input
+            value={
+              cat.tags?.join(
+                ", "
+              ) ?? ""
+            }
+            onChange={(event) =>
+              setField(
+                "tags",
+                event.target
+                  .value
+                  .split(",")
+                  .map(
+                    (item) =>
+                      item.trim()
+                  )
+                  .filter(
+                    Boolean
+                  )
+              )
+            }
+          />
+        </label>
+      </section>
+
+      <div className="cat-full-form__footer">
+        <button
+          type="submit"
+          className="button button--primary"
+          disabled={saving}
+        >
+          {saving
+            ? "Zapisywanie..."
+            : "Zapisz wszystkie zmiany"}
+        </button>
+
+        {message && (
+          <span>
+            {message}
+          </span>
+        )}
+      </div>
+    </form>
+  );
+}
+
+function Field({
+  label,
+  value,
+  onChange,
+  type = "text",
+}: {
+  label: string;
+  value: string;
+  onChange: (
+    value: string
+  ) => void;
+  type?: string;
+}) {
+  return (
+    <label className="cat-full-form__field">
+      <span>{label}</span>
+
+      <input
+        type={type}
+        value={value}
+        onChange={(event) =>
+          onChange(
+            event.target.value
+          )
+        }
+      />
+    </label>
+  );
+}
+
+function SelectField({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  options: readonly {
+    value: string;
+    label: string;
+  }[];
+  onChange: (
+    value: string
+  ) => void;
+}) {
+  return (
+    <label className="cat-full-form__field">
+      <span>{label}</span>
+
+      <select
+        value={value}
+        onChange={(event) =>
+          onChange(
+            event.target.value
+          )
+        }
+      >
+        <option value="">
+          —
+        </option>
+
+        {options.map(
+          (option) => (
+            <option
+              key={
+                option.value
+              }
+              value={
+                option.value
+              }
+            >
+              {
+                option.label
+              }
+            </option>
+          )
+        )}
+      </select>
+    </label>
+  );
+}
+
+function BooleanField({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: boolean | null;
+  onChange: (
+    value: boolean
+  ) => void;
+}) {
+  return (
+    <label className="cat-full-form__boolean">
+      <input
+        type="checkbox"
+        checked={
+          Boolean(value)
+        }
+        onChange={(event) =>
+          onChange(
+            event.target.checked
+          )
+        }
+      />
+
+      <span>{label}</span>
+    </label>
+  );
+}
+========================================
+FILE: ./app/components/cats-admin/CatMediaManager.tsx
+========================================
+
+"use client";
+
+import { useState } from "react";
+import { uploadToCloudinary } from "@/lib/cloudinary";
+import type { CatMedia } from "@/types/cat";
+
+type Props = {
+    catId: string;
+    initialMedia: CatMedia[];
+};
+
+export default function CatMediaManager({
+    catId,
+    initialMedia,
+}: Props) {
+    const [media, setMedia] = useState<CatMedia[]>(
+        [...initialMedia].sort(
+            (a, b) =>
+                (a.display_order ?? 0) -
+                (b.display_order ?? 0)
+        )
+    );
+
+    const [uploading, setUploading] = useState(false);
+    const [error, setError] = useState("");
+
+    async function uploadFiles(files: FileList | null) {
+        if (!files?.length) {
+            return;
+        }
+
+        setUploading(true);
+        setError("");
+
+        const filesArray = Array.from(files);
+
+        try {
+            for (let index = 0; index < filesArray.length; index++) {
+                const file = filesArray[index];
+
+                try {
+                    // Upload do Cloudinary przez istniejący,
+                    // działający mechanizm z lib/cloudinary.ts
+                    const uploadResult = await uploadToCloudinary(
+                        file,
+                        catId
+                    );
+
+                    const mediaType = file.type.startsWith("video/")
+                        ? "video"
+                        : "image";
+
+                    // Pierwszy plik jest głównym tylko wtedy,
+                    // gdy kot nie ma jeszcze żadnego medium.
+                    const shouldBePrimary =
+                        media.length === 0 && index === 0;
+
+                    const response = await fetch("/api/cat-media", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            cat_id: catId,
+                            media_type: mediaType,
+                            url: uploadResult.secure_url,
+                            cloudinary_public_id:
+                                uploadResult.public_id,
+                            is_primary: shouldBePrimary,
+                            display_order:
+                                media.length + index,
+                        }),
+                    });
+
+                    const result = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(
+                            result.error ??
+                                "Nie udało się zapisać medium"
+                        );
+                    }
+
+                    setMedia((current) => [
+                        ...current,
+                        result.media,
+                    ]);
+                } catch (fileError) {
+                    console.error(
+                        `Błąd uploadu pliku ${file.name}:`,
+                        fileError
+                    );
+
+                    throw fileError;
+                }
+            }
+        } catch (error) {
+            console.error(error);
+
+            setError(
+                error instanceof Error
+                    ? error.message
+                    : "Błąd uploadu"
+            );
+        } finally {
+            setUploading(false);
+        }
+    }
+
+    async function updateMedia(
+        id: string,
+        payload: Partial<CatMedia>
+    ) {
+        try {
+            const response = await fetch(
+                `/api/cat-media/${id}`,
+                {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(payload),
+                }
+            );
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    result.error ?? "Błąd zapisu"
+                );
+            }
+
+            if (payload.is_primary) {
+                setMedia((current) =>
+                    current.map((item) => ({
+                        ...item,
+                        is_primary: item.id === id,
+                    }))
+                );
+            } else {
+                setMedia((current) =>
+                    current.map((item) =>
+                        item.id === id
+                            ? {
+                                  ...item,
+                                  ...result.media,
+                              }
+                            : item
+                    )
+                );
+            }
+        } catch (error) {
+            console.error(error);
+
+            setError(
+                error instanceof Error
+                    ? error.message
+                    : "Nie udało się zapisać zmian."
+            );
+        }
+    }
+
+    async function removeMedia(item: CatMedia) {
+        const confirmed = window.confirm(
+            "Usunąć to zdjęcie?"
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+            const response = await fetch(
+                `/api/cat-media/${item.id}`,
+                {
+                    method: "DELETE",
+                }
+            );
+
+            if (!response.ok) {
+                const result = await response.json();
+
+                throw new Error(
+                    result.error ?? "Błąd usuwania"
+                );
+            }
+
+            setMedia((current) =>
+                current.filter(
+                    (mediaItem) =>
+                        mediaItem.id !== item.id
+                )
+            );
+        } catch (error) {
+            console.error(error);
+
+            setError(
+                error instanceof Error
+                    ? error.message
+                    : "Nie udało się usunąć zdjęcia."
+            );
+        }
+    }
+
+    async function move(
+        index: number,
+        direction: -1 | 1
+    ) {
+        const target = index + direction;
+
+        if (
+            target < 0 ||
+            target >= media.length
+        ) {
+            return;
+        }
+
+        const next = [...media];
+
+        [next[index], next[target]] = [
+            next[target],
+            next[index],
+        ];
+
+        const normalized = next.map(
+            (item, itemIndex) => ({
+                ...item,
+                display_order: itemIndex,
+            })
+        );
+
+        setMedia(normalized);
+
+        try {
+            await Promise.all(
+                normalized.map((item) =>
+                    fetch(
+                        `/api/cat-media/${item.id}`,
+                        {
+                            method: "PATCH",
+                            headers: {
+                                "Content-Type":
+                                    "application/json",
+                            },
+                            body: JSON.stringify({
+                                display_order:
+                                    item.display_order,
+                            }),
+                        }
+                    )
+                )
+            );
+        } catch (error) {
+            console.error(error);
+
+            setError(
+                "Nie udało się zapisać kolejności."
+            );
+        }
+    }
+
+    return (
+        <div className="media-manager">
+            <div className="media-manager__upload">
+                <label className="media-upload-button">
+                    {uploading
+                        ? "Przesyłanie..."
+                        : "+ Dodaj zdjęcia / wideo"}
+
+                    <input
+                        type="file"
+                        accept="image/*,video/*"
+                        multiple
+                        disabled={uploading}
+                        onChange={(event) =>
+                            uploadFiles(
+                                event.target.files
+                            )
+                        }
+                    />
+                </label>
+
+                <span>
+                    Możesz wybrać kilka plików
+                    jednocześnie.
+                </span>
+            </div>
+
+            {error && (
+                <div className="cats-admin-error">
+                    {error}
+                </div>
+            )}
+
+            <div className="media-manager__grid">
+                {media.map((item, index) => (
+                    <article
+                        key={item.id}
+                        className="media-card"
+                    >
+                        <div className="media-card__preview">
+                            {item.media_type === "video" ? (
+                                <video
+                                    src={item.url}
+                                    controls
+                                />
+                            ) : (
+                                <img
+                                    src={item.url}
+                                    alt={
+                                        item.alt_text ?? ""
+                                    }
+                                />
+                            )}
+
+                            {item.is_primary && (
+                                <span className="media-card__primary">
+                                    Główne
+                                </span>
+                            )}
+                        </div>
+
+                        <div className="media-card__body">
+                            <label>
+                                <span>
+                                    Alt text
+                                </span>
+
+                                <input
+                                    value={
+                                        item.alt_text ?? ""
+                                    }
+                                    onChange={(event) => {
+                                        setMedia(
+                                            (current) =>
+                                                current.map(
+                                                    (
+                                                        mediaItem
+                                                    ) =>
+                                                        mediaItem.id ===
+                                                        item.id
+                                                            ? {
+                                                                  ...mediaItem,
+                                                                  alt_text:
+                                                                      event
+                                                                          .target
+                                                                          .value,
+                                                              }
+                                                            : mediaItem
+                                                )
+                                        );
+                                    }}
+                                    onBlur={() =>
+                                        updateMedia(
+                                            item.id,
+                                            {
+                                                alt_text:
+                                                    item.alt_text,
+                                            }
+                                        )
+                                    }
+                                />
+                            </label>
+
+                            <div className="media-card__actions">
+                                {!item.is_primary && (
+                                    <button
+                                        type="button"
+                                        className="button button--outline-primary"
+                                        onClick={() =>
+                                            updateMedia(
+                                                item.id,
+                                                {
+                                                    is_primary:
+                                                        true,
+                                                }
+                                            )
+                                        }
+                                    >
+                                        Ustaw główne
+                                    </button>
+                                )}
+
+                                <div className="media-order">
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            move(
+                                                index,
+                                                -1
+                                            )
+                                        }
+                                        disabled={
+                                            index === 0
+                                        }
+                                    >
+                                        ←
+                                    </button>
+
+                                    <span>
+                                        {index + 1}
+                                    </span>
+
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            move(
+                                                index,
+                                                1
+                                            )
+                                        }
+                                        disabled={
+                                            index ===
+                                            media.length - 1
+                                        }
+                                    >
+                                        →
+                                    </button>
+                                </div>
+
+                                <button
+                                    type="button"
+                                    className="media-delete"
+                                    onClick={() =>
+                                        removeMedia(
+                                            item
+                                        )
+                                    }
+                                >
+                                    Usuń
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                ))}
+            </div>
+
+            {media.length === 0 && (
+                <div className="media-manager__empty">
+                    Ten kot nie ma jeszcze żadnych
+                    zdjęć.
+                </div>
+            )}
+        </div>
+    );
+}
+========================================
+FILE: ./app/components/cats-admin/CatsDataGrid.tsx
+========================================
+"use client";
+
+import Link from "next/link";
+
+import {
+  useMemo,
+  useState,
+} from "react";
+
+import {
+  Archive,
+  Check,
+  ChevronDown,
+  Image as ImageIcon,
+  Search,
+  Settings2,
+  X,
+} from "lucide-react";
+
+import type {
+  Cat,
+  EditableCatField,
+} from "@/types/cat";
+
+import {
+  CAT_FELV_OPTIONS,
+  CAT_FIP_OPTIONS,
+  CAT_FIV_OPTIONS,
+  CAT_GENDER_OPTIONS,
+  CAT_LOCATIONS,
+  CAT_STATUS_OPTIONS,
+  CAT_TAG_OPTIONS,
+} from "@/types/cat";
+
+import CatsExport from "@/app/components/cats-admin/CatsExport";
+
+type Props = {
+  initialCats: Cat[];
+};
+
+type FilterState = {
+  search: string;
+  status: string;
+  gender: string;
+};
+
+type SaveState =
+  | "idle"
+  | "saving"
+  | "saved"
+  | "error";
+
+type Column = {
+  key:
+    | EditableCatField
+    | "media"
+    | "actions";
+
+  label: string;
+
+  defaultVisible: boolean;
+
+  width: number;
+};
+
+const COLUMNS: Column[] = [
+  {
+    key: "media",
+    label: "Zdjęcie",
+    defaultVisible: true,
+    width: 84,
+  },
+
+  {
+    key: "name",
+    label: "Imię",
+    defaultVisible: true,
+    width: 180,
+  },
+
+  {
+    key: "slug",
+    label: "Slug",
+    defaultVisible: true,
+    width: 180,
+  },
+
+  {
+    key: "status",
+    label: "Status",
+    defaultVisible: true,
+    width: 170,
+  },
+
+  {
+    key: "gender",
+    label: "Płeć",
+    defaultVisible: true,
+    width: 130,
+  },
+
+  {
+    key: "birth_date",
+    label: "Data urodzenia",
+    defaultVisible: true,
+    width: 150,
+  },
+
+  {
+    key: "arrival_date",
+    label: "Data przyjęcia",
+    defaultVisible: true,
+    width: 150,
+  },
+
+  {
+    key: "location",
+    label: "Lokalizacja",
+    defaultVisible: true,
+    width: 160,
+  },
+
+  {
+    key: "weight",
+    label: "Waga",
+    defaultVisible: true,
+    width: 120,
+  },
+
+  {
+    key: "sterilized",
+    label: "Sterylizacja",
+    defaultVisible: true,
+    width: 130,
+  },
+
+  {
+    key: "vaccinated",
+    label: "Szczepienie",
+    defaultVisible: true,
+    width: 130,
+  },
+
+  {
+    key: "dewormed",
+    label: "Odrobaczanie",
+    defaultVisible: true,
+    width: 140,
+  },
+
+  {
+    key: "microchipped",
+    label: "Chip",
+    defaultVisible: true,
+    width: 110,
+  },
+
+  {
+    key: "good_with_children",
+    label: "Dzieci",
+    defaultVisible: true,
+    width: 110,
+  },
+
+  {
+    key: "good_with_cats",
+    label: "Koty",
+    defaultVisible: true,
+    width: 110,
+  },
+
+  {
+    key: "fiv_status",
+    label: "FIV",
+    defaultVisible: true,
+    width: 140,
+  },
+
+  {
+    key: "felv_status",
+    label: "FeLV",
+    defaultVisible: true,
+    width: 140,
+  },
+
+  {
+    key: "fip_status",
+    label: "FIP",
+    defaultVisible: true,
+    width: 140,
+  },
+
+  {
+    key: "adoption_priority",
+    label: "Priorytet",
+    defaultVisible: false,
+    width: 110,
+  },
+
+  {
+    key: "is_featured",
+    label: "Wyróżniony",
+    defaultVisible: false,
+    width: 120,
+  },
+
+  {
+    key: "virtual_adoption_url",
+    label: "Wirtualna adopcja",
+    defaultVisible: false,
+    width: 220,
+  },
+
+  {
+    key: "image_url",
+    label: "Image URL",
+    defaultVisible: false,
+    width: 300,
+  },
+
+  {
+    key: "tags",
+    label: "Tagi",
+    defaultVisible: true,
+    width: 260,
+  },
+
+  {
+    key: "description",
+    label: "Opis",
+    defaultVisible: true,
+    width: 340,
+  },
+
+  {
+    key: "actions",
+    label: "Akcje",
+    defaultVisible: true,
+    width: 220,
+  },
+];
+
+function getInitialVisibleColumns() {
+  return Object.fromEntries(
+    COLUMNS.map(
+      (column) => [
+        column.key,
+        column.defaultVisible,
+      ],
+    ),
+  );
+}
+
+function getPrimaryImage(
+  cat: Cat,
+) {
+  return (
+    cat.media?.find(
+      (media) =>
+        media.is_primary,
+    )?.url ??
+    cat.media?.[0]?.url ??
+    cat.image_url ??
+    "/avatar.jpg"
+  );
+}
+
+function getOptionLabel(
+  options: readonly {
+    value: string;
+    label: string;
+  }[],
+  value: unknown,
+) {
+  return (
+    options.find(
+      (option) =>
+        option.value === value,
+    )?.label ??
+    String(value ?? "—")
+  );
+}
+
+export default function CatsDataGrid({
+  initialCats,
+}: Props) {
+  const [cats, setCats] =
+    useState<Cat[]>(
+      initialCats,
+    );
+
+  const [
+    selectedIds,
+    setSelectedIds,
+  ] = useState<string[]>([]);
+
+  const [
+    filters,
+    setFilters,
+  ] = useState<FilterState>({
+    search: "",
+    status: "",
+    gender: "",
+  });
+
+  const [
+    visibleColumns,
+    setVisibleColumns,
+  ] = useState(
+    getInitialVisibleColumns,
+  );
+
+  const [
+    showColumnSettings,
+    setShowColumnSettings,
+  ] = useState(false);
+
+  const [
+    saveStates,
+    setSaveStates,
+  ] = useState<
+    Record<string, SaveState>
+  >({});
+
+  const [
+    editingCell,
+    setEditingCell,
+  ] = useState<string | null>(
+    null,
+  );
+
+  const filteredCats =
+    useMemo(() => {
+      const search =
+        filters.search
+          .trim()
+          .toLowerCase();
+
+      return cats.filter(
+        (cat) => {
+          if (
+            search &&
+            ![
+              cat.name,
+              cat.slug,
+              cat.description,
+              ...(cat.tags ?? []),
+            ]
+              .filter(Boolean)
+              .some((value) =>
+                String(value)
+                  .toLowerCase()
+                  .includes(search),
+              )
+          ) {
+            return false;
+          }
+
+          if (
+            filters.status &&
+            cat.status !==
+              filters.status
+          ) {
+            return false;
+          }
+
+          if (
+            filters.gender &&
+            cat.gender !==
+              filters.gender
+          ) {
+            return false;
+          }
+
+          return true;
+        },
+      );
+    }, [cats, filters]);
+
+  const filteredIds =
+    filteredCats.map(
+      (cat) => cat.id,
+    );
+
+  const allFilteredSelected =
+    filteredIds.length > 0 &&
+    filteredIds.every(
+      (id) =>
+        selectedIds.includes(id),
+    );
+
+  const someFilteredSelected =
+    filteredIds.some(
+      (id) =>
+        selectedIds.includes(id),
+    );
+
+  function toggleCatSelection(
+    catId: string,
+  ) {
+    setSelectedIds(
+      (current) =>
+        current.includes(catId)
+          ? current.filter(
+              (id) =>
+                id !== catId,
+            )
+          : [
+              ...current,
+              catId,
+            ],
+    );
+  }
+
+  function toggleAllFiltered() {
+    if (allFilteredSelected) {
+      setSelectedIds(
+        (current) =>
+          current.filter(
+            (id) =>
+              !filteredIds.includes(
+                id,
+              ),
+          ),
+      );
+
+      return;
+    }
+
+    setSelectedIds(
+      (current) => [
+        ...new Set([
+          ...current,
+          ...filteredIds,
+        ]),
+      ],
+    );
+  }
+
+  const visible =
+    COLUMNS.filter(
+      (column) =>
+        visibleColumns[
+          column.key
+        ],
+    );
+
+  async function updateField(
+    catId: string,
+    field: EditableCatField,
+    value: unknown,
+  ) {
+    const key =
+      `${catId}:${field}`;
+
+    const previous =
+      cats.find(
+        (cat) =>
+          cat.id === catId,
+      )?.[field];
+
+    setCats(
+      (current) =>
+        current.map(
+          (cat) =>
+            cat.id === catId
+              ? {
+                  ...cat,
+                  [field]:
+                    value,
+                }
+              : cat,
+        ),
+    );
+
+    setSaveStates(
+      (current) => ({
+        ...current,
+        [key]: "saving",
+      }),
+    );
+
+    try {
+      const response =
+        await fetch(
+          `/api/cats/${catId}`,
+          {
+            method: "PATCH",
+
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+
+            body: JSON.stringify({
+              field,
+              value,
+            }),
+          },
+        );
+
+      const result =
+        await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          result.error ??
+            "Błąd zapisu",
+        );
+      }
+
+      if (result.cat) {
+        setCats(
+          (current) =>
+            current.map(
+              (cat) =>
+                cat.id ===
+                catId
+                  ? {
+                      ...cat,
+                      ...result.cat,
+                    }
+                  : cat,
+            ),
+        );
+      }
+
+      setSaveStates(
+        (current) => ({
+          ...current,
+          [key]: "saved",
+        }),
+      );
+
+      window.setTimeout(
+        () => {
+          setSaveStates(
+            (current) => ({
+              ...current,
+              [key]: "idle",
+            }),
+          );
+        },
+        1200,
+      );
+    } catch (error) {
+      console.error(error);
+
+      setCats(
+        (current) =>
+          current.map(
+            (cat) =>
+              cat.id === catId
+                ? {
+                    ...cat,
+                    [field]:
+                      previous,
+                  }
+                : cat,
+          ),
+      );
+
+      setSaveStates(
+        (current) => ({
+          ...current,
+          [key]: "error",
+        }),
+      );
+    }
+
+    setEditingCell(null);
+  }
+
+  async function archiveCat(
+    catId: string,
+  ) {
+    const confirmed =
+      window.confirm(
+        "Czy na pewno chcesz zarchiwizować tego kota?",
+      );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      const response =
+        await fetch(
+          `/api/cats/${catId}`,
+          {
+            method: "DELETE",
+          },
+        );
+
+      if (!response.ok) {
+        const result =
+          await response.json();
+
+        throw new Error(
+          result.error ??
+            "Błąd archiwizacji",
+        );
+      }
+
+      setCats(
+        (current) =>
+          current.filter(
+            (cat) =>
+              cat.id !== catId,
+          ),
+      );
+
+      setSelectedIds(
+        (current) =>
+          current.filter(
+            (id) =>
+              id !== catId,
+          ),
+      );
+    } catch (error) {
+      console.error(error);
+
+      window.alert(
+        "Nie udało się zarchiwizować kota.",
+      );
+    }
+  }
+
+  function renderCell(
+    cat: Cat,
+    column: Column,
+  ) {
+    if (
+      column.key ===
+      "media"
+    ) {
+      return (
+        <div className="cats-grid-photo">
+          <img
+            src={getPrimaryImage(
+              cat,
+            )}
+            alt={
+              cat.name ??
+              "Kot"
+            }
+          />
+        </div>
+      );
+    }
+
+    if (
+      column.key ===
+      "actions"
+    ) {
+      return (
+        <div className="cats-grid-actions">
+          <Link
+            href={`/panel/koty/${cat.id}/zdjecia`}
+            className="cats-grid-action"
+            title="Zdjęcia"
+          >
+            <ImageIcon
+              size={16}
+            />
+
+            Zdjęcia
+          </Link>
+
+          <Link
+            href={`/panel/koty/${cat.id}`}
+            className="cats-grid-action"
+          >
+            Edytuj
+          </Link>
+
+          <button
+            type="button"
+            className="cats-grid-action cats-grid-action--danger"
+            onClick={() =>
+              archiveCat(
+                cat.id,
+              )
+            }
+          >
+            <Archive
+              size={16}
+            />
+          </button>
+        </div>
+      );
+    }
+
+    const field =
+      column.key;
+
+    const value =
+      cat[field];
+
+    const cellKey =
+      `${cat.id}:${field}`;
+
+    const saveState =
+      saveStates[cellKey] ??
+      "idle";
+
+    const isEditing =
+      editingCell ===
+      cellKey;
+
+    return (
+      <EditableCell
+        field={field}
+        value={value}
+        isEditing={
+          isEditing
+        }
+        saveState={
+          saveState
+        }
+        onStartEdit={() =>
+          setEditingCell(
+            cellKey,
+          )
+        }
+        onCancel={() =>
+          setEditingCell(
+            null,
+          )
+        }
+        onSave={(nextValue) =>
+          updateField(
+            cat.id,
+            field,
+            nextValue,
+          )
+        }
+      />
+    );
+  }
+
+  return (
+    <div className="cats-admin">
+      <div className="cats-toolbar">
+        <div className="cats-filters">
+          <label className="cats-search">
+            <Search
+              size={17}
+            />
+
+            <input
+              value={
+                filters.search
+              }
+              onChange={(event) =>
+                setFilters(
+                  (current) => ({
+                    ...current,
+                    search:
+                      event
+                        .target
+                        .value,
+                  }),
+                )
+              }
+              placeholder="Szukaj kota..."
+            />
+          </label>
+
+          <select
+            value={
+              filters.status
+            }
+            onChange={(event) =>
+              setFilters(
+                (current) => ({
+                  ...current,
+                  status:
+                    event
+                      .target
+                      .value,
+                }),
+              )
+            }
+          >
+            <option value="">
+              Wszystkie statusy
+            </option>
+
+            {CAT_STATUS_OPTIONS.map(
+              (option) => (
+                <option
+                  key={
+                    option.value
+                  }
+                  value={
+                    option.value
+                  }
+                >
+                  {option.label}
+                </option>
+              ),
+            )}
+          </select>
+
+          <select
+            value={
+              filters.gender
+            }
+            onChange={(event) =>
+              setFilters(
+                (current) => ({
+                  ...current,
+                  gender:
+                    event
+                      .target
+                      .value,
+                }),
+              )
+            }
+          >
+            <option value="">
+              Wszystkie płcie
+            </option>
+
+            {CAT_GENDER_OPTIONS.map(
+              (option) => (
+                <option
+                  key={
+                    option.value
+                  }
+                  value={
+                    option.value
+                  }
+                >
+                  {option.label}
+                </option>
+              ),
+            )}
+          </select>
+        </div>
+
+        <div className="cats-columns-menu">
+          <button
+            type="button"
+            className="cats-columns-button"
+            onClick={() =>
+              setShowColumnSettings(
+                (value) =>
+                  !value,
+              )
+            }
+          >
+            <Settings2
+              size={17}
+            />
+
+            Kolumny
+
+            <ChevronDown
+              size={15}
+            />
+          </button>
+
+          {showColumnSettings && (
+            <div className="cats-columns-popover">
+              <div className="cats-columns-popover__header">
+                Widoczne kolumny
+              </div>
+
+              {COLUMNS.map(
+                (column) => (
+                  <label
+                    key={
+                      column.key
+                    }
+                    className="cats-column-option"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={Boolean(
+                        visibleColumns[
+                          column.key
+                        ],
+                      )}
+                      disabled={
+                        column.key ===
+                          "media" ||
+                        column.key ===
+                          "name" ||
+                        column.key ===
+                          "actions"
+                      }
+                      onChange={() =>
+                        setVisibleColumns(
+                          (
+                            current,
+                          ) => ({
+                            ...current,
+                            [column.key]:
+                              !current[
+                                column
+                                  .key
+                              ],
+                          }),
+                        )
+                      }
+                    />
+
+                    <span>
+                      {
+                        column.label
+                      }
+                    </span>
+                  </label>
+                ),
+              )}
+            </div>
+          )}
+        </div>
+
+        <CatsExport
+          filteredCatIds={
+            filteredIds
+          }
+          selectedCatIds={
+            selectedIds
+          }
+        />
+      </div>
+
+      <div className="cats-grid-status">
+        <div className="cats-grid-status__left">
+          <label className="cats-select-all">
+            <input
+              type="checkbox"
+              checked={
+                allFilteredSelected
+              }
+              ref={(element) => {
+                if (!element) {
+                  return;
+                }
+
+                element.indeterminate =
+                  someFilteredSelected &&
+                  !allFilteredSelected;
+              }}
+              onChange={
+                toggleAllFiltered
+              }
+              aria-label="Zaznacz wszystkie koty z aktualnego filtrowania"
+            />
+
+            <span>
+              Zaznacz wszystkie
+            </span>
+          </label>
+
+          <span>
+            {filteredCats.length}{" "}
+            {filteredCats.length ===
+            1
+              ? "kot"
+              : "kotów"}
+          </span>
+
+          {selectedIds.length >
+            0 && (
+            <span className="cats-grid-selected">
+              Zaznaczono:{" "}
+              <strong>
+                {
+                  selectedIds.length
+                }
+              </strong>
+            </span>
+          )}
+        </div>
+
+        <span>
+          Kliknij komórkę,
+          aby ją edytować.
+        </span>
+      </div>
+
+      <div className="cats-grid-wrapper">
+        <table className="cats-grid">
+          <colgroup>
+            <col
+              style={{
+                width: 44,
+              }}
+            />
+
+            {visible.map(
+              (column) => (
+                <col
+                  key={
+                    column.key
+                  }
+                  style={{
+                    width:
+                      column.width,
+                  }}
+                />
+              ),
+            )}
+          </colgroup>
+
+          <thead>
+            <tr>
+              <th className="cats-grid-select">
+                <input
+                  type="checkbox"
+                  checked={
+                    allFilteredSelected
+                  }
+                  ref={(element) => {
+                    if (!element) {
+                      return;
+                    }
+
+                    element.indeterminate =
+                      someFilteredSelected &&
+                      !allFilteredSelected;
+                  }}
+                  onChange={
+                    toggleAllFiltered
+                  }
+                  aria-label="Zaznacz wszystkie koty"
+                />
+              </th>
+
+              {visible.map(
+                (column) => (
+                  <th
+                    key={
+                      column.key
+                    }
+                    className={
+                      column.key ===
+                      "name"
+                        ? "cats-grid-sticky-name"
+                        : undefined
+                    }
+                  >
+                    {
+                      column.label
+                    }
+                  </th>
+                ),
+              )}
+            </tr>
+          </thead>
+
+          <tbody>
+            {filteredCats.map(
+              (cat) => (
+                <tr
+                  key={cat.id}
+                  className={
+                    selectedIds.includes(
+                      cat.id,
+                    )
+                      ? "cats-grid-row-selected"
+                      : undefined
+                  }
+                >
+                  <td className="cats-grid-select">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.includes(
+                        cat.id,
+                      )}
+                      onChange={() =>
+                        toggleCatSelection(
+                          cat.id,
+                        )
+                      }
+                      aria-label={`Zaznacz ${cat.name ?? "kota"}`}
+                    />
+                  </td>
+
+                  {visible.map(
+                    (column) => (
+                      <td
+                        key={
+                          column.key
+                        }
+                        className={
+                          column.key ===
+                          "name"
+                            ? "cats-grid-sticky-name"
+                            : undefined
+                        }
+                      >
+                        {renderCell(
+                          cat,
+                          column,
+                        )}
+                      </td>
+                    ),
+                  )}
+                </tr>
+              ),
+            )}
+
+            {filteredCats.length ===
+              0 && (
+              <tr>
+                <td
+                  colSpan={
+                    visible.length +
+                    1
+                  }
+                  className="cats-grid-empty"
+                >
+                  Brak kotów
+                  pasujących do
+                  filtrów.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+type EditableCellProps = {
+  field: EditableCatField;
+  value: unknown;
+  isEditing: boolean;
+  saveState: SaveState;
+  onStartEdit: () => void;
+  onCancel: () => void;
+  onSave: (
+    value: unknown,
+  ) => void;
+};
+
+function EditableCell({
+  field,
+  value,
+  isEditing,
+  saveState,
+  onStartEdit,
+  onCancel,
+  onSave,
+}: EditableCellProps) {
+  if (saveState === "saving") {
+    return (
+      <div className="cats-cell cats-cell--saving">
+        <span className="cats-cell-spinner" />
+
+        zapisywanie...
+      </div>
+    );
+  }
+
+  if (isEditing) {
+    return (
+      <CellEditor
+        field={field}
+        value={value}
+        onCancel={
+          onCancel
+        }
+        onSave={onSave}
+      />
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      className="cats-cell cats-cell--display"
+      onClick={
+        onStartEdit
+      }
+    >
+      <span className="cats-cell-value">
+        {formatCellValue(
+          field,
+          value,
+        )}
+      </span>
+
+      {saveState ===
+        "saved" && (
+        <Check
+          size={14}
+          className="cats-cell-success"
+        />
+      )}
+
+      {saveState ===
+        "error" && (
+        <X
+          size={14}
+          className="cats-cell-error"
+        />
+      )}
+    </button>
+  );
+}
+
+function formatCellValue(
+  field: EditableCatField,
+  value: unknown,
+) {
+  if (
+    value === null ||
+    value === undefined ||
+    value === ""
+  ) {
+    return "—";
+  }
+
+  if (
+    [
+      "sterilized",
+      "vaccinated",
+      "dewormed",
+      "good_with_children",
+      "good_with_cats",
+      "is_featured",
+      "microchipped",
+    ].includes(field)
+  ) {
+    return value ? "✓" : "—";
+  }
+
+  if (field === "gender") {
+    return getOptionLabel(
+      CAT_GENDER_OPTIONS,
+      value,
+    );
+  }
+
+  if (field === "status") {
+    return getOptionLabel(
+      CAT_STATUS_OPTIONS,
+      value,
+    );
+  }
+
+  if (field === "location") {
+    return getOptionLabel(
+      CAT_LOCATIONS,
+      value,
+    );
+  }
+
+  if (field === "fiv_status") {
+    return getOptionLabel(
+      CAT_FIV_OPTIONS,
+      value,
+    );
+  }
+
+  if (field === "felv_status") {
+    return getOptionLabel(
+      CAT_FELV_OPTIONS,
+      value,
+    );
+  }
+
+  if (field === "fip_status") {
+    return getOptionLabel(
+      CAT_FIP_OPTIONS,
+      value,
+    );
+  }
+
+  if (field === "tags") {
+    if (
+      !Array.isArray(value) ||
+      value.length === 0
+    ) {
+      return "—";
+    }
+
+    return value.join(
+      ", ",
+    );
+  }
+
+  if (
+    field === "description"
+  ) {
+    return String(value)
+      .replace(/\s+/g, " ")
+      .slice(0, 80);
+  }
+
+  return String(value);
+}
+
+type CellEditorProps = {
+  field: EditableCatField;
+  value: unknown;
+  onCancel: () => void;
+  onSave: (
+    value: unknown,
+  ) => void;
+};
+
+function CellEditor({
+  field,
+  value,
+  onCancel,
+  onSave,
+}: CellEditorProps) {
+  const [
+    draft,
+    setDraft,
+  ] = useState(
+    field === "tags"
+      ? Array.isArray(value)
+        ? value
+        : []
+      : value ?? "",
+  );
+
+  const submit = () => {
+    if (
+      field ===
+      "adoption_priority"
+    ) {
+      const raw =
+        String(draft).trim();
+
+      onSave(
+        raw === ""
+          ? null
+          : Number(raw),
+      );
+
+      return;
+    }
+
+    if (
+      [
+        "sterilized",
+        "vaccinated",
+        "dewormed",
+        "good_with_children",
+        "good_with_cats",
+        "is_featured",
+        "microchipped",
+      ].includes(field)
+    ) {
+      onSave(
+        Boolean(draft),
+      );
+
+      return;
+    }
+
+    onSave(
+      draft === ""
+        ? null
+        : draft,
+    );
+  };
+
+  if (
+    [
+      "gender",
+      "status",
+      "location",
+      "fiv_status",
+      "felv_status",
+      "fip_status",
+    ].includes(field)
+  ) {
+    let options:
+      readonly {
+        value: string;
+        label: string;
+      }[] = [];
+
+    if (field === "gender") {
+      options =
+        CAT_GENDER_OPTIONS;
+    }
+
+    if (field === "status") {
+      options =
+        CAT_STATUS_OPTIONS;
+    }
+
+    if (field === "location") {
+      options =
+        CAT_LOCATIONS;
+    }
+
+    if (field === "fiv_status") {
+      options =
+        CAT_FIV_OPTIONS;
+    }
+
+    if (field === "felv_status") {
+      options =
+        CAT_FELV_OPTIONS;
+    }
+
+    if (field === "fip_status") {
+      options =
+        CAT_FIP_OPTIONS;
+    }
+
+    return (
+      <select
+        autoFocus
+        className="cats-cell-editor"
+        value={String(
+          draft ?? "",
+        )}
+        onChange={(event) =>
+          onSave(
+            event.target.value ||
+              null,
+          )
+        }
+        onBlur={
+          onCancel
+        }
+      >
+        <option value="">
+          —
+        </option>
+
+        {options.map(
+          (option) => (
+            <option
+              key={
+                option.value
+              }
+              value={
+                option.value
+              }
+            >
+              {
+                option.label
+              }
+            </option>
+          ),
+        )}
+      </select>
+    );
+  }
+
+  if (
+    [
+      "sterilized",
+      "vaccinated",
+      "dewormed",
+      "good_with_children",
+      "good_with_cats",
+      "is_featured",
+      "microchipped",
+    ].includes(field)
+  ) {
+    const checked =
+      Boolean(value);
+
+    return (
+      <button
+        type="button"
+        autoFocus
+        className={`cats-toggle ${
+          checked
+            ? "is-active"
+            : ""
+        }`}
+        onClick={() =>
+          onSave(
+            !checked,
+          )
+        }
+        onBlur={
+          onCancel
+        }
+      >
+        {checked
+          ? "✓ Tak"
+          : "— Nie"}
+      </button>
+    );
+  }
+
+  /*
+   * TAGI
+   *
+   * Lista jest pobierana z
+   * CAT_TAG_OPTIONS, czyli z
+   * jednego źródła prawdy.
+   *
+   * Użytkownik nie wpisuje już
+   * tagów ręcznie.
+   */
+  if (field === "tags") {
+    const selectedTags =
+      Array.isArray(draft)
+        ? (draft as string[])
+        : [];
+
+    function toggleTag(
+      tag: string,
+    ) {
+      const nextTags =
+        selectedTags.includes(
+          tag,
+        )
+          ? selectedTags.filter(
+              (item) =>
+                item !== tag,
+            )
+          : [
+              ...selectedTags,
+              tag,
+            ];
+
+      setDraft(nextTags);
+    }
+
+    return (
+      <div
+        className="cats-tags-editor"
+        onBlur={(event) => {
+          /*
+           * Nie zamykamy edytora,
+           * kiedy użytkownik przechodzi
+           * pomiędzy checkboxami.
+           */
+          if (
+            event.currentTarget.contains(
+              event.relatedTarget as Node,
+            )
+          ) {
+            return;
+          }
+
+          onSave(
+            selectedTags,
+          );
+        }}
+      >
+        <div className="cats-tags-editor__selected">
+          {selectedTags.length ===
+          0 ? (
+            <span className="cats-tags-editor__empty">
+              Brak tagów
+            </span>
+          ) : (
+            selectedTags.map(
+              (tag) => (
+                <button
+                  key={tag}
+                  type="button"
+                  className="cats-tag"
+                  onMouseDown={(
+                    event,
+                  ) => {
+                    event.preventDefault();
+                  }}
+                  onClick={() =>
+                    toggleTag(
+                      tag,
+                    )
+                  }
+                  title="Usuń tag"
+                >
+                  {tag}
+
+                  <X
+                    size={12}
+                  />
+                </button>
+              ),
+            )
+          )}
+        </div>
+
+        <div className="cats-tags-editor__options">
+          {CAT_TAG_OPTIONS.map(
+            (tag) => {
+              const checked =
+                selectedTags.includes(
+                  tag,
+                );
+
+              return (
+                <label
+                  key={tag}
+                  className={`cats-tag-option ${
+                    checked
+                      ? "is-selected"
+                      : ""
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={
+                      checked
+                    }
+                    onChange={() =>
+                      toggleTag(
+                        tag,
+                      )
+                    }
+                  />
+
+                  <span>
+                    {tag}
+                  </span>
+                </label>
+              );
+            },
+          )}
+        </div>
+
+        <button
+          type="button"
+          className="cats-tags-editor__done"
+          onMouseDown={(
+            event,
+          ) => {
+            event.preventDefault();
+          }}
+          onClick={() =>
+            onSave(
+              selectedTags,
+            )
+          }
+        >
+          Gotowe
+        </button>
+      </div>
+    );
+  }
+
+  if (
+    field ===
+    "description"
+  ) {
+    return (
+      <div className="cats-cell-editor-wrap">
+        <textarea
+          autoFocus
+          className="cats-cell-editor cats-cell-editor--textarea"
+          value={String(
+            draft,
+          )}
+          onChange={(event) =>
+            setDraft(
+              event.target
+                .value,
+            )
+          }
+          onKeyDown={(
+            event,
+          ) => {
+            if (
+              event.key ===
+              "Escape"
+            ) {
+              onCancel();
+            }
+
+            if (
+              event.key ===
+                "Enter" &&
+              (event.metaKey ||
+                event.ctrlKey)
+            ) {
+              event.preventDefault();
+
+              submit();
+            }
+          }}
+          onBlur={
+            submit
+          }
+        />
+      </div>
+    );
+  }
+
+  return (
+    <input
+      autoFocus
+      type={
+        field ===
+        "adoption_priority"
+          ? "number"
+          : field ===
+                "birth_date" ||
+              field ===
+                "arrival_date"
+            ? "date"
+            : "text"
+      }
+      className="cats-cell-editor"
+      value={String(
+        draft ?? "",
+      )}
+      onChange={(event) =>
+        setDraft(
+          event.target.value,
+        )
+      }
+      onKeyDown={(event) => {
+        if (
+          event.key ===
+          "Escape"
+        ) {
+          onCancel();
+        }
+
+        if (
+          event.key ===
+          "Enter"
+        ) {
+          event.preventDefault();
+
+          submit();
+        }
+      }}
+      onBlur={submit}
+    />
+  );
+}
+========================================
+FILE: ./app/components/cats-admin/CatsExport.tsx
+========================================
+"use client";
+
+import { useMemo, useState } from "react";
+import {
+  Download,
+  FileText,
+  Printer,
+} from "lucide-react";
+
+type ExportMode =
+  | "full"
+  | "admin"
+  | "names";
+
+type ExportScope =
+  | "all"
+  | "selected";
+
+type GroupMode =
+  | "none"
+  | "location";
+
+type Props = {
+  filteredCatIds: string[];
+  selectedCatIds: string[];
+};
+
+export default function CatsExport({
+  filteredCatIds,
+  selectedCatIds,
+}: Props) {
+  const [open, setOpen] =
+    useState(false);
+
+  const [scope, setScope] =
+    useState<ExportScope>("selected");
+
+  const [mode, setMode] =
+    useState<ExportMode>("admin");
+
+  const [groupBy, setGroupBy] =
+    useState<GroupMode>("location");
+
+  const [loading, setLoading] =
+    useState(false);
+
+  const selectedCount =
+    selectedCatIds.length;
+
+  const exportCount =
+    scope === "selected"
+      ? selectedCount
+      : filteredCatIds.length;
+
+  const canExport =
+    exportCount > 0;
+
+  const ids = useMemo(
+    () =>
+      scope === "selected"
+        ? selectedCatIds
+        : filteredCatIds,
+    [
+      scope,
+      selectedCatIds,
+      filteredCatIds,
+    ],
+  );
+
+  async function downloadTxt() {
+    setLoading(true);
+
+    try {
+      const response =
+        await fetch(
+          "/api/cats/export",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+
+            body: JSON.stringify({
+              scope,
+              mode,
+              groupBy,
+              format: "txt",
+              ids,
+            }),
+          },
+        );
+
+      if (!response.ok) {
+        throw new Error(
+          "Nie udało się wygenerować eksportu.",
+        );
+      }
+
+      const blob =
+        await response.blob();
+
+      const url =
+        URL.createObjectURL(blob);
+
+      const link =
+        document.createElement("a");
+
+      link.href = url;
+      link.download =
+        "kocia-oaza-koty.txt";
+
+      document.body.appendChild(
+        link,
+      );
+
+      link.click();
+
+      link.remove();
+
+      URL.revokeObjectURL(url);
+
+      setOpen(false);
+    } catch (error) {
+      console.error(error);
+
+      alert(
+        "Nie udało się wygenerować eksportu.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function printPdf() {
+    if (!canExport) {
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response =
+        await fetch(
+          "/api/cats/export",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+
+            body: JSON.stringify({
+              scope,
+              mode,
+              groupBy,
+              format: "pdf",
+              ids,
+            }),
+          },
+        );
+
+      if (!response.ok) {
+        throw new Error(
+          "Nie udało się przygotować PDF.",
+        );
+      }
+
+      const data =
+        await response.json();
+
+      /*
+       * localStorage jest współdzielony
+       * pomiędzy kartami tego samego originu.
+       *
+       * sessionStorage może być osobne dla
+       * nowo otwartej karty, przez co strona
+       * eksportu dostawała null.
+       */
+      localStorage.setItem(
+        "cats-export",
+        JSON.stringify(data),
+      );
+
+      /*
+       * Otwieramy stronę eksportu dopiero
+       * po zapisaniu danych.
+       */
+      window.open(
+        "/panel/koty/eksport",
+        "_blank",
+      );
+
+      setOpen(false);
+    } catch (error) {
+      console.error(error);
+
+      alert(
+        "Nie udało się przygotować PDF.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="cats-export">
+      <button
+        type="button"
+        className="button button--primary"
+        onClick={() =>
+          setOpen(
+            (value) => !value,
+          )
+        }
+      >
+        <Download size={17} />
+
+        Eksportuj
+
+        {selectedCount > 0 && (
+          <span>
+            ({selectedCount})
+          </span>
+        )}
+      </button>
+
+      {open && (
+        <div className="cats-export__panel">
+          {/* =====================================================
+              ZAKRES
+              ===================================================== */}
+
+          <div className="cats-export__section">
+            <strong>
+              Zakres
+            </strong>
+
+            <label>
+              <input
+                type="radio"
+                checked={
+                  scope === "all"
+                }
+                onChange={() =>
+                  setScope("all")
+                }
+              />
+
+              Pełna lista z filtrowania
+            </label>
+
+            <label>
+              <input
+                type="radio"
+                checked={
+                  scope ===
+                  "selected"
+                }
+                onChange={() =>
+                  setScope(
+                    "selected",
+                  )
+                }
+                disabled={
+                  selectedCount ===
+                  0
+                }
+              />
+
+              Zaznaczone
+
+              {selectedCount >
+                0 &&
+                ` (${selectedCount})`}
+            </label>
+          </div>
+
+          {/* =====================================================
+              RODZAJ LISTY
+              ===================================================== */}
+
+          <div className="cats-export__section">
+            <strong>
+              Rodzaj listy
+            </strong>
+
+            <label>
+              <input
+                type="radio"
+                checked={
+                  mode === "full"
+                }
+                onChange={() =>
+                  setMode("full")
+                }
+              />
+
+              Pełna
+            </label>
+
+            <label>
+              <input
+                type="radio"
+                checked={
+                  mode === "admin"
+                }
+                onChange={() =>
+                  setMode("admin")
+                }
+              />
+
+              Administracyjna
+            </label>
+
+            <label>
+              <input
+                type="radio"
+                checked={
+                  mode === "names"
+                }
+                onChange={() =>
+                  setMode("names")
+                }
+              />
+
+              Uproszczona —
+              tylko imiona
+            </label>
+          </div>
+
+          {/* =====================================================
+              GRUPOWANIE
+              ===================================================== */}
+
+          <div className="cats-export__section">
+            <strong>
+              Grupowanie
+            </strong>
+
+            <label>
+              <input
+                type="radio"
+                checked={
+                  groupBy ===
+                  "none"
+                }
+                onChange={() =>
+                  setGroupBy("none")
+                }
+              />
+
+              Bez grupowania
+            </label>
+
+            <label>
+              <input
+                type="radio"
+                checked={
+                  groupBy ===
+                  "location"
+                }
+                onChange={() =>
+                  setGroupBy(
+                    "location",
+                  )
+                }
+              />
+
+              Według lokalizacji
+            </label>
+          </div>
+
+          {/* =====================================================
+              LICZNIK
+              ===================================================== */}
+
+          <div className="cats-export__count">
+            Do eksportu:{" "}
+            <strong>
+              {exportCount}
+            </strong>{" "}
+            {exportCount === 1
+              ? "kot"
+              : "kotów"}
+          </div>
+
+          {/* =====================================================
+              AKCJE
+              ===================================================== */}
+
+          <div className="cats-export__actions">
+            <button
+              type="button"
+              className="button button--outline-primary"
+              disabled={
+                !canExport ||
+                loading
+              }
+              onClick={
+                downloadTxt
+              }
+            >
+              <FileText size={16} />
+
+              {loading
+                ? "Przetwarzanie..."
+                : "TXT"}
+            </button>
+
+            <button
+              type="button"
+              className="button button--primary"
+              disabled={
+                !canExport ||
+                loading
+              }
+              onClick={
+                printPdf
+              }
+            >
+              <Printer size={16} />
+
+              {loading
+                ? "Przetwarzanie..."
+                : "PDF"}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -10930,6 +17518,2066 @@ FILE: ./app/style/bazarek/dashboard-bazarek.css
   .dashboard-page__header {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+========================================
+FILE: ./app/style/dashboard/cats.css
+========================================
+/* =========================================================
+   CATS ADMIN
+   Full width / single vertical scroll / horizontal table scroll
+   ========================================================= */
+
+.cats-admin-page {
+    width: 100%;
+    min-height: 100vh;
+    padding: 32px 0 60px;
+}
+
+.cats-admin-shell {
+    width: 100%;
+    padding: 0 24px;
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.cats-admin-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.cats-admin-eyebrow {
+    margin-bottom: 8px;
+    color: var(--color-primary, #3db7ad);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.cats-admin-header h1 {
+    margin: 0;
+    font-size: clamp(32px, 4vw, 48px);
+    line-height: 1;
+}
+
+.cats-admin-header p {
+    margin: 10px 0 0;
+    opacity: 0.65;
+}
+
+.cats-admin-header__actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* =========================================================
+   ADMIN AREA
+   ========================================================= */
+
+.cats-admin {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    /*
+   * Ważne:
+   * żadnego max-height tutaj.
+   * Strona ma mieć jeden pionowy scrollbar.
+   */
+    width: 100%;
+    min-width: 0;
+}
+
+/* =========================================================
+   TOOLBAR
+   ========================================================= */
+
+.cats-toolbar {
+    position: sticky;
+    top: 72px;
+    z-index: 40;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    width: 100%;
+    min-width: 0;
+
+    padding: 10px;
+
+    border: 1px solid var(--color-border, #e7e7e7);
+    border-radius: 14px;
+
+    background: rgba(255, 255, 255, 0.96);
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    box-shadow:
+        0 4px 18px rgba(0, 0, 0, 0.04);
+}
+
+.cats-filters {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+
+    min-width: 0;
+}
+
+.cats-search {
+    width: min(360px, 35vw);
+    min-width: 240px;
+
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    padding: 0 13px;
+
+    border: 1px solid #ddd;
+    border-radius: 9px;
+
+    background: #fff;
+}
+
+.cats-search svg {
+    flex: 0 0 auto;
+    opacity: 0.55;
+}
+
+.cats-search input {
+    width: 100%;
+    min-width: 0;
+
+    border: 0;
+    outline: 0;
+
+    background: transparent;
+}
+
+.cats-filters select,
+.cats-columns-button {
+    height: 40px;
+
+    padding: 0 12px;
+
+    border: 1px solid #ddd;
+    border-radius: 9px;
+
+    background: #fff;
+    color: inherit;
+
+    cursor: pointer;
+}
+
+.cats-columns-menu {
+    position: relative;
+    flex: 0 0 auto;
+}
+
+.cats-columns-button {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.cats-columns-popover {
+    position: absolute;
+    z-index: 100;
+
+    top: calc(100% + 8px);
+    right: 0;
+
+    width: 260px;
+    max-height: 520px;
+
+    overflow-y: auto;
+
+    padding: 12px;
+
+    border: 1px solid #ddd;
+    border-radius: 14px;
+
+    background: #fff;
+
+    box-shadow:
+        0 18px 50px rgba(0, 0, 0, 0.12);
+}
+
+.cats-columns-popover__header {
+    padding: 6px 8px 10px;
+
+    font-size: 12px;
+    font-weight: 800;
+
+    opacity: 0.55;
+
+    text-transform: uppercase;
+}
+
+.cats-column-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 8px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+}
+
+.cats-column-option:hover {
+    background: #f6f6f6;
+}
+
+.cats-column-option input {
+    accent-color: #3db7ad;
+}
+
+/* =========================================================
+   TABLE STATUS
+   ========================================================= */
+
+.cats-grid-status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    padding: 2px 4px;
+
+    font-size: 13px;
+    opacity: 0.58;
+}
+
+.cats-grid-status__left {
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+
+    min-width: 0;
+}
+
+.cats-select-all {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 7px;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+}
+
+.cats-select-all input {
+    width: 16px;
+    height: 16px;
+
+    margin: 0;
+
+    cursor: pointer;
+
+    accent-color: var(--color-primary, #3db7ad);
+}
+
+.cats-grid-selected {
+    padding: 4px 9px;
+
+    border-radius: 999px;
+
+    background: rgba(61, 183, 173, 0.12);
+
+    color: #187b73;
+
+    opacity: 1;
+}
+
+/* =========================================================
+   TABLE WRAPPER
+   ========================================================= */
+
+.cats-grid-wrapper {
+    /*
+   * TYLKO poziomy scroll.
+   *
+   * Usuwamy:
+   * max-height
+   * overflow: auto
+   *
+   * dzięki temu nie powstaje drugi pionowy scrollbar.
+   */
+    width: 100%;
+    min-width: 0;
+
+    overflow-x: auto;
+    overflow-y: visible;
+
+    border: 1px solid var(--color-border, #e7e7e7);
+    border-radius: 16px;
+
+    background: #fff;
+
+    box-shadow:
+        0 8px 30px rgba(0, 0, 0, 0.04);
+
+    /*
+   * Lepszy scrollbar poziomy.
+   */
+    scrollbar-width: thin;
+}
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.cats-grid {
+    width: max-content;
+    min-width: 100%;
+
+    border-collapse: separate;
+    border-spacing: 0;
+
+    table-layout: fixed;
+}
+
+.cats-grid th {
+    /*
+   * Sticky tylko w pionie.
+   * Przy poziomym scrollu cały wrapper przesuwa tabelę.
+   */
+    position: sticky;
+    top: 0;
+
+    z-index: 20;
+
+    height: 44px;
+
+    padding: 0 10px;
+
+    border-right: 1px solid #e8e8e8;
+    border-bottom: 1px solid #ddd;
+
+    background: #f7f7f7;
+
+    color: #555;
+
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+
+    text-align: left;
+    text-transform: uppercase;
+
+    white-space: nowrap;
+}
+
+.cats-grid td {
+    height: 54px;
+
+    padding: 0;
+
+    border-right: 1px solid #ededed;
+    border-bottom: 1px solid #ededed;
+
+    background: #fff;
+
+    vertical-align: middle;
+}
+
+.cats-grid tbody tr:hover td {
+    background: #fbfffe;
+}
+
+/* =========================================================
+   STICKY CHECKBOX + NAME COLUMN
+   ========================================================= */
+
+.cats-grid-select {
+    width: 44px;
+    min-width: 44px;
+    max-width: 44px;
+
+    padding: 0 !important;
+
+    text-align: center;
+    vertical-align: middle;
+
+    position: sticky !important;
+    left: 0;
+
+    z-index: 25;
+
+    background: #fff;
+
+    box-shadow:
+        2px 0 5px rgba(0, 0, 0, 0.025);
+}
+
+.cats-grid thead .cats-grid-select {
+    z-index: 35;
+
+    background: #f7f7f7;
+}
+
+.cats-grid-select input {
+    width: 16px;
+    height: 16px;
+
+    margin: 0;
+
+    cursor: pointer;
+
+    accent-color: var(--color-primary, #3db7ad);
+}
+
+/* =========================================================
+   STICKY NAME
+   ========================================================= */
+
+.cats-grid-sticky-name {
+    position: sticky !important;
+
+    left: 44px;
+
+    z-index: 20;
+
+    background: #fff;
+
+    box-shadow:
+        5px 0 10px rgba(0, 0, 0, 0.035);
+}
+
+.cats-grid th.cats-grid-sticky-name {
+    z-index: 30;
+
+    background: #f7f7f7;
+}
+
+/* =========================================================
+   SELECTED ROW
+   ========================================================= */
+
+.cats-grid-row-selected td {
+    background: rgba(61, 183, 173, 0.055);
+}
+
+.cats-grid-row-selected .cats-grid-sticky-name {
+    background: #f3fcfa;
+}
+
+.cats-grid-row-selected .cats-grid-select {
+    background: #f3fcfa;
+}
+
+.cats-grid tbody tr:hover .cats-grid-select {
+    background: #fbfffe;
+}
+
+.cats-grid tbody tr:hover .cats-grid-sticky-name {
+    background: #fbfffe;
+}
+
+/* =========================================================
+   PHOTO
+   ========================================================= */
+
+.cats-grid-photo {
+    width: 54px;
+    height: 54px;
+
+    padding: 7px;
+}
+
+.cats-grid-photo img {
+    display: block;
+
+    width: 40px;
+    height: 40px;
+
+    border-radius: 8px;
+
+    object-fit: cover;
+
+    background: #f2f2f2;
+}
+
+/* =========================================================
+   CELL
+   ========================================================= */
+
+.cats-cell {
+    width: 100%;
+    min-height: 53px;
+
+    border: 0;
+
+    background: transparent;
+
+    text-align: left;
+}
+
+.cats-cell--display {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 0 10px;
+
+    cursor: text;
+}
+
+.cats-cell--display:hover {
+    outline: 2px solid rgba(61, 183, 173, 0.25);
+    outline-offset: -2px;
+
+    background: rgba(61, 183, 173, 0.035);
+}
+
+.cats-cell-value {
+    display: block;
+
+    max-width: 100%;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+.cats-cell-success {
+    flex: 0 0 auto;
+    color: #19966c;
+}
+
+.cats-cell-error {
+    flex: 0 0 auto;
+    color: #d9534f;
+}
+
+.cats-cell--saving {
+    display: flex;
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 0 10px;
+
+    color: #777;
+
+    font-size: 12px;
+}
+
+.cats-cell-spinner {
+    width: 13px;
+    height: 13px;
+
+    border: 2px solid #ddd;
+    border-top-color: #3db7ad;
+
+    border-radius: 50%;
+
+    animation: cats-spin 0.7s linear infinite;
+}
+
+@keyframes cats-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* =========================================================
+   EDITOR
+   ========================================================= */
+
+.cats-cell-editor {
+    width: 100%;
+    height: 42px;
+
+    margin: 5px 0;
+
+    padding: 0 8px;
+
+    border: 2px solid #3db7ad;
+    border-radius: 7px;
+
+    outline: none;
+
+    background: #fff;
+    color: inherit;
+}
+
+.cats-cell-editor--textarea {
+    min-height: 90px;
+
+    padding: 8px;
+
+    resize: vertical;
+}
+
+.cats-cell-editor-wrap {
+    padding: 6px;
+}
+
+.cats-toggle {
+    width: calc(100% - 12px);
+
+    margin: 6px;
+
+    height: 40px;
+
+    border: 1px solid #ddd;
+    border-radius: 8px;
+
+    background: #f7f7f7;
+
+    cursor: pointer;
+}
+
+.cats-toggle.is-active {
+    border-color: #3db7ad;
+
+    background: rgba(61, 183, 173, 0.12);
+
+    color: #187b73;
+
+    font-weight: 700;
+}
+
+/* =========================================================
+   ACTIONS
+   ========================================================= */
+
+.cats-grid-actions {
+    display: flex;
+    align-items: center;
+
+    gap: 5px;
+
+    padding: 0 8px;
+}
+
+.cats-grid-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 5px;
+
+    min-height: 32px;
+
+    padding: 0 9px;
+
+    border: 1px solid #ddd;
+    border-radius: 7px;
+
+    background: #fff;
+
+    color: inherit;
+
+    font-size: 12px;
+
+    text-decoration: none;
+
+    cursor: pointer;
+}
+
+.cats-grid-action:hover {
+    border-color: #3db7ad;
+}
+
+.cats-grid-action--danger {
+    color: #b54848;
+}
+
+/* =========================================================
+   EMPTY / ERROR
+   ========================================================= */
+
+.cats-grid-empty {
+    height: 160px !important;
+
+    padding: 30px !important;
+
+    color: #777;
+
+    text-align: center !important;
+}
+
+.cats-admin-error {
+    padding: 20px;
+
+    border: 1px solid #f0c4c4;
+    border-radius: 14px;
+
+    background: #fff5f5;
+
+    color: #a33;
+}
+
+/* =========================================================
+   EDIT PAGE
+   ========================================================= */
+
+.cats-edit-page {
+    width: 100%;
+    min-height: 100vh;
+
+    padding: 32px 24px 80px;
+}
+
+.cats-edit-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 24px;
+
+    margin-bottom: 28px;
+}
+
+.cats-edit-header h1 {
+    margin: 0;
+
+    font-size: clamp(32px, 4vw, 48px);
+    line-height: 1;
+}
+
+.cats-edit-header p {
+    margin: 10px 0 0;
+
+    opacity: 0.65;
+}
+
+.cats-back-link {
+    display: inline-block;
+
+    margin-bottom: 12px;
+
+    color: inherit;
+
+    font-size: 14px;
+
+    opacity: 0.65;
+
+    text-decoration: none;
+}
+
+.cats-back-link:hover {
+    opacity: 1;
+}
+
+/* =========================================================
+   FULL CAT FORM
+   ========================================================= */
+
+.cat-full-form {
+    display: flex;
+    flex-direction: column;
+
+    gap: 20px;
+
+    max-width: 1100px;
+}
+
+.cat-full-form__section {
+    padding: 24px;
+
+    border: 1px solid var(--color-border, #e7e7e7);
+    border-radius: 20px;
+
+    background: #fff;
+}
+
+.cat-full-form__section h2 {
+    margin: 0 0 20px;
+
+    font-size: 20px;
+}
+
+.cat-full-form__grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 16px;
+}
+
+.cat-full-form__field {
+    display: flex;
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+.cat-full-form__field>span {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.cat-full-form__field input,
+.cat-full-form__field select,
+.cat-full-form__field textarea {
+    width: 100%;
+
+    min-height: 44px;
+
+    padding: 10px 12px;
+
+    border: 1px solid #ddd;
+    border-radius: 10px;
+
+    outline: none;
+
+    background: #fff;
+    color: inherit;
+}
+
+.cat-full-form__field textarea {
+    min-height: 180px;
+
+    resize: vertical;
+}
+
+.cat-full-form__field input:focus,
+.cat-full-form__field select:focus,
+.cat-full-form__field textarea:focus {
+    border-color: #3db7ad;
+
+    box-shadow:
+        0 0 0 3px rgba(61, 183, 173, 0.12);
+}
+
+.cat-full-form__checks {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 10px;
+
+    margin-bottom: 20px;
+}
+
+.cat-full-form__boolean {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    min-height: 48px;
+
+    padding: 0 14px;
+
+    border: 1px solid #e2e2e2;
+    border-radius: 10px;
+
+    cursor: pointer;
+}
+
+.cat-full-form__boolean input {
+    width: 18px;
+    height: 18px;
+
+    accent-color: #3db7ad;
+}
+
+.cat-full-form__footer {
+    display: flex;
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 10px 0;
+}
+
+/* =========================================================
+   MEDIA MANAGER
+   ========================================================= */
+
+.media-manager {
+    display: flex;
+    flex-direction: column;
+
+    gap: 20px;
+}
+
+.media-manager__upload {
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+
+    flex-wrap: wrap;
+
+    padding: 20px;
+
+    border: 1px dashed #ccc;
+    border-radius: 18px;
+
+    background: #fff;
+}
+
+.media-upload-button {
+    position: relative;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 44px;
+
+    padding: 0 16px;
+
+    border-radius: 10px;
+
+    background: #3db7ad;
+
+    color: #fff;
+
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.media-upload-button input {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    opacity: 0;
+
+    cursor: pointer;
+}
+
+.media-manager__upload>span {
+    color: #777;
+
+    font-size: 13px;
+}
+
+.media-manager__grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 18px;
+}
+
+.media-card {
+    overflow: hidden;
+
+    border: 1px solid #e2e2e2;
+    border-radius: 18px;
+
+    background: #fff;
+}
+
+.media-card__preview {
+    position: relative;
+
+    aspect-ratio: 1;
+
+    background: #f2f2f2;
+}
+
+.media-card__preview img,
+.media-card__preview video {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+.media-card__primary {
+    position: absolute;
+
+    top: 10px;
+    left: 10px;
+
+    padding: 6px 9px;
+
+    border-radius: 999px;
+
+    background: #3db7ad;
+
+    color: #fff;
+
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.media-card__body {
+    display: flex;
+    flex-direction: column;
+
+    gap: 12px;
+
+    padding: 14px;
+}
+
+.media-card__body label {
+    display: flex;
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+.media-card__body label span {
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.media-card__body input {
+    height: 38px;
+
+    padding: 0 10px;
+
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.media-card__actions {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 7px;
+}
+
+.media-order {
+    display: flex;
+    align-items: center;
+
+    border: 1px solid #ddd;
+    border-radius: 8px;
+
+    overflow: hidden;
+}
+
+.media-order button,
+.media-order span {
+    width: 32px;
+    height: 32px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 0;
+
+    background: #fff;
+}
+
+.media-order button {
+    cursor: pointer;
+}
+
+.media-order button:disabled {
+    opacity: 0.3;
+
+    cursor: default;
+}
+
+.media-delete {
+    height: 32px;
+
+    padding: 0 10px;
+
+    border: 1px solid #edcaca;
+    border-radius: 8px;
+
+    background: #fff7f7;
+
+    color: #a33;
+
+    cursor: pointer;
+}
+
+.media-manager__empty {
+    padding: 60px 20px;
+
+    border: 1px dashed #ddd;
+    border-radius: 18px;
+
+    background: #fff;
+
+    color: #777;
+
+    text-align: center;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+    .cats-admin-shell {
+        padding: 0 14px;
+    }
+
+    .cats-admin-header,
+    .cats-edit-header {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+    .cats-toolbar {
+        align-items: stretch;
+
+        flex-direction: column;
+
+        top: 64px;
+    }
+
+    .cats-search {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .cats-columns-menu {
+        align-self: flex-start;
+    }
+
+    .cat-full-form__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cat-full-form__checks {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .media-manager__grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .cats-admin-page {
+        padding-top: 20px;
+    }
+
+    .cats-admin-shell {
+        padding: 0 10px;
+    }
+
+    .cats-edit-page {
+        padding:
+            20px 10px 60px;
+    }
+
+    .cat-full-form__section {
+        padding: 16px;
+
+        border-radius: 15px;
+    }
+
+    .cat-full-form__checks {
+        grid-template-columns: 1fr;
+    }
+
+    .media-manager__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cats-grid-status {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+    .cats-grid-status__left {
+        width: 100%;
+
+        flex-wrap: wrap;
+    }
+
+    .cats-export__panel {
+        position: fixed;
+
+        left: 10px;
+        right: 10px;
+
+        top: 130px;
+
+        width: auto;
+    }
+}
+
+
+
+
+
+
+
+
+.cats-export {
+    position: relative;
+
+    flex: 0 0 auto;
+
+    margin-left: auto;
+}
+
+.cats-export__panel {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    z-index: 100;
+
+    width: 340px;
+    padding: 20px;
+
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+
+    box-shadow:
+        0 16px 40px rgba(0, 0, 0, 0.12);
+
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.cats-export__section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.cats-export__section>strong {
+    font-size: 14px;
+}
+
+.cats-export__section label {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.cats-export__section input {
+    accent-color: var(--color-primary);
+}
+
+.cats-export__count {
+    padding: 12px 14px;
+
+    border-radius: 10px;
+    background: var(--color-bg-alt);
+
+    font-size: 14px;
+}
+
+.cats-export__actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.cats-export__actions button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 7px;
+}
+
+.print-page {
+    min-height: 100vh;
+    padding: 32px;
+
+    background: #fff;
+    color: #111;
+
+    font-family: Arial, sans-serif;
+}
+
+.print-header {
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+
+    border-bottom: 2px solid #111;
+}
+
+.print-header h1 {
+    margin: 0;
+    font-size: 28px;
+}
+
+.print-header h2 {
+    margin: 6px 0;
+    font-size: 20px;
+}
+
+.print-header p {
+    margin: 0;
+    color: #666;
+    font-size: 12px;
+}
+
+.print-group {
+    margin-bottom: 28px;
+}
+
+.print-group>h3 {
+    margin: 0 0 14px;
+
+    padding-bottom: 6px;
+
+    border-bottom: 1px solid #999;
+
+    font-size: 17px;
+    text-transform: uppercase;
+}
+
+.print-name {
+    padding: 7px 0;
+
+    border-bottom: 1px solid #ddd;
+
+    font-size: 15px;
+}
+
+.print-cat {
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+
+    border-bottom: 1px solid #ddd;
+
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+.print-cat h4 {
+    margin: 0 0 9px;
+
+    font-size: 17px;
+}
+
+.print-cat__fields {
+    display: grid;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 5px 20px;
+
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+@media print {
+    @page {
+        size: A4;
+        margin: 15mm;
+    }
+
+    .print-page {
+        padding: 0;
+    }
+
+    .print-header {
+        break-after: avoid;
+    }
+
+    .print-group {
+        break-inside: auto;
+    }
+
+    .print-cat {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+}
+
+@media screen {
+    .print-page {
+        max-width: 900px;
+        margin: 40px auto;
+    }
+}
+
+
+
+/* =========================================================
+   PRINT / EXPORT
+   ========================================================= */
+
+.print-page {
+  min-height: 100vh;
+
+  padding: 32px;
+
+  background: #fff;
+  color: #111;
+
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.print-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 30px;
+
+  margin-bottom: 28px;
+  padding-bottom: 14px;
+
+  border-bottom: 2px solid #111;
+}
+
+.print-header h1 {
+  margin: 0;
+
+  font-size: 28px;
+}
+
+.print-header h2 {
+  margin: 6px 0 0;
+
+  font-size: 20px;
+}
+
+.print-header p {
+  margin: 4px 0 0;
+
+  color: #666;
+
+  font-size: 12px;
+}
+
+.print-header__meta {
+  flex: 0 0 auto;
+
+  color: #555;
+
+  font-size: 11px;
+
+  text-align: right;
+}
+
+.print-page--loading,
+.print-page--error {
+  max-width: 900px;
+
+  margin: 40px auto;
+}
+
+.print-group {
+  margin-bottom: 28px;
+}
+
+.print-group > h3 {
+  margin: 0 0 14px;
+
+  padding-bottom: 6px;
+
+  border-bottom: 1px solid #999;
+
+  font-size: 17px;
+
+  text-transform: uppercase;
+}
+
+.print-name {
+  padding: 7px 0;
+
+  border-bottom: 1px solid #ddd;
+
+  font-size: 15px;
+}
+
+.print-cat {
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+
+  border-bottom: 1px solid #ddd;
+
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.print-cat h4 {
+  margin: 0 0 9px;
+
+  font-size: 17px;
+}
+
+.print-cat__fields {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 5px 20px;
+
+  font-size: 12px;
+
+  line-height: 1.45;
+}
+
+/* =========================================================
+   ADMINISTRATIVE TABLE
+   ========================================================= */
+
+.print-admin-group {
+  margin-bottom: 22px;
+
+  break-inside: auto;
+  page-break-inside: auto;
+}
+
+.print-admin-group__title {
+  margin: 0 0 8px;
+
+  padding: 5px 7px;
+
+  background: #eeeeee;
+
+  border-bottom: 1px solid #999;
+
+  font-size: 12px;
+
+  font-weight: 800;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.04em;
+}
+
+.print-admin-table-wrap {
+  width: 100%;
+  max-width: 100%;
+
+  overflow: visible;
+}
+
+.print-admin-table {
+  width: 100%;
+  max-width: 100%;
+
+  border-collapse: collapse;
+
+  /*
+   * Kluczowe:
+   * przeglądarka nie może rozszerzyć tabeli
+   * poza szerokość strony.
+   */
+  table-layout: fixed;
+
+  font-size: 7.2px;
+
+  line-height: 1.15;
+}
+
+.print-admin-table th,
+.print-admin-table td {
+  box-sizing: border-box;
+
+  padding: 4px 3px;
+
+  border: 1px solid #aaa;
+
+  vertical-align: middle;
+
+  overflow-wrap: anywhere;
+  word-break: break-word;
+
+  text-align: center;
+}
+
+.print-admin-table th {
+  background: #eeeeee;
+
+  color: #111;
+
+  font-size: 7px;
+
+  font-weight: 800;
+
+  line-height: 1.1;
+
+  text-align: center;
+}
+
+.print-admin-table td {
+  background: #fff;
+}
+
+.print-admin-table__name {
+  font-weight: 700;
+
+  text-align: left !important;
+}
+
+/*
+ * 16 kolumn.
+ *
+ * Suma = 100%.
+ */
+
+.print-admin-table th:nth-child(1),
+.print-admin-table td:nth-child(1) {
+  width: 10%;
+}
+
+.print-admin-table th:nth-child(2),
+.print-admin-table td:nth-child(2) {
+  width: 9%;
+}
+
+.print-admin-table th:nth-child(3),
+.print-admin-table td:nth-child(3) {
+  width: 5%;
+}
+
+.print-admin-table th:nth-child(4),
+.print-admin-table td:nth-child(4) {
+  width: 5%;
+}
+
+.print-admin-table th:nth-child(5),
+.print-admin-table td:nth-child(5) {
+  width: 9%;
+}
+
+.print-admin-table th:nth-child(6),
+.print-admin-table td:nth-child(6) {
+  width: 7%;
+}
+
+.print-admin-table th:nth-child(7),
+.print-admin-table td:nth-child(7) {
+  width: 5%;
+}
+
+.print-admin-table th:nth-child(8),
+.print-admin-table td:nth-child(8) {
+  width: 5%;
+}
+
+.print-admin-table th:nth-child(9),
+.print-admin-table td:nth-child(9) {
+  width: 5%;
+}
+
+.print-admin-table th:nth-child(10),
+.print-admin-table td:nth-child(10) {
+  width: 5%;
+}
+
+.print-admin-table th:nth-child(11),
+.print-admin-table td:nth-child(11) {
+  width: 5%;
+}
+
+.print-admin-table th:nth-child(12),
+.print-admin-table td:nth-child(12) {
+  width: 5%;
+}
+
+.print-admin-table th:nth-child(13),
+.print-admin-table td:nth-child(13) {
+  width: 5%;
+}
+
+.print-admin-table th:nth-child(14),
+.print-admin-table td:nth-child(14) {
+  width: 5%;
+}
+
+.print-admin-table th:nth-child(15),
+.print-admin-table td:nth-child(15) {
+  width: 5%;
+}
+
+.print-admin-table th:nth-child(16),
+.print-admin-table td:nth-child(16) {
+  width: 5%;
+}
+
+/* =========================================================
+   SCREEN
+   ========================================================= */
+
+@media screen {
+  .print-page {
+    max-width: 1100px;
+
+    margin: 40px auto;
+  }
+
+  .print-page--admin {
+    max-width: 1400px;
+  }
+}
+
+/* =========================================================
+   PRINT
+   ========================================================= */
+
+@media print {
+  /*
+   * ADMINISTRACYJNA:
+   * A4 POZIOMO.
+   */
+  @page {
+    size: A4 landscape;
+    margin: 8mm;
+  }
+
+  html,
+  body {
+    width: 100%;
+
+    margin: 0;
+    padding: 0;
+
+    background: #fff;
+  }
+
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .print-page {
+    width: 100%;
+    max-width: none;
+
+    min-height: 0;
+
+    margin: 0;
+    padding: 0;
+
+    background: #fff;
+  }
+
+  /*
+   * Wydruk administracyjny wykorzystuje
+   * pełną szerokość A4 landscape.
+   */
+  .print-page--admin {
+    width: 100%;
+    max-width: none;
+  }
+
+  .print-header {
+    margin-bottom: 10px;
+    padding-bottom: 7px;
+
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  .print-header h1 {
+    font-size: 18px;
+  }
+
+  .print-header h2 {
+    margin-top: 3px;
+
+    font-size: 13px;
+  }
+
+  .print-header__meta {
+    font-size: 8px;
+  }
+
+  .print-admin-group {
+    margin-bottom: 12px;
+
+    break-inside: auto;
+    page-break-inside: auto;
+  }
+
+  .print-admin-group__title {
+    margin-bottom: 5px;
+
+    padding: 3px 5px;
+
+    font-size: 9px;
+  }
+
+  /*
+   * Najważniejsze ustawienia tabeli.
+   */
+  .print-admin-table {
+    width: 100%;
+    max-width: 100%;
+
+    table-layout: fixed;
+
+    border-collapse: collapse;
+
+    font-size: 6.8px;
+    line-height: 1.1;
+  }
+
+  .print-admin-table thead {
+    display: table-header-group;
+  }
+
+  .print-admin-table tbody {
+    display: table-row-group;
+  }
+
+  .print-admin-table tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .print-admin-table th,
+  .print-admin-table td {
+    padding: 3px 2px;
+
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .print-admin-table th {
+    font-size: 6.5px;
+
+    line-height: 1.05;
+  }
+
+  .print-admin-table__name {
+    font-weight: 700;
+  }
+
+  /*
+   * Pozostałe tryby mogą korzystać
+   * z normalnego układu dokumentu.
+   */
+  .print-group {
+    break-inside: auto;
+    page-break-inside: auto;
+  }
+
+  .print-cat {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
+
+
+
+
+/* =========================================================
+   TAGI — EDYCJA W TABELI
+   ========================================================= */
+
+.cats-tags-editor {
+  width: 330px;
+  max-width: min(330px, calc(100vw - 32px));
+  padding: 12px;
+  background: #fff;
+  border: 1px solid #dfe7e6;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(24, 45, 43, 0.12);
+  position: relative;
+  z-index: 50;
+}
+
+/* Aktualnie wybrane tagi */
+
+.cats-tags-editor__selected {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 34px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #edf1f0;
+}
+
+.cats-tags-editor__empty {
+  display: flex;
+  align-items: center;
+  min-height: 28px;
+  color: #98a5a3;
+  font-size: 12px;
+}
+
+/* Pojedynczy wybrany tag */
+
+.cats-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 27px;
+  padding: 4px 8px 4px 10px;
+  border: 1px solid #b9e2dc;
+  border-radius: 999px;
+  background: #eefaf8;
+  color: #277b71;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.cats-tag:hover {
+  background: #e1f5f1;
+  border-color: #91d2c8;
+  color: #1e675f;
+  transform: translateY(-1px);
+}
+
+.cats-tag svg {
+  opacity: 0.7;
+}
+
+/* Lista dostępnych tagów */
+
+.cats-tags-editor__options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+  max-height: 230px;
+  overflow-y: auto;
+  padding: 2px;
+}
+
+/* Pojedyncza opcja */
+
+.cats-tag-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 8px 9px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: #536260;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.cats-tag-option:hover {
+  background: #f4f8f7;
+  border-color: #e0e9e7;
+  color: #263d39;
+}
+
+.cats-tag-option.is-selected {
+  background: #f0faf8;
+  border-color: #c8e7e2;
+  color: #277b71;
+  font-weight: 600;
+}
+
+.cats-tag-option input {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
+  margin: 0;
+  cursor: pointer;
+  accent-color: var(--color-primary, #3db7ad);
+}
+
+.cats-tag-option span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Przycisk Gotowe */
+
+.cats-tags-editor__done {
+  width: 100%;
+  margin-top: 10px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--color-primary, #3db7ad);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.cats-tags-editor__done:hover {
+  background: #319f96;
+  box-shadow: 0 4px 12px rgba(61, 183, 173, 0.22);
+  transform: translateY(-1px);
+}
+
+.cats-tags-editor__done:active {
+  transform: translateY(0);
+}
+
+/* =========================================================
+   TAGI W ZWYKŁYM WIDOKU KOMÓRKI
+   ========================================================= */
+
+.cats-cell-value {
+  min-width: 0;
+}
+
+.cats-cell--display:has(.cats-cell-value) {
+  line-height: 1.45;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 600px) {
+  .cats-tags-editor {
+    width: 290px;
+    max-width: calc(100vw - 24px);
+  }
+
+  .cats-tags-editor__options {
+    grid-template-columns: 1fr;
+    max-height: 260px;
   }
 }
 ========================================
@@ -16773,6 +25421,19 @@ export async function GET() {
   });
 }
 ========================================
+FILE: ./lib/auth/admin.ts
+========================================
+import { cookies } from "next/headers";
+
+export async function isAdminAuthenticated() {
+  const cookieStore = await cookies();
+
+  const cookie =
+    cookieStore.get("kocia-admin");
+
+  return cookie?.value === "authorized";
+}
+========================================
 FILE: ./lib/bazarek/getAuctions.ts
 ========================================
 // lib/bazarek/getAuctions.ts
@@ -16829,6 +25490,204 @@ export async function getBids(
   }
 
   return data;
+}
+========================================
+FILE: ./lib/cloudinary.ts
+========================================
+// lib/cloudinary.ts
+
+/**
+ * Uploads an image or video directly to Cloudinary
+ * using an unsigned upload preset.
+ *
+ * Files are stored in:
+ * cats/{catId}/
+ */
+export async function uploadToCloudinary(
+    file: File,
+    catId: string
+) {
+    const formData = new FormData();
+
+    formData.append("file", file);
+    formData.append(
+        "upload_preset",
+        "kocia_oaza_unsigned"
+    );
+    formData.append(
+        "folder",
+        `cats/${catId}`
+    );
+
+    const response = await fetch(
+        "https://api.cloudinary.com/v1_1/dskmhj26c/auto/upload",
+        {
+            method: "POST",
+            body: formData,
+        }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(
+            data.error?.message ||
+                "Upload do Cloudinary nie powiódł się"
+        );
+    }
+
+    return data;
+}
+
+/**
+ * Optimizes a Cloudinary URL with automatic
+ * format, quality and size transformations.
+ */
+export function optimizeCloudinaryUrl(
+    url: string,
+    options: {
+        width?: number;
+        height?: number;
+        quality?: "auto" | number;
+        format?:
+            | "auto"
+            | "webp"
+            | "avif"
+            | "jpg"
+            | "png";
+        crop?:
+            | "fill"
+            | "fit"
+            | "limit"
+            | "scale";
+    } = {}
+): string {
+    if (
+        !url ||
+        !url.includes("cloudinary.com")
+    ) {
+        return url;
+    }
+
+    const {
+        width,
+        height,
+        quality = "auto",
+        format = "auto",
+        crop = "limit",
+    } = options;
+
+    const transformations = [
+        format && `f_${format}`,
+        quality && `q_${quality}`,
+        width && `w_${width}`,
+        height && `h_${height}`,
+        crop && `c_${crop}`,
+    ]
+        .filter(Boolean)
+        .join(",");
+
+    if (!transformations) {
+        return url;
+    }
+
+    return url.replace(
+        "/upload/",
+        `/upload/${transformations}/`
+    );
+}
+
+/**
+ * Generates responsive Cloudinary URLs
+ * for different screen sizes.
+ */
+export function getResponsiveCloudinaryUrls(
+    url: string
+) {
+    return {
+        mobile: optimizeCloudinaryUrl(
+            url,
+            {
+                width: 640,
+                quality: "auto",
+                format: "auto",
+            }
+        ),
+
+        tablet: optimizeCloudinaryUrl(
+            url,
+            {
+                width: 1024,
+                quality: "auto",
+                format: "auto",
+            }
+        ),
+
+        desktop: optimizeCloudinaryUrl(
+            url,
+            {
+                width: 1920,
+                quality: "auto",
+                format: "auto",
+            }
+        ),
+    };
+}
+
+/**
+ * Generates a small blurred placeholder
+ * from a Cloudinary image URL.
+ */
+export function getBlurDataURL(
+    url: string
+): string {
+    return optimizeCloudinaryUrl(
+        url,
+        {
+            width: 10,
+            quality: 10,
+            format: "auto",
+            crop: "fill",
+        }
+    );
+}
+========================================
+FILE: ./lib/email.ts
+========================================
+import nodemailer from "nodemailer";
+
+export async function sendEmail({
+  to,
+  subject,
+  html,
+}: {
+  to: string | string[];
+  subject: string;
+  html: string;
+}) {
+  const gmailUser = process.env.GMAIL_USER;
+  const gmailPassword = process.env.GMAIL_APP_PASSWORD;
+
+  if (!gmailUser || !gmailPassword) {
+    throw new Error(
+      "Brak GMAIL_USER lub GMAIL_APP_PASSWORD"
+    );
+  }
+
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: gmailUser,
+      pass: gmailPassword,
+    },
+  });
+
+  return transporter.sendMail({
+    from: `"Kocia Oaza" <${gmailUser}>`,
+    to,
+    subject,
+    html,
+  });
 }
 ========================================
 FILE: ./lib/supabase/client.ts
@@ -17067,15 +25926,16 @@ FILE: ./package-lock.json
         "cloudinary": "^2.10.0",
         "lucide-react": "^1.14.0",
         "next": "16.2.4",
-        "nodemailer": "^8.0.7",
+        "nodemailer": "^8.0.11",
         "react": "19.2.4",
         "react-dom": "19.2.4",
-        "react-icons": "^5.6.0"
+        "react-icons": "^5.6.0",
+        "resend": "^6.28.1"
       },
       "devDependencies": {
         "@tailwindcss/postcss": "^4",
         "@types/node": "^20",
-        "@types/nodemailer": "^8.0.0",
+        "@types/nodemailer": "^8.0.2",
         "@types/react": "^19",
         "@types/react-dom": "^19",
         "eslint": "^9",
@@ -18308,6 +27168,12 @@ FILE: ./package-lock.json
       "dev": true,
       "license": "MIT"
     },
+    "node_modules/@stablelib/base64": {
+      "version": "1.0.1",
+      "resolved": "https://registry.npmjs.org/@stablelib/base64/-/base64-1.0.1.tgz",
+      "integrity": "sha512-1bnPQqSxSuc3Ii6MhBysoWCg58j97aUjuCSZrGSmDxNqtytIi0k8utUenAwTZN4V5mXXYGsVUI9zeBqy+jBOSQ==",
+      "license": "MIT"
+    },
     "node_modules/@supabase/auth-js": {
       "version": "2.105.3",
       "resolved": "https://registry.npmjs.org/@supabase/auth-js/-/auth-js-2.105.3.tgz",
@@ -18728,9 +27594,9 @@ FILE: ./package-lock.json
       }
     },
     "node_modules/@types/nodemailer": {
-      "version": "8.0.0",
-      "resolved": "https://registry.npmjs.org/@types/nodemailer/-/nodemailer-8.0.0.tgz",
-      "integrity": "sha512-fyf8jWULsCo0d0BuoQ75i6IeoHs47qcqxWc7yUdUcV0pOZGjUTTOvwdG1PRXUDqN/8A64yQdQdnA2pZgcdi+cA==",
+      "version": "8.0.2",
+      "resolved": "https://registry.npmjs.org/@types/nodemailer/-/nodemailer-8.0.2.tgz",
+      "integrity": "sha512-c7M5ox8p0nEOfbJ2E9Qcmt8/QCu/VzsiAhzBiZbvky2PhKZDHpKB3sQHBM5MEZNkCfBOaS6S9//AGPRTNB7IaA==",
       "dev": true,
       "license": "MIT",
       "dependencies": {
@@ -20722,6 +29588,12 @@ FILE: ./package-lock.json
       "dev": true,
       "license": "MIT"
     },
+    "node_modules/fast-sha256": {
+      "version": "1.3.0",
+      "resolved": "https://registry.npmjs.org/fast-sha256/-/fast-sha256-1.3.0.tgz",
+      "integrity": "sha512-n11RGP/lrWEFI/bWdygLxhI+pVeo1ZYIVwvvPkW7azl/rOy+F3HYRZ2K5zeE9mmkhQppyv9sQFx0JM9UabnpPQ==",
+      "license": "Unlicense"
+    },
     "node_modules/fastq": {
       "version": "1.20.1",
       "resolved": "https://registry.npmjs.org/fastq/-/fastq-1.20.1.tgz",
@@ -22307,9 +31179,9 @@ FILE: ./package-lock.json
       "license": "MIT"
     },
     "node_modules/nodemailer": {
-      "version": "8.0.7",
-      "resolved": "https://registry.npmjs.org/nodemailer/-/nodemailer-8.0.7.tgz",
-      "integrity": "sha512-pkjE4mkBzQjdJT4/UmlKl3pX0rC9fZmjh7c6C9o7lv66Ac6w9WCnzPzhbPNxwZAzlF4mdq4CSWB5+FbK6FWCow==",
+      "version": "8.0.11",
+      "resolved": "https://registry.npmjs.org/nodemailer/-/nodemailer-8.0.11.tgz",
+      "integrity": "sha512-nrO/pDAUKl+wXX+lx16tDLbnm0fW6sK/x8mgohaCpg+CdCEl482bD4tCuAZk2DyliruiNTIZxRCoWkDqJEnAiA==",
       "license": "MIT-0",
       "engines": {
         "node": ">=6.0.0"
@@ -22575,6 +31447,12 @@ FILE: ./package-lock.json
         "node": ">= 0.4"
       }
     },
+    "node_modules/postal-mime": {
+      "version": "2.7.6",
+      "resolved": "https://registry.npmjs.org/postal-mime/-/postal-mime-2.7.6.tgz",
+      "integrity": "sha512-UUlyE2KlxmvwMGq060onF/VWU3zD6dVW31FwokQ5v26jWd35fbs2MoTFzh+jXnPwAyV2MULMKXcBInGOl5TO6Q==",
+      "license": "MIT-0"
+    },
     "node_modules/postcss": {
       "version": "8.5.14",
       "resolved": "https://registry.npmjs.org/postcss/-/postcss-8.5.14.tgz",
@@ -22736,6 +31614,27 @@ FILE: ./package-lock.json
       },
       "funding": {
         "url": "https://github.com/sponsors/ljharb"
+      }
+    },
+    "node_modules/resend": {
+      "version": "6.28.1",
+      "resolved": "https://registry.npmjs.org/resend/-/resend-6.28.1.tgz",
+      "integrity": "sha512-5VWOcDiWKBt0NWYKXwzY9WJ+LbpQLYw9M6j1DDJYPk7TloHfWOJyaY4EFKoR/KPL0N4m5yO3o96iDoYOX7v+GA==",
+      "license": "MIT",
+      "dependencies": {
+        "postal-mime": "2.7.6",
+        "standardwebhooks": "1.1.1"
+      },
+      "engines": {
+        "node": ">=20"
+      },
+      "peerDependencies": {
+        "@react-email/render": "*"
+      },
+      "peerDependenciesMeta": {
+        "@react-email/render": {
+          "optional": true
+        }
       }
     },
     "node_modules/resolve": {
@@ -23109,6 +32008,16 @@ FILE: ./package-lock.json
       "integrity": "sha512-+L3ccpzibovGXFK+Ap/f8LOS0ahMrHTf3xu7mMLSpEGU0EO9ucaysSylKo9eRDFNhWve/y275iPmIZ4z39a9iA==",
       "dev": true,
       "license": "MIT"
+    },
+    "node_modules/standardwebhooks": {
+      "version": "1.1.1",
+      "resolved": "https://registry.npmjs.org/standardwebhooks/-/standardwebhooks-1.1.1.tgz",
+      "integrity": "sha512-bCbX9ZEyFkWPsRz7Bl3NuQUJohmwGSev/yhr7vhaGPlc4AfIrspIRa6cPTBuI1ItmrTDJ4d/S2hCsfe4+vQGnQ==",
+      "license": "MIT",
+      "dependencies": {
+        "@stablelib/base64": "^1.0.0",
+        "fast-sha256": "^1.3.0"
+      }
     },
     "node_modules/stop-iteration-iterator": {
       "version": "1.1.0",
@@ -23867,15 +32776,16 @@ FILE: ./package.json
     "cloudinary": "^2.10.0",
     "lucide-react": "^1.14.0",
     "next": "16.2.4",
-    "nodemailer": "^8.0.7",
+    "nodemailer": "^8.0.11",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "react-icons": "^5.6.0"
+    "react-icons": "^5.6.0",
+    "resend": "^6.28.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
-    "@types/nodemailer": "^8.0.0",
+    "@types/nodemailer": "^8.0.2",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
@@ -23972,6 +32882,303 @@ export type Bid = {
 
     created_at: string;
 };
+========================================
+FILE: ./types/cat-media.ts
+========================================
+export type CatMedia = {
+  id: string;
+  cat_id: string;
+
+  media_type: string;
+  url: string;
+
+  cloudinary_public_id: string | null;
+
+  is_primary: boolean | null;
+  display_order: number | null;
+
+  created_at: string | null;
+  updated_at: string | null;
+
+  alt_text: string | null;
+};
+========================================
+FILE: ./types/cat.ts
+========================================
+export type CatStatus =
+  | "available"
+  | "reserved"
+  | "adopted";
+
+export type CatGender =
+  | "male"
+  | "female"
+  | string;
+
+export type CatLocation =
+  | "kociarnia"
+  | "dt"
+  | "cafe"
+  | "ds"
+  | "zytnia"
+  | "zoska"
+  | "lecznica"
+  | "piwnica"
+  | "poczekalnia";
+
+export type FivStatus = string;
+export type FelvStatus = string;
+export type FipStatus = string;
+
+export type Cat = {
+  id: string;
+
+  name: string | null;
+  gender: CatGender | null;
+  description: string | null;
+  image_url: string | null;
+  status: CatStatus | null;
+
+  created_at: string | null;
+
+  tags: string[] | null;
+  location: CatLocation | null;
+
+  sterilized: boolean | null;
+  vaccinated: boolean | null;
+  dewormed: boolean | null;
+
+  good_with_children: boolean | null;
+  good_with_cats: boolean | null;
+
+  weight: string | null;
+
+  adoption_priority: number | null;
+  is_featured: boolean | null;
+
+  birth_date: string | null;
+
+  deleted_at: string | null;
+
+  slug: string;
+
+  fiv_status: FivStatus | null;
+  felv_status: FelvStatus | null;
+  fip_status: FipStatus | null;
+
+  updated_at: string | null;
+
+  virtual_adoption_url: string | null;
+
+  microchipped: boolean | null;
+
+  arrival_date: string | null;
+
+  media?: CatMedia[];
+};
+
+export type CatMedia = {
+  id: string;
+  cat_id: string;
+
+  media_type: string;
+  url: string;
+
+  cloudinary_public_id: string | null;
+
+  is_primary: boolean | null;
+  display_order: number | null;
+
+  created_at: string | null;
+  updated_at: string | null;
+
+  alt_text: string | null;
+};
+
+export const CAT_LOCATIONS: {
+  value: CatLocation;
+  label: string;
+}[] = [
+  {
+    value: "kociarnia",
+    label: "Kociarnia",
+  },
+  {
+    value: "dt",
+    label: "Dom tymczasowy",
+  },
+  {
+    value: "cafe",
+    label: "Cafe",
+  },
+  {
+    value: "ds",
+    label: "DS",
+  },
+  {
+    value: "zytnia",
+    label: "Żytnia",
+  },
+  {
+    value: "zoska",
+    label: "Zośka",
+  },
+  {
+    value: "lecznica",
+    label: "Lecznica",
+  },
+  {
+    value: "piwnica",
+    label: "Piwnica",
+  },
+  {
+    value: "poczekalnia",
+    label: "Poczekalnia",
+  },
+];
+
+export const CAT_STATUS_OPTIONS = [
+  {
+    value: "available",
+    label: "Szukam domu",
+  },
+  {
+    value: "reserved",
+    label: "Zarezerwowany",
+  },
+  {
+    value: "adopted",
+    label: "Mam już dom",
+  },
+] as const;
+
+export const CAT_GENDER_OPTIONS = [
+  {
+    value: "female",
+    label: "Samica",
+  },
+  {
+    value: "male",
+    label: "Samiec",
+  },
+] as const;
+
+export const CAT_FIV_OPTIONS = [
+  {
+    value: "unknown",
+    label: "Nieznany",
+  },
+  {
+    value: "negative",
+    label: "Negatywny",
+  },
+  {
+    value: "positive",
+    label: "Pozytywny",
+  },
+] as const;
+
+export const CAT_FELV_OPTIONS = [
+  {
+    value: "unknown",
+    label: "Nieznany",
+  },
+  {
+    value: "negative",
+    label: "Negatywny",
+  },
+  {
+    value: "positive",
+    label: "Pozytywny",
+  },
+] as const;
+
+export const CAT_FIP_OPTIONS = [
+  {
+    value: "none",
+    label: "Brak",
+  },
+  {
+    value: "unknown",
+    label: "Nieznany",
+  },
+  {
+    value: "suspected",
+    label: "Podejrzenie",
+  },
+  {
+    value: "positive",
+    label: "Pozytywny",
+  },
+] as const;
+
+export type EditableCatField =
+  | "name"
+  | "gender"
+  | "description"
+  | "image_url"
+  | "status"
+  | "tags"
+  | "location"
+  | "sterilized"
+  | "vaccinated"
+  | "dewormed"
+  | "good_with_children"
+  | "weight"
+  | "adoption_priority"
+  | "is_featured"
+  | "good_with_cats"
+  | "birth_date"
+  | "slug"
+  | "fiv_status"
+  | "felv_status"
+  | "fip_status"
+  | "virtual_adoption_url"
+  | "microchipped"
+  | "arrival_date";
+
+export const EDITABLE_CAT_FIELDS: EditableCatField[] = [
+  "name",
+  "gender",
+  "description",
+  "image_url",
+  "status",
+  "tags",
+  "location",
+  "sterilized",
+  "vaccinated",
+  "dewormed",
+  "good_with_children",
+  "weight",
+  "adoption_priority",
+  "is_featured",
+  "good_with_cats",
+  "birth_date",
+  "slug",
+  "fiv_status",
+  "felv_status",
+  "fip_status",
+  "virtual_adoption_url",
+  "microchipped",
+  "arrival_date",
+];
+
+export const CAT_TAG_OPTIONS = [
+  "aktywny",
+  "do adopcji razem",
+  "jedynak",
+  "łatwy",
+  "miziasty",
+  "nieśmiały",
+  "niezależny",
+  "potrzebuje czasu",
+  "spokojny",
+  "towarzyski",
+  "wrażliwy",
+  "z kotem",
+] as const;
+
+export type CatTag = (typeof CAT_TAG_OPTIONS)[number];
 ========================================
 FILE: ./types/media.ts
 ========================================

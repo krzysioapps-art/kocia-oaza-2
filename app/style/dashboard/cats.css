@@ -5,13 +5,31 @@
 
 .cats-admin-page {
     width: 100%;
-    min-height: 100vh;
-    padding: 32px 0 60px;
+    height: 100%;
+    min-height: 0;
+    padding: 14px 0 18px;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .cats-admin-shell {
     width: 100%;
-    padding: 0 24px;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    padding: 0 16px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+.cats-admin-grid-area {
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
 }
 
 /* =========================================================
@@ -22,12 +40,12 @@
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
-    gap: 24px;
-    margin-bottom: 24px;
+    gap: 14px;
+    margin-bottom: 10px;
 }
 
 .cats-admin-eyebrow {
-    margin-bottom: 8px;
+    margin-bottom: 4px;
     color: var(--color-primary, #3db7ad);
     font-size: 12px;
     font-weight: 800;
@@ -37,19 +55,26 @@
 
 .cats-admin-header h1 {
     margin: 0;
-    font-size: clamp(32px, 4vw, 48px);
+    font-size: clamp(26px, 3vw, 34px);
     line-height: 1;
 }
 
 .cats-admin-header p {
-    margin: 10px 0 0;
+    margin: 4px 0 0;
     opacity: 0.65;
 }
 
 .cats-admin-header__actions {
     display: flex;
-    gap: 10px;
+    gap: 6px;
     flex-wrap: wrap;
+}
+
+.cats-admin-header__actions .button,
+.cats-toolbar .button {
+    min-height: 34px;
+    padding: 7px 11px;
+    line-height: 1.1;
 }
 
 /* =========================================================
@@ -59,7 +84,10 @@
 .cats-admin {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 6px;
+    height: 100%;
+    min-height: 0;
+    flex: 1 1 0;
 
     /*
    * Ważne:
@@ -83,15 +111,15 @@
     align-items: center;
     justify-content: space-between;
 
-    gap: 12px;
+    gap: 8px;
 
     width: 100%;
     min-width: 0;
 
-    padding: 10px;
+    padding: 6px;
 
     border: 1px solid var(--color-border, #e7e7e7);
-    border-radius: 14px;
+    border-radius: 10px;
 
     background: rgba(255, 255, 255, 0.96);
 
@@ -105,23 +133,23 @@
 .cats-filters {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     flex-wrap: wrap;
 
     min-width: 0;
 }
 
 .cats-search {
-    width: min(360px, 35vw);
-    min-width: 240px;
+    width: min(300px, 30vw);
+    min-width: 180px;
 
-    height: 40px;
+    height: 34px;
 
     display: flex;
     align-items: center;
-    gap: 9px;
+    gap: 7px;
 
-    padding: 0 13px;
+    padding: 0 10px;
 
     border: 1px solid #ddd;
     border-radius: 9px;
@@ -146,9 +174,9 @@
 
 .cats-filters select,
 .cats-columns-button {
-    height: 40px;
+    height: 34px;
 
-    padding: 0 12px;
+    padding: 0 10px;
 
     border: 1px solid #ddd;
     border-radius: 9px;
@@ -235,9 +263,9 @@
 
     gap: 12px;
 
-    padding: 2px 4px;
+    padding: 0 2px;
 
-    font-size: 13px;
+    font-size: 12px;
     opacity: 0.58;
 }
 
@@ -245,7 +273,7 @@
     display: flex;
     align-items: center;
 
-    gap: 14px;
+    gap: 10px;
 
     min-width: 0;
 }
@@ -273,7 +301,7 @@
 }
 
 .cats-grid-selected {
-    padding: 4px 9px;
+    padding: 3px 8px;
 
     border-radius: 999px;
 
@@ -289,8 +317,12 @@
    ========================================================= */
 
 .cats-grid-wrapper {
+    flex: 1 1 0;
+    min-height: 0;
+    position: relative;
+
     /*
-   * TYLKO poziomy scroll.
+   * Scroll poziomy i pionowy tabeli.
    *
    * Usuwamy:
    * max-height
@@ -302,10 +334,15 @@
     min-width: 0;
 
     overflow-x: auto;
-    overflow-y: visible;
+    overflow-y: auto;
+
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable both-edges;
+    scrollbar-width: auto;
+    scrollbar-color: #aebbb8 #f1f4f3;
 
     border: 1px solid var(--color-border, #e7e7e7);
-    border-radius: 16px;
+    border-radius: 12px;
 
     background: #fff;
 
@@ -316,6 +353,25 @@
    * Lepszy scrollbar poziomy.
    */
     scrollbar-width: thin;
+}
+
+.cats-grid-wrapper::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+.cats-grid-wrapper::-webkit-scrollbar-track {
+    background: #f1f4f3;
+}
+
+.cats-grid-wrapper::-webkit-scrollbar-thumb {
+    background: #aebbb8;
+    border-radius: 999px;
+    border: 2px solid #f1f4f3;
+}
+
+.cats-grid-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #8e9d9a;
 }
 
 /* =========================================================
@@ -342,9 +398,9 @@
 
     z-index: 20;
 
-    height: 44px;
+    height: 34px;
 
-    padding: 0 10px;
+    padding: 0 8px;
 
     border-right: 1px solid #e8e8e8;
     border-bottom: 1px solid #ddd;
@@ -353,7 +409,7 @@
 
     color: #555;
 
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 800;
     letter-spacing: 0.04em;
 
@@ -364,7 +420,7 @@
 }
 
 .cats-grid td {
-    height: 54px;
+    height: 42px;
 
     padding: 0;
 
@@ -426,10 +482,23 @@
    STICKY NAME
    ========================================================= */
 
+.cats-grid td:nth-child(2),
+.cats-grid th:nth-child(2) {
+    position: sticky;
+    left: 44px;
+    z-index: 30;
+    background: #fff;
+}
+
+.cats-grid thead th:nth-child(2) {
+    z-index: 45;
+    background: #f7f7f7;
+}
+
 .cats-grid-sticky-name {
     position: sticky !important;
 
-    left: 44px;
+    left: 128px;
 
     z-index: 20;
 
@@ -475,7 +544,7 @@
 
 .cats-grid-photo {
     width: 54px;
-    height: 54px;
+    height: 42px;
 
     padding: 7px;
 }
@@ -483,8 +552,8 @@
 .cats-grid-photo img {
     display: block;
 
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
 
     border-radius: 8px;
 
@@ -499,7 +568,7 @@
 
 .cats-cell {
     width: 100%;
-    min-height: 53px;
+    min-height: 41px;
 
     border: 0;
 
@@ -512,7 +581,7 @@
     display: flex;
     align-items: center;
 
-    gap: 8px;
+    gap: 6px;
 
     padding: 0 10px;
 
@@ -732,12 +801,12 @@
 .cats-edit-header h1 {
     margin: 0;
 
-    font-size: clamp(32px, 4vw, 48px);
+    font-size: clamp(26px, 3vw, 34px);
     line-height: 1;
 }
 
 .cats-edit-header p {
-    margin: 10px 0 0;
+    margin: 4px 0 0;
 
     opacity: 0.65;
 }
@@ -1003,7 +1072,7 @@
 
     color: #fff;
 
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 800;
 }
 
@@ -1457,7 +1526,7 @@
 
   color: #555;
 
-  font-size: 11px;
+  font-size: 10px;
 
   text-align: right;
 }
@@ -2054,4 +2123,21 @@
     grid-template-columns: 1fr;
     max-height: 260px;
   }
+}
+
+/* =========================================================
+   BRAKUJĄCE / NIEZNANE WARTOŚCI
+   ========================================================= */
+
+.cats-cell-value--missing {
+    display: inline-block;
+
+    padding: 2px 7px;
+
+    color: #b42318;
+    background: #fff1f0;
+
+    border-radius: 6px;
+
+    font-weight: 500;
 }

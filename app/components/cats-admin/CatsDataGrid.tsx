@@ -1173,20 +1173,34 @@ function EditableCell({
     );
   }
 
-  return (
-    <button
-      type="button"
-      className="cats-cell cats-cell--display"
-      onClick={
-        onStartEdit
-      }
+  const formattedValue =
+  formatCellValue(
+    field,
+    value,
+  );
+
+const isMissingValue =
+  formattedValue === "—" ||
+  formattedValue === "-" ||
+  formattedValue === "Nieznany";
+
+return (
+  <button
+    type="button"
+    className="cats-cell cats-cell--display"
+    onClick={
+      onStartEdit
+    }
+  >
+    <span
+      className={`cats-cell-value ${
+        isMissingValue
+          ? "cats-cell-value--missing"
+          : ""
+      }`}
     >
-      <span className="cats-cell-value">
-        {formatCellValue(
-          field,
-          value,
-        )}
-      </span>
+      {formattedValue}
+    </span>
 
       {saveState ===
         "saved" && (
