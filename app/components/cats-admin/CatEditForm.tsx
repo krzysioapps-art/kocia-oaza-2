@@ -10,6 +10,7 @@ import type {
 } from "@/types/cat";
 
 import {
+  CAT_COAT_TYPE_OPTIONS,
   CAT_FELV_OPTIONS,
   CAT_FIP_OPTIONS,
   CAT_FIV_OPTIONS,
@@ -65,6 +66,7 @@ export default function CatEditForm({
       const fields = [
         "name",
         "gender",
+        "coat_type",
         "description",
         "image_url",
         "status",
@@ -203,6 +205,24 @@ export default function CatEditForm({
               setField(
                 "gender",
                 value
+              )
+            }
+          />
+
+          <SelectField
+            label="Typ sierści"
+            value={
+              cat.coat_type ??
+              ""
+            }
+            options={
+              CAT_COAT_TYPE_OPTIONS
+            }
+            onChange={(value) =>
+              setField(
+                "coat_type",
+                value ||
+                  null
               )
             }
           />

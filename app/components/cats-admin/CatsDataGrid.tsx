@@ -2,27 +2,23 @@
 
 import Link from "next/link";
 
-import {
-  useMemo,
-  useState,
-} from "react";
+import { useMemo, useState } from "react";
 
 import {
   Archive,
   Check,
   ChevronDown,
-  Image as ImageIcon,
+  Images,
+  Plus,
   Search,
   Settings2,
   X,
 } from "lucide-react";
 
-import type {
-  Cat,
-  EditableCatField,
-} from "@/types/cat";
+import type { Cat, EditableCatField } from "@/types/cat";
 
 import {
+  CAT_COAT_TYPE_OPTIONS,
   CAT_FELV_OPTIONS,
   CAT_FIP_OPTIONS,
   CAT_FIV_OPTIONS,
@@ -44,17 +40,10 @@ type FilterState = {
   gender: string;
 };
 
-type SaveState =
-  | "idle"
-  | "saving"
-  | "saved"
-  | "error";
+type SaveState = "idle" | "saving" | "saved" | "error";
 
 type Column = {
-  key:
-    | EditableCatField
-    | "media"
-    | "actions";
+  key: EditableCatField | "media" | "actions";
 
   label: string;
 
@@ -97,6 +86,13 @@ const COLUMNS: Column[] = [
     label: "Płeć",
     defaultVisible: true,
     width: 130,
+  },
+
+  {
+    key: "coat_type",
+    label: "Sierść",
+    defaultVisible: true,
+    width: 170,
   },
 
   {
@@ -236,29 +232,19 @@ const COLUMNS: Column[] = [
     key: "actions",
     label: "Akcje",
     defaultVisible: true,
-    width: 220,
+    width: 120,
   },
 ];
 
 function getInitialVisibleColumns() {
   return Object.fromEntries(
-    COLUMNS.map(
-      (column) => [
-        column.key,
-        column.defaultVisible,
-      ],
-    ),
+    COLUMNS.map((column) => [column.key, column.defaultVisible]),
   );
 }
 
-function getPrimaryImage(
-  cat: Cat,
-) {
+function getPrimaryImage(cat: Cat) {
   return (
-    cat.media?.find(
-      (media) =>
-        media.is_primary,
-    )?.url ??
+    cat.media?.find((media) => media.is_primary)?.url ??
     cat.media?.[0]?.url ??
     cat.image_url ??
     "/avatar.jpg"
@@ -273,468 +259,269 @@ function getOptionLabel(
   value: unknown,
 ) {
   return (
-    options.find(
-      (option) =>
-        option.value === value,
-    )?.label ??
+    options.find((option) => option.value === value)?.label ??
     String(value ?? "—")
   );
 }
 
-export default function CatsDataGrid({
-  initialCats,
-}: Props) {
-  const [cats, setCats] =
-    useState<Cat[]>(
-      initialCats,
-    );
+export default function CatsDataGrid({ initialCats }: Props) {
+  const [cats, setCats] = useState<Cat[]>(initialCats);
 
-  const [
-    selectedIds,
-    setSelectedIds,
-  ] = useState<string[]>([]);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
-  const [
-    filters,
-    setFilters,
-  ] = useState<FilterState>({
+  const [filters, setFilters] = useState<FilterState>({
     search: "",
     status: "",
     gender: "",
   });
 
-  const [
-    visibleColumns,
-    setVisibleColumns,
-  ] = useState(
+  const [visibleColumns, setVisibleColumns] = useState(
     getInitialVisibleColumns,
   );
 
-  const [
-    showColumnSettings,
-    setShowColumnSettings,
-  ] = useState(false);
+  const [showColumnSettings, setShowColumnSettings] = useState(false);
 
-  const [
-    saveStates,
-    setSaveStates,
-  ] = useState<
-    Record<string, SaveState>
-  >({});
+  const [saveStates, setSaveStates] = useState<Record<string, SaveState>>({});
 
-  const [
-    editingCell,
-    setEditingCell,
-  ] = useState<string | null>(
-    null,
-  );
+  const [editingCell, setEditingCell] = useState<string | null>(null);
 
-  const filteredCats =
-    useMemo(() => {
-      const search =
-        filters.search
-          .trim()
-          .toLowerCase();
+  const filteredCats = useMemo(() => {
+    const search = filters.search.trim().toLowerCase();
 
-      return cats.filter(
-        (cat) => {
-          if (
-            search &&
-            ![
-              cat.name,
-              cat.slug,
-              cat.description,
-              ...(cat.tags ?? []),
-            ]
-              .filter(Boolean)
-              .some((value) =>
-                String(value)
-                  .toLowerCase()
-                  .includes(search),
-              )
-          ) {
-            return false;
-          }
+    return cats.filter((cat) => {
+      if (
+        search &&
+        ![cat.name, cat.slug, cat.description, ...(cat.tags ?? [])]
+          .filter(Boolean)
+          .some((value) => String(value).toLowerCase().includes(search))
+      ) {
+        return false;
+      }
 
-          if (
-            filters.status &&
-            cat.status !==
-              filters.status
-          ) {
-            return false;
-          }
+      if (filters.status && cat.status !== filters.status) {
+        return false;
+      }
 
-          if (
-            filters.gender &&
-            cat.gender !==
-              filters.gender
-          ) {
-            return false;
-          }
+      if (filters.gender && cat.gender !== filters.gender) {
+        return false;
+      }
 
-          return true;
-        },
-      );
-    }, [cats, filters]);
+      return true;
+    });
+  }, [cats, filters]);
 
-  const filteredIds =
-    filteredCats.map(
-      (cat) => cat.id,
-    );
+  const filteredIds = filteredCats.map((cat) => cat.id);
 
   const allFilteredSelected =
     filteredIds.length > 0 &&
-    filteredIds.every(
-      (id) =>
-        selectedIds.includes(id),
-    );
+    filteredIds.every((id) => selectedIds.includes(id));
 
-  const someFilteredSelected =
-    filteredIds.some(
-      (id) =>
-        selectedIds.includes(id),
-    );
+  const someFilteredSelected = filteredIds.some((id) =>
+    selectedIds.includes(id),
+  );
 
-  function toggleCatSelection(
-    catId: string,
-  ) {
-    setSelectedIds(
-      (current) =>
-        current.includes(catId)
-          ? current.filter(
-              (id) =>
-                id !== catId,
-            )
-          : [
-              ...current,
-              catId,
-            ],
+  function toggleCatSelection(catId: string) {
+    setSelectedIds((current) =>
+      current.includes(catId)
+        ? current.filter((id) => id !== catId)
+        : [...current, catId],
     );
   }
 
   function toggleAllFiltered() {
     if (allFilteredSelected) {
-      setSelectedIds(
-        (current) =>
-          current.filter(
-            (id) =>
-              !filteredIds.includes(
-                id,
-              ),
-          ),
+      setSelectedIds((current) =>
+        current.filter((id) => !filteredIds.includes(id)),
       );
 
       return;
     }
 
-    setSelectedIds(
-      (current) => [
-        ...new Set([
-          ...current,
-          ...filteredIds,
-        ]),
-      ],
-    );
+    setSelectedIds((current) => [...new Set([...current, ...filteredIds])]);
   }
 
-  const visible =
-    COLUMNS.filter(
-      (column) =>
-        visibleColumns[
-          column.key
-        ],
-    );
+  const visible = COLUMNS.filter((column) => visibleColumns[column.key]);
 
   async function updateField(
     catId: string,
     field: EditableCatField,
     value: unknown,
   ) {
-    const key =
-      `${catId}:${field}`;
+    const key = `${catId}:${field}`;
 
-    const previous =
-      cats.find(
-        (cat) =>
-          cat.id === catId,
-      )?.[field];
+    const previous = cats.find((cat) => cat.id === catId)?.[field];
 
-    setCats(
-      (current) =>
-        current.map(
-          (cat) =>
-            cat.id === catId
-              ? {
-                  ...cat,
-                  [field]:
-                    value,
-                }
-              : cat,
-        ),
+    setCats((current) =>
+      current.map((cat) =>
+        cat.id === catId
+          ? {
+              ...cat,
+              [field]: value,
+            }
+          : cat,
+      ),
     );
 
-    setSaveStates(
-      (current) => ({
-        ...current,
-        [key]: "saving",
-      }),
-    );
+    setSaveStates((current) => ({
+      ...current,
+      [key]: "saving",
+    }));
 
     try {
-      const response =
-        await fetch(
-          `/api/cats/${catId}`,
-          {
-            method: "PATCH",
+      const response = await fetch(`/api/cats/${catId}`, {
+        method: "PATCH",
 
-            headers: {
-              "Content-Type":
-                "application/json",
-            },
+        headers: {
+          "Content-Type": "application/json",
+        },
 
-            body: JSON.stringify({
-              field,
-              value,
-            }),
-          },
-        );
+        body: JSON.stringify({
+          field,
+          value,
+        }),
+      });
 
-      const result =
-        await response.json();
+      const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          result.error ??
-            "Błąd zapisu",
-        );
+        throw new Error(result.error ?? "Błąd zapisu");
       }
 
       if (result.cat) {
-        setCats(
-          (current) =>
-            current.map(
-              (cat) =>
-                cat.id ===
-                catId
-                  ? {
-                      ...cat,
-                      ...result.cat,
-                    }
-                  : cat,
-            ),
+        setCats((current) =>
+          current.map((cat) =>
+            cat.id === catId
+              ? {
+                  ...cat,
+                  ...result.cat,
+                }
+              : cat,
+          ),
         );
       }
 
-      setSaveStates(
-        (current) => ({
-          ...current,
-          [key]: "saved",
-        }),
-      );
+      setSaveStates((current) => ({
+        ...current,
+        [key]: "saved",
+      }));
 
-      window.setTimeout(
-        () => {
-          setSaveStates(
-            (current) => ({
-              ...current,
-              [key]: "idle",
-            }),
-          );
-        },
-        1200,
-      );
+      window.setTimeout(() => {
+        setSaveStates((current) => ({
+          ...current,
+          [key]: "idle",
+        }));
+      }, 1200);
     } catch (error) {
       console.error(error);
 
-      setCats(
-        (current) =>
-          current.map(
-            (cat) =>
-              cat.id === catId
-                ? {
-                    ...cat,
-                    [field]:
-                      previous,
-                  }
-                : cat,
-          ),
+      setCats((current) =>
+        current.map((cat) =>
+          cat.id === catId
+            ? {
+                ...cat,
+                [field]: previous,
+              }
+            : cat,
+        ),
       );
 
-      setSaveStates(
-        (current) => ({
-          ...current,
-          [key]: "error",
-        }),
-      );
+      setSaveStates((current) => ({
+        ...current,
+        [key]: "error",
+      }));
     }
 
     setEditingCell(null);
   }
 
-  async function archiveCat(
-    catId: string,
-  ) {
-    const confirmed =
-      window.confirm(
-        "Czy na pewno chcesz zarchiwizować tego kota?",
-      );
+  async function archiveCat(catId: string) {
+    const confirmed = window.confirm(
+      "Czy na pewno chcesz zarchiwizować tego kota?",
+    );
 
     if (!confirmed) {
       return;
     }
 
     try {
-      const response =
-        await fetch(
-          `/api/cats/${catId}`,
-          {
-            method: "DELETE",
-          },
-        );
+      const response = await fetch(`/api/cats/${catId}`, {
+        method: "DELETE",
+      });
 
       if (!response.ok) {
-        const result =
-          await response.json();
+        const result = await response.json();
 
-        throw new Error(
-          result.error ??
-            "Błąd archiwizacji",
-        );
+        throw new Error(result.error ?? "Błąd archiwizacji");
       }
 
-      setCats(
-        (current) =>
-          current.filter(
-            (cat) =>
-              cat.id !== catId,
-          ),
-      );
+      setCats((current) => current.filter((cat) => cat.id !== catId));
 
-      setSelectedIds(
-        (current) =>
-          current.filter(
-            (id) =>
-              id !== catId,
-          ),
-      );
+      setSelectedIds((current) => current.filter((id) => id !== catId));
     } catch (error) {
       console.error(error);
 
-      window.alert(
-        "Nie udało się zarchiwizować kota.",
-      );
+      window.alert("Nie udało się zarchiwizować kota.");
     }
   }
 
-  function renderCell(
-    cat: Cat,
-    column: Column,
-  ) {
-    if (
-      column.key ===
-      "media"
-    ) {
+  function renderCell(cat: Cat, column: Column) {
+    if (column.key === "media") {
       return (
         <div className="cats-grid-photo">
-          <img
-            src={getPrimaryImage(
-              cat,
-            )}
-            alt={
-              cat.name ??
-              "Kot"
-            }
-          />
+          <img src={getPrimaryImage(cat)} alt={cat.name ?? "Kot"} />
+
+          <Link
+            href={`/panel/koty/${cat.id}/zdjecia`}
+            className="cats-grid-photo__manage"
+            title="Zarządzaj zdjęciami"
+            aria-label={`Zarządzaj zdjęciami kota ${cat.name ?? ""}`}
+          >
+            <Images size={15} />
+
+            <Plus size={9} className="cats-grid-photo__manage-plus" />
+          </Link>
         </div>
       );
     }
 
-    if (
-      column.key ===
-      "actions"
-    ) {
+    if (column.key === "actions") {
       return (
         <div className="cats-grid-actions">
-          <Link
-            href={`/panel/koty/${cat.id}/zdjecia`}
-            className="cats-grid-action"
-            title="Zdjęcia"
-          >
-            <ImageIcon
-              size={16}
-            />
 
-            Zdjęcia
-          </Link>
-
-          <Link
-            href={`/panel/koty/${cat.id}`}
-            className="cats-grid-action"
-          >
+          <Link href={`/panel/koty/${cat.id}`} className="cats-grid-action">
             Edytuj
           </Link>
 
           <button
             type="button"
             className="cats-grid-action cats-grid-action--danger"
-            onClick={() =>
-              archiveCat(
-                cat.id,
-              )
-            }
+            onClick={() => archiveCat(cat.id)}
           >
-            <Archive
-              size={16}
-            />
+            <Archive size={16} />
           </button>
         </div>
       );
     }
 
-    const field =
-      column.key;
+    const field = column.key;
 
-    const value =
-      cat[field];
+    const value = cat[field];
 
-    const cellKey =
-      `${cat.id}:${field}`;
+    const cellKey = `${cat.id}:${field}`;
 
-    const saveState =
-      saveStates[cellKey] ??
-      "idle";
+    const saveState = saveStates[cellKey] ?? "idle";
 
-    const isEditing =
-      editingCell ===
-      cellKey;
+    const isEditing = editingCell === cellKey;
 
     return (
       <EditableCell
         field={field}
         value={value}
-        isEditing={
-          isEditing
-        }
-        saveState={
-          saveState
-        }
-        onStartEdit={() =>
-          setEditingCell(
-            cellKey,
-          )
-        }
-        onCancel={() =>
-          setEditingCell(
-            null,
-          )
-        }
-        onSave={(nextValue) =>
-          updateField(
-            cat.id,
-            field,
-            nextValue,
-          )
-        }
+        isEditing={isEditing}
+        saveState={saveState}
+        onStartEdit={() => setEditingCell(cellKey)}
+        onCancel={() => setEditingCell(null)}
+        onSave={(nextValue) => updateField(cat.id, field, nextValue)}
       />
     );
   }
@@ -744,99 +531,54 @@ export default function CatsDataGrid({
       <div className="cats-toolbar">
         <div className="cats-filters">
           <label className="cats-search">
-            <Search
-              size={17}
-            />
+            <Search size={17} />
 
             <input
-              value={
-                filters.search
-              }
+              value={filters.search}
               onChange={(event) =>
-                setFilters(
-                  (current) => ({
-                    ...current,
-                    search:
-                      event
-                        .target
-                        .value,
-                  }),
-                )
+                setFilters((current) => ({
+                  ...current,
+                  search: event.target.value,
+                }))
               }
               placeholder="Szukaj kota..."
             />
           </label>
 
           <select
-            value={
-              filters.status
-            }
+            value={filters.status}
             onChange={(event) =>
-              setFilters(
-                (current) => ({
-                  ...current,
-                  status:
-                    event
-                      .target
-                      .value,
-                }),
-              )
+              setFilters((current) => ({
+                ...current,
+                status: event.target.value,
+              }))
             }
           >
-            <option value="">
-              Wszystkie statusy
-            </option>
+            <option value="">Wszystkie statusy</option>
 
-            {CAT_STATUS_OPTIONS.map(
-              (option) => (
-                <option
-                  key={
-                    option.value
-                  }
-                  value={
-                    option.value
-                  }
-                >
-                  {option.label}
-                </option>
-              ),
-            )}
+            {CAT_STATUS_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
           </select>
 
           <select
-            value={
-              filters.gender
-            }
+            value={filters.gender}
             onChange={(event) =>
-              setFilters(
-                (current) => ({
-                  ...current,
-                  gender:
-                    event
-                      .target
-                      .value,
-                }),
-              )
+              setFilters((current) => ({
+                ...current,
+                gender: event.target.value,
+              }))
             }
           >
-            <option value="">
-              Wszystkie płcie
-            </option>
+            <option value="">Wszystkie płcie</option>
 
-            {CAT_GENDER_OPTIONS.map(
-              (option) => (
-                <option
-                  key={
-                    option.value
-                  }
-                  value={
-                    option.value
-                  }
-                >
-                  {option.label}
-                </option>
-              ),
-            )}
+            {CAT_GENDER_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -844,22 +586,11 @@ export default function CatsDataGrid({
           <button
             type="button"
             className="cats-columns-button"
-            onClick={() =>
-              setShowColumnSettings(
-                (value) =>
-                  !value,
-              )
-            }
+            onClick={() => setShowColumnSettings((value) => !value)}
           >
-            <Settings2
-              size={17}
-            />
-
+            <Settings2 size={17} />
             Kolumny
-
-            <ChevronDown
-              size={15}
-            />
+            <ChevronDown size={15} />
           </button>
 
           {showColumnSettings && (
@@ -868,65 +599,32 @@ export default function CatsDataGrid({
                 Widoczne kolumny
               </div>
 
-              {COLUMNS.map(
-                (column) => (
-                  <label
-                    key={
-                      column.key
+              {COLUMNS.map((column) => (
+                <label key={column.key} className="cats-column-option">
+                  <input
+                    type="checkbox"
+                    checked={Boolean(visibleColumns[column.key])}
+                    disabled={
+                      column.key === "media" ||
+                      column.key === "name" ||
+                      column.key === "actions"
                     }
-                    className="cats-column-option"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={Boolean(
-                        visibleColumns[
-                          column.key
-                        ],
-                      )}
-                      disabled={
-                        column.key ===
-                          "media" ||
-                        column.key ===
-                          "name" ||
-                        column.key ===
-                          "actions"
-                      }
-                      onChange={() =>
-                        setVisibleColumns(
-                          (
-                            current,
-                          ) => ({
-                            ...current,
-                            [column.key]:
-                              !current[
-                                column
-                                  .key
-                              ],
-                          }),
-                        )
-                      }
-                    />
+                    onChange={() =>
+                      setVisibleColumns((current) => ({
+                        ...current,
+                        [column.key]: !current[column.key],
+                      }))
+                    }
+                  />
 
-                    <span>
-                      {
-                        column.label
-                      }
-                    </span>
-                  </label>
-                ),
-              )}
+                  <span>{column.label}</span>
+                </label>
+              ))}
             </div>
           )}
         </div>
 
-        <CatsExport
-          filteredCatIds={
-            filteredIds
-          }
-          selectedCatIds={
-            selectedIds
-          }
-        />
+        <CatsExport filteredCatIds={filteredIds} selectedCatIds={selectedIds} />
       </div>
 
       <div className="cats-grid-status">
@@ -934,54 +632,34 @@ export default function CatsDataGrid({
           <label className="cats-select-all">
             <input
               type="checkbox"
-              checked={
-                allFilteredSelected
-              }
+              checked={allFilteredSelected}
               ref={(element) => {
                 if (!element) {
                   return;
                 }
 
                 element.indeterminate =
-                  someFilteredSelected &&
-                  !allFilteredSelected;
+                  someFilteredSelected && !allFilteredSelected;
               }}
-              onChange={
-                toggleAllFiltered
-              }
+              onChange={toggleAllFiltered}
               aria-label="Zaznacz wszystkie koty z aktualnego filtrowania"
             />
 
-            <span>
-              Zaznacz wszystkie
-            </span>
+            <span>Zaznacz wszystkie</span>
           </label>
 
           <span>
-            {filteredCats.length}{" "}
-            {filteredCats.length ===
-            1
-              ? "kot"
-              : "kotów"}
+            {filteredCats.length} {filteredCats.length === 1 ? "kot" : "kotów"}
           </span>
 
-          {selectedIds.length >
-            0 && (
+          {selectedIds.length > 0 && (
             <span className="cats-grid-selected">
-              Zaznaczono:{" "}
-              <strong>
-                {
-                  selectedIds.length
-                }
-              </strong>
+              Zaznaczono: <strong>{selectedIds.length}</strong>
             </span>
           )}
         </div>
 
-        <span>
-          Kliknij komórkę,
-          aby ją edytować.
-        </span>
+        <span>Kliknij komórkę, aby ją edytować.</span>
       </div>
 
       <div className="cats-grid-wrapper">
@@ -993,19 +671,14 @@ export default function CatsDataGrid({
               }}
             />
 
-            {visible.map(
-              (column) => (
-                <col
-                  key={
-                    column.key
-                  }
-                  style={{
-                    width:
-                      column.width,
-                  }}
-                />
-              ),
-            )}
+            {visible.map((column) => (
+              <col
+                key={column.key}
+                style={{
+                  width: column.width,
+                }}
+              />
+            ))}
           </colgroup>
 
           <thead>
@@ -1013,112 +686,71 @@ export default function CatsDataGrid({
               <th className="cats-grid-select">
                 <input
                   type="checkbox"
-                  checked={
-                    allFilteredSelected
-                  }
+                  checked={allFilteredSelected}
                   ref={(element) => {
                     if (!element) {
                       return;
                     }
 
                     element.indeterminate =
-                      someFilteredSelected &&
-                      !allFilteredSelected;
+                      someFilteredSelected && !allFilteredSelected;
                   }}
-                  onChange={
-                    toggleAllFiltered
-                  }
+                  onChange={toggleAllFiltered}
                   aria-label="Zaznacz wszystkie koty"
                 />
               </th>
 
-              {visible.map(
-                (column) => (
-                  <th
-                    key={
-                      column.key
-                    }
-                    className={
-                      column.key ===
-                      "name"
-                        ? "cats-grid-sticky-name"
-                        : undefined
-                    }
-                  >
-                    {
-                      column.label
-                    }
-                  </th>
-                ),
-              )}
+              {visible.map((column) => (
+                <th
+                  key={column.key}
+                  className={
+                    column.key === "name" ? "cats-grid-sticky-name" : undefined
+                  }
+                >
+                  {column.label}
+                </th>
+              ))}
             </tr>
           </thead>
 
           <tbody>
-            {filteredCats.map(
-              (cat) => (
-                <tr
-                  key={cat.id}
-                  className={
-                    selectedIds.includes(
-                      cat.id,
-                    )
-                      ? "cats-grid-row-selected"
-                      : undefined
-                  }
-                >
-                  <td className="cats-grid-select">
-                    <input
-                      type="checkbox"
-                      checked={selectedIds.includes(
-                        cat.id,
-                      )}
-                      onChange={() =>
-                        toggleCatSelection(
-                          cat.id,
-                        )
-                      }
-                      aria-label={`Zaznacz ${cat.name ?? "kota"}`}
-                    />
+            {filteredCats.map((cat) => (
+              <tr
+                key={cat.id}
+                className={
+                  selectedIds.includes(cat.id)
+                    ? "cats-grid-row-selected"
+                    : undefined
+                }
+              >
+                <td className="cats-grid-select">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.includes(cat.id)}
+                    onChange={() => toggleCatSelection(cat.id)}
+                    aria-label={`Zaznacz ${cat.name ?? "kota"}`}
+                  />
+                </td>
+
+                {visible.map((column) => (
+                  <td
+                    key={column.key}
+                    className={
+                      column.key === "name"
+                        ? "cats-grid-sticky-name"
+                        : undefined
+                    }
+                  >
+                    {renderCell(cat, column)}
                   </td>
+                ))}
+              </tr>
+            ))}
 
-                  {visible.map(
-                    (column) => (
-                      <td
-                        key={
-                          column.key
-                        }
-                        className={
-                          column.key ===
-                          "name"
-                            ? "cats-grid-sticky-name"
-                            : undefined
-                        }
-                      >
-                        {renderCell(
-                          cat,
-                          column,
-                        )}
-                      </td>
-                    ),
-                  )}
-                </tr>
-              ),
-            )}
-
-            {filteredCats.length ===
-              0 && (
+            {filteredCats.length === 0 && (
               <tr>
-                <td
-                  colSpan={
-                    visible.length +
-                    1
-                  }
-                  className="cats-grid-empty"
-                >
-                  Brak kotów
-                  pasujących do
-                  filtrów.
+                <td colSpan={visible.length + 1} className="cats-grid-empty">
+                  Brak kotów pasujących do filtrów.
                 </td>
               </tr>
             )}
@@ -1136,9 +768,7 @@ type EditableCellProps = {
   saveState: SaveState;
   onStartEdit: () => void;
   onCancel: () => void;
-  onSave: (
-    value: unknown,
-  ) => void;
+  onSave: (value: unknown) => void;
 };
 
 function EditableCell({
@@ -1154,7 +784,6 @@ function EditableCell({
     return (
       <div className="cats-cell cats-cell--saving">
         <span className="cats-cell-spinner" />
-
         zapisywanie...
       </div>
     );
@@ -1165,71 +794,44 @@ function EditableCell({
       <CellEditor
         field={field}
         value={value}
-        onCancel={
-          onCancel
-        }
+        onCancel={onCancel}
         onSave={onSave}
       />
     );
   }
 
-  const formattedValue =
-  formatCellValue(
-    field,
-    value,
-  );
+  const formattedValue = formatCellValue(field, value);
 
-const isMissingValue =
-  formattedValue === "—" ||
-  formattedValue === "-" ||
-  formattedValue === "Nieznany";
+  const isMissingValue =
+    formattedValue === "—" ||
+    formattedValue === "-" ||
+    formattedValue === "Nieznany";
 
-return (
-  <button
-    type="button"
-    className="cats-cell cats-cell--display"
-    onClick={
-      onStartEdit
-    }
-  >
-    <span
-      className={`cats-cell-value ${
-        isMissingValue
-          ? "cats-cell-value--missing"
-          : ""
-      }`}
+  return (
+    <button
+      type="button"
+      className="cats-cell cats-cell--display"
+      onClick={onStartEdit}
     >
-      {formattedValue}
-    </span>
+      <span
+        className={`cats-cell-value ${
+          isMissingValue ? "cats-cell-value--missing" : ""
+        }`}
+      >
+        {formattedValue}
+      </span>
 
-      {saveState ===
-        "saved" && (
-        <Check
-          size={14}
-          className="cats-cell-success"
-        />
+      {saveState === "saved" && (
+        <Check size={14} className="cats-cell-success" />
       )}
 
-      {saveState ===
-        "error" && (
-        <X
-          size={14}
-          className="cats-cell-error"
-        />
-      )}
+      {saveState === "error" && <X size={14} className="cats-cell-error" />}
     </button>
   );
 }
 
-function formatCellValue(
-  field: EditableCatField,
-  value: unknown,
-) {
-  if (
-    value === null ||
-    value === undefined ||
-    value === ""
-  ) {
+function formatCellValue(field: EditableCatField, value: unknown) {
+  if (value === null || value === undefined || value === "") {
     return "—";
   }
 
@@ -1248,66 +850,43 @@ function formatCellValue(
   }
 
   if (field === "gender") {
-    return getOptionLabel(
-      CAT_GENDER_OPTIONS,
-      value,
-    );
+    return getOptionLabel(CAT_GENDER_OPTIONS, value);
+  }
+
+  if (field === "coat_type") {
+    return getOptionLabel(CAT_COAT_TYPE_OPTIONS, value);
   }
 
   if (field === "status") {
-    return getOptionLabel(
-      CAT_STATUS_OPTIONS,
-      value,
-    );
+    return getOptionLabel(CAT_STATUS_OPTIONS, value);
   }
 
   if (field === "location") {
-    return getOptionLabel(
-      CAT_LOCATIONS,
-      value,
-    );
+    return getOptionLabel(CAT_LOCATIONS, value);
   }
 
   if (field === "fiv_status") {
-    return getOptionLabel(
-      CAT_FIV_OPTIONS,
-      value,
-    );
+    return getOptionLabel(CAT_FIV_OPTIONS, value);
   }
 
   if (field === "felv_status") {
-    return getOptionLabel(
-      CAT_FELV_OPTIONS,
-      value,
-    );
+    return getOptionLabel(CAT_FELV_OPTIONS, value);
   }
 
   if (field === "fip_status") {
-    return getOptionLabel(
-      CAT_FIP_OPTIONS,
-      value,
-    );
+    return getOptionLabel(CAT_FIP_OPTIONS, value);
   }
 
   if (field === "tags") {
-    if (
-      !Array.isArray(value) ||
-      value.length === 0
-    ) {
+    if (!Array.isArray(value) || value.length === 0) {
       return "—";
     }
 
-    return value.join(
-      ", ",
-    );
+    return value.join(", ");
   }
 
-  if (
-    field === "description"
-  ) {
-    return String(value)
-      .replace(/\s+/g, " ")
-      .slice(0, 80);
+  if (field === "description") {
+    return String(value).replace(/\s+/g, " ").slice(0, 80);
   }
 
   return String(value);
@@ -1317,41 +896,19 @@ type CellEditorProps = {
   field: EditableCatField;
   value: unknown;
   onCancel: () => void;
-  onSave: (
-    value: unknown,
-  ) => void;
+  onSave: (value: unknown) => void;
 };
 
-function CellEditor({
-  field,
-  value,
-  onCancel,
-  onSave,
-}: CellEditorProps) {
-  const [
-    draft,
-    setDraft,
-  ] = useState(
-    field === "tags"
-      ? Array.isArray(value)
-        ? value
-        : []
-      : value ?? "",
+function CellEditor({ field, value, onCancel, onSave }: CellEditorProps) {
+  const [draft, setDraft] = useState(
+    field === "tags" ? (Array.isArray(value) ? value : []) : (value ?? ""),
   );
 
   const submit = () => {
-    if (
-      field ===
-      "adoption_priority"
-    ) {
-      const raw =
-        String(draft).trim();
+    if (field === "adoption_priority") {
+      const raw = String(draft).trim();
 
-      onSave(
-        raw === ""
-          ? null
-          : Number(raw),
-      );
+      onSave(raw === "" ? null : Number(raw));
 
       return;
     }
@@ -1367,23 +924,18 @@ function CellEditor({
         "microchipped",
       ].includes(field)
     ) {
-      onSave(
-        Boolean(draft),
-      );
+      onSave(Boolean(draft));
 
       return;
     }
 
-    onSave(
-      draft === ""
-        ? null
-        : draft,
-    );
+    onSave(draft === "" ? null : draft);
   };
 
   if (
     [
       "gender",
+      "coat_type",
       "status",
       "location",
       "fiv_status",
@@ -1391,79 +943,54 @@ function CellEditor({
       "fip_status",
     ].includes(field)
   ) {
-    let options:
-      readonly {
-        value: string;
-        label: string;
-      }[] = [];
+    let options: readonly {
+      value: string;
+      label: string;
+    }[] = [];
 
     if (field === "gender") {
-      options =
-        CAT_GENDER_OPTIONS;
+      options = CAT_GENDER_OPTIONS;
+    }
+
+    if (field === "coat_type") {
+      options = CAT_COAT_TYPE_OPTIONS;
     }
 
     if (field === "status") {
-      options =
-        CAT_STATUS_OPTIONS;
+      options = CAT_STATUS_OPTIONS;
     }
 
     if (field === "location") {
-      options =
-        CAT_LOCATIONS;
+      options = CAT_LOCATIONS;
     }
 
     if (field === "fiv_status") {
-      options =
-        CAT_FIV_OPTIONS;
+      options = CAT_FIV_OPTIONS;
     }
 
     if (field === "felv_status") {
-      options =
-        CAT_FELV_OPTIONS;
+      options = CAT_FELV_OPTIONS;
     }
 
     if (field === "fip_status") {
-      options =
-        CAT_FIP_OPTIONS;
+      options = CAT_FIP_OPTIONS;
     }
 
     return (
       <select
         autoFocus
         className="cats-cell-editor"
-        value={String(
-          draft ?? "",
-        )}
-        onChange={(event) =>
-          onSave(
-            event.target.value ||
-              null,
-          )
-        }
-        onBlur={
-          onCancel
-        }
+        value={String(draft ?? "")}
+        onChange={(event) => onSave(event.target.value || null)}
+        onBlur={onCancel}
       >
-        <option value="">
-          —
-        </option>
+        <option value="">—</option>
 
-        {options.map(
-          (option) => (
-            <option
-              key={
-                option.value
-              }
-              value={
-                option.value
-              }
-            >
-              {
-                option.label
-              }
-            </option>
-          ),
-        )}
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
       </select>
     );
   }
@@ -1479,30 +1006,17 @@ function CellEditor({
       "microchipped",
     ].includes(field)
   ) {
-    const checked =
-      Boolean(value);
+    const checked = Boolean(value);
 
     return (
       <button
         type="button"
         autoFocus
-        className={`cats-toggle ${
-          checked
-            ? "is-active"
-            : ""
-        }`}
-        onClick={() =>
-          onSave(
-            !checked,
-          )
-        }
-        onBlur={
-          onCancel
-        }
+        className={`cats-toggle ${checked ? "is-active" : ""}`}
+        onClick={() => onSave(!checked)}
+        onBlur={onCancel}
       >
-        {checked
-          ? "✓ Tak"
-          : "— Nie"}
+        {checked ? "✓ Tak" : "— Nie"}
       </button>
     );
   }
@@ -1518,26 +1032,12 @@ function CellEditor({
    * tagów ręcznie.
    */
   if (field === "tags") {
-    const selectedTags =
-      Array.isArray(draft)
-        ? (draft as string[])
-        : [];
+    const selectedTags = Array.isArray(draft) ? (draft as string[]) : [];
 
-    function toggleTag(
-      tag: string,
-    ) {
-      const nextTags =
-        selectedTags.includes(
-          tag,
-        )
-          ? selectedTags.filter(
-              (item) =>
-                item !== tag,
-            )
-          : [
-              ...selectedTags,
-              tag,
-            ];
+    function toggleTag(tag: string) {
+      const nextTags = selectedTags.includes(tag)
+        ? selectedTags.filter((item) => item !== tag)
+        : [...selectedTags, tag];
 
       setDraft(nextTags);
     }
@@ -1551,106 +1051,64 @@ function CellEditor({
            * kiedy użytkownik przechodzi
            * pomiędzy checkboxami.
            */
-          if (
-            event.currentTarget.contains(
-              event.relatedTarget as Node,
-            )
-          ) {
+          if (event.currentTarget.contains(event.relatedTarget as Node)) {
             return;
           }
 
-          onSave(
-            selectedTags,
-          );
+          onSave(selectedTags);
         }}
       >
         <div className="cats-tags-editor__selected">
-          {selectedTags.length ===
-          0 ? (
-            <span className="cats-tags-editor__empty">
-              Brak tagów
-            </span>
+          {selectedTags.length === 0 ? (
+            <span className="cats-tags-editor__empty">Brak tagów</span>
           ) : (
-            selectedTags.map(
-              (tag) => (
-                <button
-                  key={tag}
-                  type="button"
-                  className="cats-tag"
-                  onMouseDown={(
-                    event,
-                  ) => {
-                    event.preventDefault();
-                  }}
-                  onClick={() =>
-                    toggleTag(
-                      tag,
-                    )
-                  }
-                  title="Usuń tag"
-                >
-                  {tag}
+            selectedTags.map((tag) => (
+              <button
+                key={tag}
+                type="button"
+                className="cats-tag"
+                onMouseDown={(event) => {
+                  event.preventDefault();
+                }}
+                onClick={() => toggleTag(tag)}
+                title="Usuń tag"
+              >
+                {tag}
 
-                  <X
-                    size={12}
-                  />
-                </button>
-              ),
-            )
+                <X size={12} />
+              </button>
+            ))
           )}
         </div>
 
         <div className="cats-tags-editor__options">
-          {CAT_TAG_OPTIONS.map(
-            (tag) => {
-              const checked =
-                selectedTags.includes(
-                  tag,
-                );
+          {CAT_TAG_OPTIONS.map((tag) => {
+            const checked = selectedTags.includes(tag);
 
-              return (
-                <label
-                  key={tag}
-                  className={`cats-tag-option ${
-                    checked
-                      ? "is-selected"
-                      : ""
-                  }`}
-                >
-                  <input
-                    type="checkbox"
-                    checked={
-                      checked
-                    }
-                    onChange={() =>
-                      toggleTag(
-                        tag,
-                      )
-                    }
-                  />
+            return (
+              <label
+                key={tag}
+                className={`cats-tag-option ${checked ? "is-selected" : ""}`}
+              >
+                <input
+                  type="checkbox"
+                  checked={checked}
+                  onChange={() => toggleTag(tag)}
+                />
 
-                  <span>
-                    {tag}
-                  </span>
-                </label>
-              );
-            },
-          )}
+                <span>{tag}</span>
+              </label>
+            );
+          })}
         </div>
 
         <button
           type="button"
           className="cats-tags-editor__done"
-          onMouseDown={(
-            event,
-          ) => {
+          onMouseDown={(event) => {
             event.preventDefault();
           }}
-          onClick={() =>
-            onSave(
-              selectedTags,
-            )
-          }
+          onClick={() => onSave(selectedTags)}
         >
           Gotowe
         </button>
@@ -1658,48 +1116,26 @@ function CellEditor({
     );
   }
 
-  if (
-    field ===
-    "description"
-  ) {
+  if (field === "description") {
     return (
       <div className="cats-cell-editor-wrap">
         <textarea
           autoFocus
           className="cats-cell-editor cats-cell-editor--textarea"
-          value={String(
-            draft,
-          )}
-          onChange={(event) =>
-            setDraft(
-              event.target
-                .value,
-            )
-          }
-          onKeyDown={(
-            event,
-          ) => {
-            if (
-              event.key ===
-              "Escape"
-            ) {
+          value={String(draft)}
+          onChange={(event) => setDraft(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === "Escape") {
               onCancel();
             }
 
-            if (
-              event.key ===
-                "Enter" &&
-              (event.metaKey ||
-                event.ctrlKey)
-            ) {
+            if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
               event.preventDefault();
 
               submit();
             }
           }}
-          onBlur={
-            submit
-          }
+          onBlur={submit}
         />
       </div>
     );
@@ -1709,37 +1145,21 @@ function CellEditor({
     <input
       autoFocus
       type={
-        field ===
-        "adoption_priority"
+        field === "adoption_priority"
           ? "number"
-          : field ===
-                "birth_date" ||
-              field ===
-                "arrival_date"
+          : field === "birth_date" || field === "arrival_date"
             ? "date"
             : "text"
       }
       className="cats-cell-editor"
-      value={String(
-        draft ?? "",
-      )}
-      onChange={(event) =>
-        setDraft(
-          event.target.value,
-        )
-      }
+      value={String(draft ?? "")}
+      onChange={(event) => setDraft(event.target.value)}
       onKeyDown={(event) => {
-        if (
-          event.key ===
-          "Escape"
-        ) {
+        if (event.key === "Escape") {
           onCancel();
         }
 
-        if (
-          event.key ===
-          "Enter"
-        ) {
+        if (event.key === "Enter") {
           event.preventDefault();
 
           submit();

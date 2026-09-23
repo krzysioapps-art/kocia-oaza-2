@@ -245,7 +245,7 @@
     flex: 0 0 auto;
 
     width: 100%;
-    min-height: 72px;
+    min-height: 64px;
 
     background: rgba(255, 255, 255, 0.96);
 
@@ -257,7 +257,7 @@
 
 .dashboard-topbar__inner {
     width: 100%;
-    min-height: 72px;
+    min-height: 64px;
 
     padding: 0 24px;
 
@@ -273,21 +273,115 @@
 .dashboard-brand {
     flex: 0 0 auto;
 
-    font-weight: 700;
+    color: inherit;
+
+    font-weight: 800;
     font-size: 18px;
 
     text-decoration: none;
+
+    white-space: nowrap;
 }
+
+/* =========================================================
+   PANEL NAV — ZAKŁADKI
+   ========================================================= */
 
 .dashboard-nav {
     display: flex;
-    align-items: center;
-    justify-content: flex-end;
+    align-items: stretch;
 
-    gap: 12px;
+    align-self: stretch;
 
-    flex-wrap: wrap;
+    gap: 3px;
+
+    min-width: 0;
+
+    overflow-x: auto;
+
+    scrollbar-width: none;
 }
+
+.dashboard-nav::-webkit-scrollbar {
+    display: none;
+}
+
+.dashboard-nav__item {
+    position: relative;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    min-height: 64px;
+
+    padding: 0 13px;
+
+    border: 0;
+
+    background: transparent;
+
+    color: #687572;
+
+    font-size: 13px;
+    font-weight: 650;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+
+    transition:
+        color 0.18s ease,
+        background 0.18s ease;
+}
+
+.dashboard-nav__item::after {
+    content: "";
+
+    position: absolute;
+
+    left: 9px;
+    right: 9px;
+    bottom: 0;
+
+    height: 2px;
+
+    border-radius: 999px;
+
+    background: transparent;
+
+    transform: scaleX(0);
+
+    transition:
+        transform 0.18s ease,
+        background 0.18s ease;
+}
+
+.dashboard-nav__item:hover {
+    color: var(--color-primary, #3db7ad);
+
+    background: rgba(61, 183, 173, 0.055);
+}
+
+.dashboard-nav__item--active {
+    color: var(--color-primary, #3db7ad);
+
+    font-weight: 750;
+
+    background: rgba(61, 183, 173, 0.07);
+}
+
+.dashboard-nav__item--active::after {
+    background: var(--color-primary, #3db7ad);
+
+    transform: scaleX(1);
+}
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
 
 .dashboard-content {
     width: 100%;
@@ -308,24 +402,233 @@
 
 .dashboard-content > main:not(.cats-admin-page)::after {
     content: "";
+
     display: block;
+
     width: 100%;
     height: 32px;
+
     flex: 0 0 32px;
 }
 
-@media (max-width: 768px) {
-    .dashboard-topbar__inner {
-        align-items: flex-start;
-        flex-direction: column;
-        justify-content: center;
+/* =========================================================
+   HOME PANEL
+   ========================================================= */
 
-        padding: 12px 16px;
+.dashboard-home {
+    display: flex;
+    flex-direction: column;
+
+    gap: 32px;
+}
+
+.dashboard-home__header h1 {
+    margin: 0;
+}
+
+.dashboard-home__header p {
+    margin-top: 8px;
+
+    max-width: 620px;
+
+    color: #687572;
+
+    line-height: 1.5;
+}
+
+.dashboard-home__grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 20px;
+}
+
+.dashboard-home-card {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: space-between;
+
+    min-height: 190px;
+
+    padding: 26px;
+
+    box-sizing: border-box;
+
+    border: 1px solid var(--color-border);
+
+    border-radius: 22px;
+
+    background: #fff;
+
+    color: inherit;
+
+    text-decoration: none;
+
+    overflow: hidden;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.dashboard-home-card::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            circle at 100% 0%,
+            rgba(61, 183, 173, 0.09),
+            transparent 42%
+        );
+}
+
+.dashboard-home-card:hover {
+    transform: translateY(-3px);
+
+    border-color: rgba(61, 183, 173, 0.35);
+
+    box-shadow:
+        0 12px 34px rgba(0, 0, 0, 0.07);
+}
+
+.dashboard-home-card__icon {
+    position: relative;
+
+    width: 52px;
+    height: 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 15px;
+
+    background: rgba(61, 183, 173, 0.1);
+
+    color: var(--color-primary, #3db7ad);
+}
+
+.dashboard-home-card__content {
+    position: relative;
+
+    margin-top: 28px;
+}
+
+.dashboard-home-card__content h2 {
+    margin: 0;
+
+    font-size: 26px;
+
+    line-height: 1.1;
+}
+
+.dashboard-home-card__content p {
+    margin: 8px 0 0;
+
+    max-width: 520px;
+
+    color: #687572;
+
+    line-height: 1.5;
+}
+
+.dashboard-home-card--fundraisers
+.dashboard-home-card__icon {
+    background: rgba(239, 180, 73, 0.13);
+
+    color: #b47a19;
+}
+
+.dashboard-home-card--bazarek
+.dashboard-home-card__icon {
+    background: rgba(120, 104, 190, 0.1);
+
+    color: #6d5aad;
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 900px) {
+    .dashboard-topbar__inner {
+        padding: 0 16px;
+
+        gap: 12px;
+    }
+
+    .dashboard-brand {
+        font-size: 16px;
+    }
+
+    .dashboard-nav__item {
+        padding: 0 10px;
+    }
+
+    .dashboard-home__grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-page__header {
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 600px) {
+    .dashboard-topbar__inner {
+        min-height: 58px;
+
+        padding: 0 10px;
+    }
+
+    .dashboard-brand {
+        display: none;
     }
 
     .dashboard-nav {
         width: 100%;
 
-        justify-content: flex-start;
+        min-height: 58px;
+    }
+
+    .dashboard-nav__item {
+        min-height: 58px;
+
+        flex: 1 0 auto;
+
+        padding: 0 9px;
+
+        font-size: 12px;
+    }
+
+    .dashboard-nav__item svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .dashboard-home {
+        gap: 24px;
+    }
+
+    .dashboard-home-card {
+        min-height: 170px;
+
+        padding: 22px;
     }
 }

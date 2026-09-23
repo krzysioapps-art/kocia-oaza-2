@@ -20,6 +20,13 @@ export type CatLocation =
   | "piwnica"
   | "poczekalnia";
 
+  export type CatCoatType =
+  | "solid"
+  | "tabby"
+  | "colorpoint"
+  | "tortoiseshell_calico"
+  | "bicolor";
+
 export type FivStatus = string;
 export type FelvStatus = string;
 export type FipStatus = string;
@@ -32,6 +39,7 @@ export type Cat = {
   description: string | null;
   image_url: string | null;
   status: CatStatus | null;
+  coat_type: CatCoatType | null;
 
   created_at: string | null;
 
@@ -216,6 +224,7 @@ export type EditableCatField =
   | "description"
   | "image_url"
   | "status"
+   | "coat_type"
   | "tags"
   | "location"
   | "sterilized"
@@ -241,6 +250,7 @@ export const EDITABLE_CAT_FIELDS: EditableCatField[] = [
   "description",
   "image_url",
   "status",
+  "coat_type",
   "tags",
   "location",
   "sterilized",
@@ -277,3 +287,26 @@ export const CAT_TAG_OPTIONS = [
 ] as const;
 
 export type CatTag = (typeof CAT_TAG_OPTIONS)[number];
+
+export const CAT_COAT_TYPE_OPTIONS = [
+  {
+    value: "solid",
+    label: "Jednolite",
+  },
+  {
+    value: "tabby",
+    label: "Tabby (pręgowane)",
+  },
+  {
+    value: "colorpoint",
+    label: "Colorpoint",
+  },
+  {
+    value: "tortoiseshell_calico",
+    label: "Szylkretowe i trójkolorowe",
+  },
+  {
+    value: "bicolor",
+    label: "Bicolor (dwukolorowe)",
+  },
+] as const;

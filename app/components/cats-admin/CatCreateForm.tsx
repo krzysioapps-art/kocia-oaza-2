@@ -7,6 +7,7 @@ import {
 import { useRouter } from "next/navigation";
 
 import {
+  CAT_COAT_TYPE_OPTIONS,
   CAT_GENDER_OPTIONS,
   CAT_LOCATIONS,
   CAT_STATUS_OPTIONS,
@@ -40,6 +41,7 @@ export default function CatCreateForm() {
     slug: "",
     status: "available",
     gender: "",
+    coat_type: "",
     description: "",
     birth_date: "",
     arrival_date: "",
@@ -284,6 +286,9 @@ export default function CatCreateForm() {
               gender:
                 form.gender ||
                 null,
+              coat_type:
+                form.coat_type ||
+                null,
               description:
                 form.description ||
                 null,
@@ -432,6 +437,22 @@ export default function CatCreateForm() {
             onChange={(value) =>
               setField(
                 "gender",
+                value
+              )
+            }
+          />
+
+          <SelectField
+            label="Typ sierści"
+            value={
+              form.coat_type
+            }
+            options={
+              CAT_COAT_TYPE_OPTIONS
+            }
+            onChange={(value) =>
+              setField(
+                "coat_type",
                 value
               )
             }

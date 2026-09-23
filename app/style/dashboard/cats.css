@@ -337,7 +337,7 @@
     overflow-y: auto;
 
     overscroll-behavior: contain;
-    scrollbar-gutter: stable both-edges;
+    scrollbar-gutter: stable;
     scrollbar-width: auto;
     scrollbar-color: #aebbb8 #f1f4f3;
 
@@ -380,7 +380,9 @@
 
 .cats-grid {
     width: max-content;
-    min-width: 100%;
+
+    margin: 0;
+    padding: 0;
 
     border-collapse: separate;
     border-spacing: 0;
@@ -421,7 +423,7 @@
 
 .cats-grid td {
     height: 42px;
-
+    min-height: 42px;
     padding: 0;
 
     border-right: 1px solid #ededed;
@@ -430,6 +432,7 @@
     background: #fff;
 
     vertical-align: middle;
+    box-sizing: border-box;
 }
 
 .cats-grid tbody tr:hover td {
@@ -446,6 +449,8 @@
     max-width: 44px;
 
     padding: 0 !important;
+
+    box-sizing: border-box;
 
     text-align: center;
     vertical-align: middle;
@@ -467,11 +472,29 @@
     background: #f7f7f7;
 }
 
+.cats-grid thead .cats-grid-select {
+    z-index: 35;
+
+    width: 44px;
+    min-width: 44px;
+    max-width: 44px;
+
+    padding: 0 !important;
+
+    box-sizing: border-box;
+
+    text-align: center;
+
+    background: #f7f7f7;
+}
+
 .cats-grid-select input {
+    display: block;
+
     width: 16px;
     height: 16px;
 
-    margin: 0;
+    margin: 0 auto;
 
     cursor: pointer;
 
@@ -543,10 +566,14 @@
    ========================================================= */
 
 .cats-grid-photo {
+    position: relative;
+
     width: 54px;
     height: 42px;
 
-    padding: 7px;
+    padding: 5px 7px;
+
+    box-sizing: border-box;
 }
 
 .cats-grid-photo img {
@@ -560,6 +587,54 @@
     object-fit: cover;
 
     background: #f2f2f2;
+}
+
+.cats-grid-photo__manage {
+    position: absolute;
+
+    right: 2px;
+    bottom: 2px;
+
+    width: 22px;
+    height: 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 50%;
+
+    background: #fff;
+    color: #3db7ad;
+
+    text-decoration: none;
+
+    box-shadow:
+        0 2px 7px rgba(0, 0, 0, 0.14);
+
+    transition:
+        transform 0.16s ease,
+        box-shadow 0.16s ease,
+        color 0.16s ease;
+}
+
+.cats-grid-photo__manage:hover {
+    color: #277b71;
+
+    transform: scale(1.08);
+
+    box-shadow:
+        0 3px 10px rgba(0, 0, 0, 0.18);
+}
+
+.cats-grid-photo__manage-plus {
+    position: absolute;
+
+    right: 1px;
+    top: 1px;
+
+    stroke-width: 3;
 }
 
 /* =========================================================
@@ -653,10 +728,14 @@
    ========================================================= */
 
 .cats-cell-editor {
-    width: 100%;
-    height: 42px;
+    display: block;
 
-    margin: 5px 0;
+    width: 100%;
+    height: 38px;
+    min-height: 0;
+    max-height: 38px;
+
+    margin: 0;
 
     padding: 0 8px;
 
@@ -667,18 +746,32 @@
 
     background: #fff;
     color: inherit;
+
+    box-sizing: border-box;
 }
 
 .cats-cell-editor--textarea {
-    min-height: 90px;
+    height: 38px;
+    min-height: 38px;
+    max-height: 38px;
 
-    padding: 8px;
+    padding: 6px 8px;
 
-    resize: vertical;
+    resize: none;
+    overflow: hidden;
 }
 
 .cats-cell-editor-wrap {
-    padding: 6px;
+    height: 42px;
+    min-height: 42px;
+    max-height: 42px;
+
+    padding: 2px 6px;
+
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
 }
 
 .cats-toggle {
