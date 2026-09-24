@@ -1,22 +1,14 @@
 import type { Metadata } from "next";
 
-import Hero from "@/app/components/sections/Hero";
-import FundraisersSection from "../components/sections/FundraisersSection";
-import HowWeHelp from "@/app/components/sections/HowWeHelp";
-import CatsSection from "../components/sections/CatsSection";
-import HelpSection from "../components/sections/HelpSection";
-import TipsSection from "@/app/components/sections/TipsSection";
-import AdoptionFlow from "@/app/components/sections/AdoptionFlow";
-import FinalCTA from "@/app/components/sections/FinalCTA";
-import NewsSection from "../components/sections/NewsSection";
+import Container from "@/app/components/ui/Container";
+import Heading from "@/app/components/ui/Heading";
 
-import "@/app/style/home/hero.css";
-import "@/app/style/home/adoption-flow.css";
-import "@/app/style/home/cats-section.css";
-import "@/app/style/home/help-section.css";
-import "@/app/style/home/how-we-help.css";
-import "@/app/style/home/stats.css";
-import "@/app/style/home/tips-preview.css";
+import { getFundraisers } from "@/lib/supabase/fundraisers";
+
+import HomeClient from "./HomeClient";
+
+import "./page.css";
+
 
 export const metadata: Metadata = {
   title: "Kocia Oaza | Adopcja kotów i pomoc bezdomnym kotom",
@@ -35,22 +27,67 @@ export const metadata: Metadata = {
     type: "website",
   },
 };
-    // <NewsSection />
-export default function HomePage() {
+
+type Fundraiser = {
+  id: number;
+  title: string;
+  slug: string;
+  is_active: boolean;
+  created_at: string;
+};
+
+async function FundraisersSection() {
+  const fundraisers: Fundraiser[] = await getFundraisers();
+
+  return (
+    <section className="section section--alt">
+      <Container>
+        <div className="section__header">
+          <Heading level="lg">
+            Pomóż nam ratować kolejne koty
+          </Heading>
+
+          <p className="text">
+            Każda wpłata pomaga opłacić leczenie, karmę i bezpieczne schronienie.
+          </p>
+        </div>
+
+        <div className="section__content">
+          <div className="fundraisers">
+            {fundraisers.map((item) => (
+              <div
+                className="fundraisers__card"
+                key={item.id}
+              >
+                <a
+                  href={`https://www.ratujemyzwierzaki.pl/en/${item.slug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={item.title}
+                >
+                  <iframe
+                    frameBorder="0"
+                    scrolling="no"
+                    src={`https://www.ratujemyzwierzaki.pl/en/${item.slug}/banner`}
+                    width="300"
+                    height="450"
+                  />
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+export default async function HomePage() {
   return (
     <main>
-      <Hero />
-      <HowWeHelp />
-      <FundraisersSection />
-  
-
-      <HelpSection />
-      <CatsSection />
-
-      <AdoptionFlow />
-      <TipsSection />
-
-      <FinalCTA />
+      <HomeClient>
+        <FundraisersSection />
+      </HomeClient>
     </main>
   );
 }

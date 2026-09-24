@@ -7,7 +7,7 @@ import Heading from "@/app/components/ui/Heading";
 
 import PublicCatsGrid from "@/app/components/koty/PublicCatsGrid";
 
-import "@/app/style/koty/cat-page.css";
+import "./cats-page.css";
 
 type Cat = {
   id: string;

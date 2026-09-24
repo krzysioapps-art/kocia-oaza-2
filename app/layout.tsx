@@ -1,9 +1,4 @@
-import "@/app/style/root.css";
-
-/* layout */
-import "@/app/style/layout/navbar.css";
-import "@/app/style/layout/topbar.css";
-import "@/app/style/layout/footer.css";
+import "@/app/root.css";
 
 /* UI (globalne komponenty) */
 import "@/app/style/ui/card.css";

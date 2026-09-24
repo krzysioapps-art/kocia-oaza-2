@@ -11,7 +11,7 @@ import { FiCopy, FiCheck } from "react-icons/fi";
 
 export default function Footer() {
     const [copied, setCopied] = useState(false);
-
+    const [linksOpen, setLinksOpen] = useState(false);
     const accountNumber = "66 2530 0008 2090 1073 2242 0001";
 
     const handleCopy = async () => {
@@ -41,8 +41,22 @@ export default function Footer() {
                     </div>
 
                     {/* LINKS */}
-                    <div className="footer__col">
-                        <h4 className="footer__heading">Linki</h4>
+                    <div className={`footer__col footer__linksCol ${linksOpen ? "is-open" : ""}`}>
+                        <button
+                            type="button"
+                            className="footer__linksToggle"
+                            onClick={() => setLinksOpen((prev) => !prev)}
+                            aria-expanded={linksOpen}
+                        >
+                            <span>Linki</span>
+
+                            <span
+                                className="footer__linksIcon"
+                                aria-hidden="true"
+                            >
+                                +
+                            </span>
+                        </button>
 
                         <div className="footer__links">
                             <a href="/">Witaj</a>
@@ -55,6 +69,7 @@ export default function Footer() {
                             <a href="/polityka-prywatnosci">
                                 Polityka prywatności
                             </a>
+
                             <button
                                 type="button"
                                 className="footer__cookieSettings"

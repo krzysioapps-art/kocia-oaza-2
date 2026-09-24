@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 
-import "@/app/style/zgloszenia.css";
+import "../zgloszenia.css";
 
 type Props = {
     params: Promise<{

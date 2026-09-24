@@ -4,7 +4,7 @@ import Link from "next/link";
 
 import { createClient } from "@/lib/supabase/server";
 
-import "@/app/style/zgloszenia.css";
+import "./zgloszenia.css";
 
 export default async function AdoptionFormsPage() {
     const supabase = await createClient();

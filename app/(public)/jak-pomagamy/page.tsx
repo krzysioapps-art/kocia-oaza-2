@@ -4,9 +4,10 @@ import Container from "@/app/components/ui/Container";
 import Heading from "@/app/components/ui/Heading";
 import Button from "@/app/components/ui/Button";
 
+import "./how-we-help.css";
+
 import {
     Heart,
-    Activity,
     Scissors,
     Home,
     PawPrint,
@@ -35,223 +36,409 @@ export const metadata: Metadata = {
 
 export default function HowWeHelpPage() {
     return (
-        <main>
+        <main className="how-help-page">
 
-            {/* HERO */}
+            {/* =====================================================
+                HEADER
+            ===================================================== */}
 
             <section className="page-header-neutral">
                 <Container>
                     <div className="page-header__inner">
-                        <Heading level="lg">Co robimy każdego dnia</Heading>
+                        <Heading level="lg">
+                            Co robimy każdego dnia
+                        </Heading>
 
                         <p className="text">
-                            Ratujemy, leczymy i pomagamy kotom wrócić do normalnego życia.
+                            Ratujemy, leczymy i pomagamy kotom wrócić
+                            do normalnego życia.
                         </p>
 
                         <p className="text">
-                            Trafiają do nas koty chore, porzucone, często w bardzo złym stanie.{" "}
+                            Trafiają do nas koty chore, porzucone,
+                            często w bardzo złym stanie.{" "}
                             <span className="text-highlight">
-                                Każdy przypadek to czas, koszty i ogromne zaangażowanie
-                            </span>
+                                Każdy przypadek to czas, koszty i ogromne
+                                zaangażowanie
+                            </span>{" "}
                             — ale przede wszystkim szansa na nowe życie.
                         </p>
                     </div>
                 </Container>
             </section>
 
-            {/* JAK POMAGAMY */}
-            <section className="section section">
+            {/* =====================================================
+                PROCESS
+            ===================================================== */}
+
+            <section className="section how-process">
                 <Container>
                     <div className="section__header">
-                        <Heading level="md">Jak pomagamy kotom pod naszą opieką</Heading>
+                        <Heading level="md">
+                            Jak pomagamy kotom pod naszą opieką
+                        </Heading>
 
                         <p className="text">
-                            Od momentu przyjęcia kota aż do znalezienia domu — <strong>każdy etap ma znaczenie.</strong>
+                            Od momentu przyjęcia kota aż do znalezienia
+                            domu — <strong>każdy etap ma znaczenie.</strong>
                         </p>
                     </div>
 
-                    <div className="process section__content">
+                    <div className="how-process__steps section__content">
 
-                        <div className="card-base">
-                            <div className="mission-icon"><PawPrint /></div>
-                            <h3>1. Trafia do nas</h3>
+                        <div className="how-process__step">
+                            <div className="how-process__icon how-process__icon--primary">
+                                <PawPrint />
+                            </div>
+
+                            <span className="how-process__number">
+                                01
+                            </span>
+
+                            <h3>
+                                Trafia do nas
+                            </h3>
+
                             <p>
-                                Przyjmujemy koty <strong>chore, po wypadkach i porzucone</strong> lub zabezpieczone z interwencji.
+                                Przyjmujemy koty{" "}
+                                <strong>
+                                    chore, po wypadkach i porzucone
+                                </strong>{" "}
+                                lub zabezpieczone z interwencji.
                                 Często wymagają natychmiastowej pomocy.
                             </p>
                         </div>
 
-                        <div className="card-base">
-                            <div className="mission-icon"><Stethoscope /></div>
-                            <h3>2. Leczenie</h3>
+                        <div className="how-process__step">
+                            <div className="how-process__icon how-process__icon--secondary">
+                                <Stethoscope />
+                            </div>
+
+                            <span className="how-process__number">
+                                02
+                            </span>
+
+                            <h3>
+                                Leczenie
+                            </h3>
+
                             <p>
-                                Diagnostyka, wizyty u weterynarza i pełna opieka.
-                                Każdy kot dostaje tyle czasu, ile potrzebuje.
+                                Diagnostyka, wizyty u weterynarza
+                                i pełna opieka. Każdy kot dostaje
+                                tyle czasu, ile potrzebuje.
                             </p>
                         </div>
 
-                        <div className="card-base">
-                            <div className="mission-icon"><Sparkles /></div>
-                            <h3>3. Regeneracja</h3>
+                        <div className="how-process__step">
+                            <div className="how-process__icon how-process__icon--tertiary">
+                                <Sparkles />
+                            </div>
+
+                            <span className="how-process__number">
+                                03
+                            </span>
+
+                            <h3>
+                                Regeneracja
+                            </h3>
+
                             <p>
-                                Kot dochodzi do siebie fizycznie i psychicznie.
-                                Uczy się zaufania i poczucia bezpieczeństwa.
+                                Kot dochodzi do siebie fizycznie
+                                i psychicznie. Uczy się zaufania
+                                i poczucia bezpieczeństwa.
                             </p>
                         </div>
 
-                        <div className="card-base">
-                            <div className="mission-icon"><Home /></div>
-                            <h3>4. Nowy dom</h3>
+                        <div className="how-process__step">
+                            <div className="how-process__icon how-process__icon--primary">
+                                <Home />
+                            </div>
+
+                            <span className="how-process__number">
+                                04
+                            </span>
+
+                            <h3>
+                                Nowy dom
+                            </h3>
+
                             <p>
                                 Szukamy odpowiedniego opiekuna.
                                 Proces adopcji nie jest przypadkowy.
                             </p>
                         </div>
 
-
-                    </div>
-                    <div className="how-hero__media-wrap">
-                        <div className="how-hero__media">
-                            <img src="/proces1.jpg" alt="leczenie kota u weterynarza" />
-                            <img src="/proces2.jpg" alt="opieka nad kotem" />
-                            <img src="/proces3.jpg" alt="kot w trakcie regeneracji" />
-                        </div>
-                    </div>
-                </Container>
-            </section>
-
-            {/* KOTY WOLNO ŻYJĄCE */}
-            <section className="section section--alt">
-                <Container>
-                    <div className="section__header">
-                        <Heading level="md">Opieka nad kotami wolno żyjącymi</Heading>
-
-                        <p className="text">
-                            Opiekujemy się także stadami kotów wolno żyjących.
-                            To ważne: <span className="text-highlight">tych kotów nie zabieramy i nie szukamy im domów</span>.
-                            Ich miejscem jest środowisko, w którym żyją — <strong>to tam czują się bezpiecznie</strong>.
-                        </p>
                     </div>
 
-                    <div className="grid-3 section__content">
+                    <div className="how-process__media">
+                        <img
+                            src="/proces1.jpg"
+                            alt="Leczenie kota u weterynarza"
+                        />
 
-                        <div className="card-base">
-                            <div className="mission-icon"><PawPrint /></div>
-                            <h3>Codzienna opieka</h3>
-                            <p>
-                                Zapewniamy karmę i świeżą wodę każdego dnia.
-                            </p>
-                        </div>
+                        <img
+                            src="/proces2.jpg"
+                            alt="Opieka nad kotem"
+                        />
 
-                        <div className="card-base">
-                            <div className="mission-icon"><Home /></div>
-                            <h3>Schronienie</h3>
-                            <p>
-                                Budujemy ocieplane domki i regularnie wymieniamy w nich słomę.
-                            </p>
-                        </div>
-
-                        <div className="card-base">
-                            <div className="mission-icon"><Scissors /></div>
-                            <h3>Kontrola populacji</h3>
-                            <p>
-                                Prowadzimy kastracje, aby zapobiegać bezdomności.
-                            </p>
-                        </div>
-
-                    </div>
-
-                    <div className="how-hero__media-wrap">
-                        <div className="how-hero__media">
-                            <img src="/jak-pomagamy1.jpg" alt="kot wolno żyjący" />
-                            <img src="/jak-pomagamy2.jpg" alt="koty wolno żyjące zimą" />
-                            <img src="/jak-pomagamy3.jpg" alt="dokarmianie kotów" />
-                        </div>
-                    </div>
-
-                    <div className="section__footer">
-                        <p className="text">
-                            Jeśli któryś z tych kotów zachoruje, ulegnie wypadkowi lub wymaga pomocy —
-                            wtedy trafia pod naszą opiekę i przechodzi leczenie.
-                        </p>
+                        <img
+                            src="/proces3.jpg"
+                            alt="Kot w trakcie regeneracji"
+                        />
                     </div>
                 </Container>
             </section>
 
-            {/* STATYSTYKI */}
-            <section className="section section">
+            {/* =====================================================
+                KOTY WOLNO ŻYJĄCE
+            ===================================================== */}
+
+            <section className="section section--alt how-free-cats">
                 <Container>
                     <div className="section__header">
-                        <Heading level="md">Efekty naszej pracy</Heading>
+                        <Heading level="md">
+                            Opieka nad kotami wolno żyjącymi
+                        </Heading>
+
+                        <p className="text">
+                            Opiekujemy się także stadami kotów wolno
+                            żyjących. To ważne:{" "}
+                            <span className="text-highlight">
+                                tych kotów nie zabieramy i nie szukamy
+                                im domów
+                            </span>
+                            . Ich miejscem jest środowisko, w którym żyją
+                            — <strong>to tam czują się bezpiecznie</strong>.
+                        </p>
                     </div>
 
-                    <div className="grid-3 stats section__content">
+                    <div className="how-free-cats__items section__content">
 
-                        <div className="card-base">
+                        <div className="how-free-cats__item">
+                            <div className="how-free-cats__icon how-free-cats__icon--primary">
+                                <PawPrint />
+                            </div>
+
+                            <h3>
+                                Codzienna opieka
+                            </h3>
+
+                            <p>
+                                Zapewniamy karmę i świeżą wodę
+                                każdego dnia.
+                            </p>
+                        </div>
+
+                        <div className="how-free-cats__item">
+                            <div className="how-free-cats__icon how-free-cats__icon--secondary">
+                                <Home />
+                            </div>
+
+                            <h3>
+                                Schronienie
+                            </h3>
+
+                            <p>
+                                Budujemy ocieplane domki i regularnie
+                                wymieniamy w nich słomę.
+                            </p>
+                        </div>
+
+                        <div className="how-free-cats__item">
+                            <div className="how-free-cats__icon how-free-cats__icon--tertiary">
+                                <Scissors />
+                            </div>
+
+                            <h3>
+                                Kontrola populacji
+                            </h3>
+
+                            <p>
+                                Prowadzimy kastracje, aby zapobiegać
+                                bezdomności.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <div className="how-free-cats__media">
+                        <img
+                            src="/jak-pomagamy1.jpg"
+                            alt="Kot wolno żyjący"
+                        />
+
+                        <img
+                            src="/jak-pomagamy2.jpg"
+                            alt="Koty wolno żyjące zimą"
+                        />
+
+                        <img
+                            src="/jak-pomagamy3.jpg"
+                            alt="Dokarmianie kotów"
+                        />
+                    </div>
+
+                    <div className="how-free-cats__note">
+                        <p className="text">
+                            Jeśli któryś z tych kotów zachoruje, ulegnie
+                            wypadkowi lub wymaga pomocy — wtedy trafia
+                            pod naszą opiekę i przechodzi leczenie.
+                        </p>
+                    </div>
+                </Container>
+            </section>
+
+            {/* =====================================================
+                EFEKTY
+            ===================================================== */}
+
+            <section className="section how-results">
+                <Container>
+                    <div className="section__header">
+                        <Heading level="md">
+                            Efekty naszej pracy
+                        </Heading>
+                    </div>
+
+                    <div className="how-results__grid section__content">
+
+                        <div className="how-result how-result--primary">
                             <Heart />
-                            <strong>120+</strong>
-                            <p>uratowanych kotów</p>
+
+                            <strong>
+                                120+
+                            </strong>
+
+                            <p>
+                                uratowanych kotów
+                            </p>
                         </div>
 
-                        <div className="card-base">
+                        <div className="how-result how-result--secondary">
                             <Scissors />
-                            <strong>300+</strong>
-                            <p>kastracji</p>
+
+                            <strong>
+                                300+
+                            </strong>
+
+                            <p>
+                                kastracji
+                            </p>
                         </div>
 
-                        <div className="card-base">
+                        <div className="how-result how-result--tertiary">
                             <Home />
-                            <strong>40+</strong>
-                            <p>adopcji</p>
+
+                            <strong>
+                                40+
+                            </strong>
+
+                            <p>
+                                adopcji
+                            </p>
                         </div>
+
                     </div>
                 </Container>
             </section>
 
-            <section className="section section--alt">
+            {/* =====================================================
+                TRUDNA STRONA POMOCY
+            ===================================================== */}
+
+            <section className="section section--alt how-difficult">
                 <Container>
-                    <div className="section__header">
-                        <Heading level="md">To nie zawsze jest łatwe</Heading>
+                    <div className="how-difficult__inner">
+                        <Heading level="md">
+                            To nie zawsze jest łatwe
+                        </Heading>
 
                         <p className="text">
-                            Leczenie bywa długie, a nie każdy kot od razu ufa człowiekowi.
-                            Niektóre historie są trudne — <strong>ale każdy kot zasługuje na szansę</strong>.
+                            Leczenie bywa długie, a nie każdy kot od razu
+                            ufa człowiekowi. Niektóre historie są trudne —
+                            <strong>
+                                {" "}ale każdy kot zasługuje na szansę.
+                            </strong>
                         </p>
                     </div>
                 </Container>
             </section>
 
-            {/* CTA */}
-            <section className="section section">
+            {/* =====================================================
+                JAK MOŻESZ POMÓC
+            ===================================================== */}
+
+            <section className="section how-you-can-help">
                 <Container>
                     <div className="section__header">
-                        <Heading level="md">Jak możesz pomóc Ty</Heading>
+                        <Heading level="md">
+                            Jak możesz pomóc Ty
+                        </Heading>
                     </div>
 
-                    <div className="grid-3 stats section__content">
+                    <div className="how-help-options section__content">
 
-                        <div className="card-base">
-                            <div className="mission-icon"><Home /></div>
-                            <h3>Adoptuj</h3>
-                            <p><strong>Daj kotu bezpieczny, stały dom</strong></p>
-                            <Button href="/koty" mode="outline">
+                        <div className="how-help-option">
+                            <div className="how-help-option__icon how-help-option__icon--primary">
+                                <Home />
+                            </div>
+
+                            <h3>
+                                Adoptuj
+                            </h3>
+
+                            <p>
+                                <strong>
+                                    Daj kotu bezpieczny, stały dom.
+                                </strong>
+                            </p>
+
+                            <Button
+                                href="/koty"
+                                mode="outline"
+                            >
                                 Zobacz koty
                             </Button>
                         </div>
 
-                        <div className="card-base">
-                            <div className="mission-icon"><PawPrint /></div>
-                            <h3>Dom tymczasowy</h3>
-                            <p><strong>Pomóż kotu dojść do siebie</strong></p>
-                            <Button href="/dom-tymczasowy" mode="outline">
+                        <div className="how-help-option">
+                            <div className="how-help-option__icon how-help-option__icon--secondary">
+                                <PawPrint />
+                            </div>
+
+                            <h3>
+                                Dom tymczasowy
+                            </h3>
+
+                            <p>
+                                <strong>
+                                    Pomóż kotu dojść do siebie.
+                                </strong>
+                            </p>
+
+                            <Button
+                                href="/dom-tymczasowy"
+                                mode="outline"
+                            >
                                 Dowiedz się więcej
                             </Button>
                         </div>
 
-                        <div className="card-base">
-                            <div className="mission-icon"><Heart /></div>
-                            <h3>Wesprzyj</h3>
-                            <p><strong>Pomóż finansować leczenie</strong></p>
+                        <div className="how-help-option">
+                            <div className="how-help-option__icon how-help-option__icon--tertiary">
+                                <Heart />
+                            </div>
+
+                            <h3>
+                                Wesprzyj
+                            </h3>
+
+                            <p>
+                                <strong>
+                                    Pomóż finansować leczenie.
+                                </strong>
+                            </p>
+
                             <a
                                 href="https://www.ratujemyzwierzaki.pl/en/kociaoaza"
                                 target="_blank"
@@ -267,27 +454,40 @@ export default function HowWeHelpPage() {
                 </Container>
             </section>
 
-            {/* FINAL CTA */}
-            <section className="section section--final">
-                <Container>
-                    <div className="section__header">
-                        <Heading level="lg">Każdy kot zasługuje na szansę</Heading>
-                        <p className="text">
-                            Dzięki ludziom takim jak Ty możemy pomagać dalej.
-                        </p>
-                    </div>
+            {/* =====================================================
+                FINAL CTA
+            ===================================================== */}
 
-                    <div className="section__footer">
-                        <Button href="/koty">Poznaj koty</Button>
-                        <a
-                            href="https://www.ratujemyzwierzaki.pl/en/kociaoaza"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            <Button mode="outline">
-                                Wesprzyj nas <ArrowRight size={16} />
+            <section className="section section--green how-final">
+                <Container>
+                    <div className="how-final__inner">
+
+                        <Heading level="lg">
+                            Każdy kot zasługuje na szansę
+                        </Heading>
+
+                        <p className="text">
+                            Dzięki ludziom takim jak Ty możemy pomagać
+                            dalej.
+                        </p>
+
+                        <div className="how-final__actions">
+                            <Button href="/koty">
+                                Poznaj koty
                             </Button>
-                        </a>
+
+                            <a
+                                href="https://www.ratujemyzwierzaki.pl/en/kociaoaza"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <Button mode="outline">
+                                    Wesprzyj nas
+                                    <ArrowRight size={16} />
+                                </Button>
+                            </a>
+                        </div>
+
                     </div>
                 </Container>
             </section>

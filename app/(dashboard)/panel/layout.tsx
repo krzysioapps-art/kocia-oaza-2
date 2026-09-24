@@ -1,7 +1,5 @@
 "use client";
 
-// app/(dashboard)/panel/layout.tsx
-
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -13,7 +11,7 @@ import {
     ShoppingBag,
 } from "lucide-react";
 
-import "@/app/style/bazarek/dashboard-bazarek.css";
+import ".././dashboard.css";
 
 type NavItem = {
     href: string;
@@ -41,11 +39,6 @@ const navItems: NavItem[] = [
         href: "/panel/zbiorki",
         label: "Zbiórki",
         icon: HeartHandshake,
-    },
-    {
-        href: "/panel/bazarek",
-        label: "Bazarek",
-        icon: ShoppingBag,
     },
     {
         href: "/",

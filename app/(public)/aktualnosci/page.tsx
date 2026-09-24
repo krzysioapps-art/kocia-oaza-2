@@ -5,6 +5,9 @@ import PostModal from "@/app/components/news/PostModal";
 import Container from "@/app/components/ui/Container";
 import Heading from "@/app/components/ui/Heading";
 
+import "@/app/style/ui/modal.css";
+import "./post.css";
+
 export const metadata: Metadata = {
   title: "Aktualności | Kocia Oaza",
   description:

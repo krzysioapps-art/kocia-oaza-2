@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 
 import CatEditForm from "@/app/components/cats-admin/CatEditForm";
 
-import "@/app/style/dashboard/cats.css";
+import "../../dashboard.css";
 
 type Props = {
   params: Promise<{

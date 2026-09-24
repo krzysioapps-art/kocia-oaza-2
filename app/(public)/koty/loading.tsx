@@ -1,3 +1,5 @@
+import "./cats-page.css";
+
 export default function Loading() {
   return (
     <main className="cats-page">

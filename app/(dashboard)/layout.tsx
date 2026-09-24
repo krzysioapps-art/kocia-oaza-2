@@ -1,5 +1,5 @@
 
-import "@/app/style/bazarek/dashboard-bazarek.css";
+import "./dashboard.css";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return <>{children}</>;

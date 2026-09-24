@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 
 import CatsDataGrid from "@/app/components/cats-admin/CatsDataGrid";
 
-import "@/app/style/dashboard/cats.css";
+import "../../cats.css";
 
 export default async function CatsAdminPage() {
     const supabase = await createClient();

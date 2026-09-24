@@ -5,8 +5,6 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 
 import Card from "@/app/components/ui/Card";
 
-import "@/app/style/home/cats-section.css";
-
 type Cat = {
   id: string;
   name: string;

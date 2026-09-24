@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import CatCreateForm from "@/app/components/cats-admin/CatCreateForm";
 
-import "@/app/style/dashboard/cats.css";
+import ".././cats.css";
 
 export default function NewCatPage() {
   return (

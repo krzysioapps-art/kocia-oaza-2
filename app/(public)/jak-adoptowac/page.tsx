@@ -4,7 +4,7 @@ import Container from "@/app/components/ui/Container";
 import Heading from "@/app/components/ui/Heading";
 import Button from "@/app/components/ui/Button";
 
-import "@/app/style/jak-adoptowac.css";
+import "./jak-adoptowac.css";
 
 import {
     Phone,
@@ -37,67 +37,110 @@ export const metadata: Metadata = {
 
 export default function AdoptionPage() {
     return (
-        <main>
+        <main className="adoption-page">
 
-            {/* HEADER */}
+            {/* =====================================================
+                HEADER
+            ===================================================== */}
+
             <section className="page-header-neutral">
                 <Container>
                     <div className="page-header__inner">
-                        <Heading level="lg">Jak wygląda adopcja?</Heading>
+                        <Heading level="lg">
+                            Jak wygląda adopcja?
+                        </Heading>
+
                         <p className="text">
-                            Prosty proces, który zakończy się nową przyjaźnią
+                            Prosty proces, który zakończy się nową
+                            przyjaźnią
                         </p>
                     </div>
                 </Container>
             </section>
 
-            {/* STEPS */}
-            <section className="section">
+            {/* =====================================================
+                PROCESS
+            ===================================================== */}
+
+            <section className="section adoption-process">
                 <Container>
                     <div className="section__header">
-                        <Heading level="md">Krok po kroku</Heading>
+                        <Heading level="md">
+                            Krok po kroku
+                        </Heading>
+
+                        <p className="text">
+                            Od pierwszego kontaktu do bezpiecznego domu.
+                        </p>
                     </div>
 
                     <div className="adoption-steps section__content">
 
-                        <div className="card-base adoption-step">
+                        <div className="adoption-step">
                             <div className="step-icon">
-                                <Phone size={28} />
+                                <Phone size={26} />
                             </div>
-                            <h3>1. Zgłoszenie</h3>
+
+                            <span className="adoption-step__number">
+                                01
+                            </span>
+
+                            <h3>Zgłoszenie</h3>
+
                             <p>
-                                Wyślij formularz klikając „Adoptuj” przy wybranym kocie
-                                lub zadzwoń.
+                                Wyślij formularz klikając „Adoptuj”
+                                przy wybranym kocie lub zadzwoń.
                             </p>
                         </div>
 
-                        <div className="card-base adoption-step">
+                        <div className="adoption-step">
                             <div className="step-icon">
-                                <User size={28} />
+                                <User size={26} />
                             </div>
-                            <h3>2. Poznanie kota</h3>
+
+                            <span className="adoption-step__number">
+                                02
+                            </span>
+
+                            <h3>Poznanie kota</h3>
+
                             <p>
-                                Spotykasz kota w kociarni lub domu tymczasowym.
+                                Spotykasz kota w kociarni lub domu
+                                tymczasowym.
                             </p>
                         </div>
 
-                        <div className="card-base adoption-step">
+                        <div className="adoption-step">
                             <div className="step-icon">
-                                <FileText size={28} />
+                                <FileText size={26} />
                             </div>
-                            <h3>3. Decyzja i umowa</h3>
+
+                            <span className="adoption-step__number">
+                                03
+                            </span>
+
+                            <h3>Decyzja i umowa</h3>
+
                             <p>
-                                Podpisujemy umowę i przygotowujemy Cię na przyjęcie kota.
+                                Podpisujemy umowę i przygotowujemy Cię
+                                na przyjęcie kota.
                             </p>
                         </div>
 
-                        <div className="card-base adoption-step">
+                        <div className="adoption-step">
                             <div className="step-icon">
-                                <Home size={28} />
+                                <Home size={26} />
                             </div>
-                            <h3>4. Po adopcji</h3>
+
+                            <span className="adoption-step__number">
+                                04
+                            </span>
+
+                            <h3>Po adopcji</h3>
+
                             <p>
-                                Rejestracja chipa i spokojna adaptacja kota.
+                                Rejestracja chipa i spokojna adaptacja
+                                kota.
                             </p>
                         </div>
 
@@ -105,27 +148,46 @@ export default function AdoptionPage() {
                 </Container>
             </section>
 
-            {/* REQUIREMENTS */}
-            <section className="section section">
+            {/* =====================================================
+                REQUIREMENTS
+            ===================================================== */}
+
+            <section className="section section--alt adoption-requirements">
                 <Container>
                     <div className="section__header">
-                        <Heading level="md">Warunki adopcji</Heading>
+                        <Heading level="md">
+                            Warunki adopcji
+                        </Heading>
+
+                        <p className="text">
+                            Chcemy, aby każdy kot trafił do bezpiecznego
+                            domu.
+                        </p>
                     </div>
 
                     <div className="adoption-req section__content">
 
-                        <div className="card-base variant--primary">
-                            <Home />
+                        <div className="adoption-req__item">
+                            <div className="adoption-req__icon adoption-req__icon--primary">
+                                <Home size={25} />
+                            </div>
+
                             <p>Dom niewychodzący</p>
                         </div>
 
-                        <div className="card-base variant--secondary">
-                            <ShieldCheck />
+                        <div className="adoption-req__item">
+                            <div className="adoption-req__icon adoption-req__icon--secondary">
+                                <ShieldCheck size={25} />
+                            </div>
+
                             <p>Zabezpieczone okna</p>
                         </div>
 
-                        <div className="card-base variant--tertiary">
-                            <LayoutGrid />
+                        <div className="adoption-req__item">
+                            <div className="adoption-req__icon adoption-req__icon--tertiary">
+                                <LayoutGrid size={25} />
+                            </div>
+
                             <p>Osiatkowany balkon</p>
                         </div>
 
@@ -133,36 +195,52 @@ export default function AdoptionPage() {
                 </Container>
             </section>
 
-            {/* FAQ */}
-            <section className="section">
+            {/* =====================================================
+                FAQ
+            ===================================================== */}
+
+            <section className="section adoption-faq">
                 <Container>
                     <div className="section__header">
-                        <Heading level="md">Często zadawane pytania</Heading>
+                        <Heading level="md">
+                            Często zadawane pytania
+                        </Heading>
                     </div>
 
                     <div className="faq section__content">
 
-                        <div className="card-base">
-                            <h3>Ile kosztuje adopcja?</h3>
+                        <div className="faq__item">
+                            <h3>
+                                Ile kosztuje adopcja?
+                            </h3>
+
                             <p>
                                 Adopcja jest bezpłatna. Kot jest zdrowy,
-                                wykastrowany/wysterylizowany, odrobaczony i zaszczepiony.
+                                wykastrowany/wysterylizowany, odrobaczony
+                                i zaszczepiony.
                             </p>
                         </div>
 
-                        <div className="card-base">
-                            <h3>Czy mogę adoptować kota jeśli mam małe dziecko?</h3>
+                        <div className="faq__item">
+                            <h3>
+                                Czy mogę adoptować kota jeśli mam
+                                małe dziecko?
+                            </h3>
+
                             <p>
-                                Tak! Mamy koty przyjazne dzieciom — są oznaczone jako
-                                „Idealne dla rodzin”.
+                                Tak! Mamy koty przyjazne dzieciom —
+                                są oznaczone jako „Idealne dla rodzin”.
                             </p>
                         </div>
 
-                        <div className="card-base">
-                            <h3>Czy mogę mieć więcej niż jednego kota?</h3>
+                        <div className="faq__item">
+                            <h3>
+                                Czy mogę mieć więcej niż jednego kota?
+                            </h3>
+
                             <p>
-                                Oczywiście! Wiele kotów dobrze czuje się w towarzystwie
-                                innych kotów.
+                                Oczywiście! Wiele kotów dobrze czuje
+                                się w towarzystwie innych kotów.
                             </p>
                         </div>
 
@@ -170,17 +248,27 @@ export default function AdoptionPage() {
                 </Container>
             </section>
 
-            {/* CTA */}
-            <section className="section section--alt">
-                <Container>
-                    <div className="section__header">
-                        <Heading level="md">Gotowy na adopcję?</Heading>
-                    </div>
+            {/* =====================================================
+                CTA
+            ===================================================== */}
 
-                    <div className="section__footer">
+            <section className="section section--green adoption-cta">
+                <Container>
+                    <div className="adoption-cta__inner">
+
+                        <Heading level="md">
+                            Gotowy na adopcję?
+                        </Heading>
+
+                        <p className="text">
+                            Poznaj koty, które czekają na swój dom.
+                        </p>
+
                         <Button href="/koty">
-                            Zobacz koty <ArrowRight size={16} />
+                            Zobacz koty
+                            <ArrowRight size={16} />
                         </Button>
+
                     </div>
                 </Container>
             </section>

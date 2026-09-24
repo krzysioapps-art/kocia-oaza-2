@@ -1,0 +1,556 @@
+/* =========================================================
+   HOW WE HELP PAGE
+   ========================================================= */
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.how-help-page .page-header__inner {
+    max-width: 760px;
+}
+
+.how-help-page .page-header__inner .text + .text {
+    margin-top: var(--space-1);
+}
+
+.how-help-page .text-highlight {
+    color: var(--color-accent-1-strong);
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   PROCESS
+   ========================================================= */
+
+.how-process__steps {
+    position: relative;
+
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+
+    gap: var(--space-4);
+
+    margin-top: var(--space-5);
+}
+
+.how-process__steps::before {
+    content: "";
+
+    position: absolute;
+
+    top: 28px;
+    left: 10%;
+    right: 10%;
+
+    height: 1px;
+
+    background: var(--color-border);
+}
+
+.how-process__step {
+    position: relative;
+    z-index: 1;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: var(--space-1);
+
+    text-align: center;
+}
+
+.how-process__icon {
+    width: 56px;
+    height: 56px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: var(--space-1);
+
+    border-radius: var(--radius-pill);
+
+    background: var(--color-bg);
+
+    border: 1px solid var(--color-border);
+}
+
+.how-process__icon--primary {
+    color: var(--color-accent-1-strong);
+}
+
+.how-process__icon--secondary {
+    color: var(--color-accent-2-strong);
+}
+
+.how-process__icon--tertiary {
+    color: var(--color-accent-3-strong);
+}
+
+.how-process__number {
+    font-size: 11px;
+    font-weight: 600;
+
+    letter-spacing: 0.08em;
+
+    opacity: 0.4;
+}
+
+.how-process__step h3 {
+    font-size: 18px;
+    line-height: 1.3;
+}
+
+.how-process__step p {
+    max-width: 245px;
+
+    font-size: 14px;
+    line-height: 1.65;
+
+    opacity: 0.7;
+}
+
+
+/* =========================================================
+   PROCESS MEDIA
+   ========================================================= */
+
+.how-process__media {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: var(--space-3);
+
+    margin-top: var(--space-5);
+}
+
+.how-process__media img {
+    display: block;
+
+    width: 100%;
+
+    aspect-ratio: 3 / 4;
+
+    object-fit: cover;
+
+    border-radius: var(--radius-lg);
+}
+
+
+/* =========================================================
+   FREE-LIVING CATS
+   ========================================================= */
+
+.how-free-cats__items {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: var(--space-3);
+
+    margin-top: var(--space-5);
+}
+
+.how-free-cats__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: var(--space-1);
+
+    padding: var(--space-3);
+
+    text-align: center;
+}
+
+.how-free-cats__icon {
+    width: 52px;
+    height: 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: var(--space-1);
+
+    border-radius: var(--radius-pill);
+}
+
+.how-free-cats__icon--primary {
+    background: var(--color-accent-1);
+    color: var(--color-accent-1-strong);
+}
+
+.how-free-cats__icon--secondary {
+    background: var(--color-accent-2);
+    color: var(--color-accent-2-strong);
+}
+
+.how-free-cats__icon--tertiary {
+    background: var(--color-accent-3);
+    color: var(--color-accent-3-strong);
+}
+
+.how-free-cats__item h3 {
+    font-size: 17px;
+    line-height: 1.3;
+}
+
+.how-free-cats__item p {
+    max-width: 250px;
+
+    font-size: 14px;
+    line-height: 1.6;
+
+    opacity: 0.7;
+}
+
+
+/* =========================================================
+   FREE-LIVING CATS MEDIA
+   ========================================================= */
+
+.how-free-cats__media {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: var(--space-3);
+
+    margin-top: var(--space-4);
+}
+
+.how-free-cats__media img {
+    display: block;
+
+    width: 100%;
+
+    aspect-ratio: 3 / 4;
+
+    object-fit: cover;
+
+    border-radius: var(--radius-lg);
+}
+
+.how-free-cats__note {
+    max-width: 760px;
+
+    margin: var(--space-4) auto 0;
+
+    text-align: center;
+}
+
+.how-free-cats__note .text {
+    opacity: 0.7;
+}
+
+
+/* =========================================================
+   RESULTS
+   ========================================================= */
+
+.how-results__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: var(--space-3);
+
+    max-width: 900px;
+
+    margin: var(--space-5) auto 0;
+}
+
+.how-result {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: var(--space-1);
+
+    padding: var(--space-4);
+
+    border-radius: var(--radius-lg);
+
+    text-align: center;
+}
+
+.how-result--primary {
+    background: var(--color-accent-1);
+    color: var(--color-accent-1-strong);
+}
+
+.how-result--secondary {
+    background: var(--color-accent-2);
+    color: var(--color-accent-2-strong);
+}
+
+.how-result--tertiary {
+    background: var(--color-accent-3);
+    color: var(--color-accent-3-strong);
+}
+
+.how-result svg {
+    width: 24px;
+    height: 24px;
+}
+
+.how-result strong {
+    font-size: 40px;
+    line-height: 1;
+
+    font-weight: 600;
+
+    letter-spacing: -0.02em;
+}
+
+.how-result p {
+    color: var(--color-text);
+
+    font-size: 14px;
+
+    opacity: 0.7;
+}
+
+
+/* =========================================================
+   DIFFICULT PART
+   ========================================================= */
+
+.how-difficult__inner {
+    max-width: 700px;
+
+    margin: 0 auto;
+
+    text-align: center;
+}
+
+.how-difficult__inner .text {
+    margin-top: var(--space-2);
+
+    line-height: 1.75;
+
+    opacity: 0.75;
+}
+
+
+/* =========================================================
+   HOW YOU CAN HELP
+   ========================================================= */
+
+.how-help-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: var(--space-3);
+
+    max-width: 1000px;
+
+    margin: var(--space-5) auto 0;
+}
+
+.how-help-option {
+    min-height: 270px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: var(--space-1);
+
+    padding: var(--space-4);
+
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+
+    text-align: center;
+}
+
+.how-help-option__icon {
+    width: 52px;
+    height: 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: var(--space-1);
+
+    border-radius: var(--radius-pill);
+}
+
+.how-help-option__icon--primary {
+    background: var(--color-accent-1);
+    color: var(--color-accent-1-strong);
+}
+
+.how-help-option__icon--secondary {
+    background: var(--color-accent-2);
+    color: var(--color-accent-2-strong);
+}
+
+.how-help-option__icon--tertiary {
+    background: var(--color-accent-3);
+    color: var(--color-accent-3-strong);
+}
+
+.how-help-option h3 {
+    font-size: 18px;
+}
+
+.how-help-option p {
+    min-height: 44px;
+
+    font-size: 14px;
+
+    opacity: 0.7;
+}
+
+.how-help-option .button {
+    margin-top: auto;
+}
+
+.how-help-option > a {
+    margin-top: auto;
+}
+
+
+/* =========================================================
+   FINAL CTA
+   ========================================================= */
+
+.how-final__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: var(--space-2);
+
+    text-align: center;
+}
+
+.how-final__inner > .text {
+    opacity: 0.75;
+}
+
+.how-final__actions {
+    display: flex;
+    align-items: center;
+
+    gap: var(--space-2);
+
+    margin-top: var(--space-2);
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    /* PROCESS */
+
+    .how-process__steps {
+        grid-template-columns: 1fr;
+
+        gap: var(--space-4);
+    }
+
+    .how-process__steps::before {
+        top: 28px;
+        bottom: 28px;
+        left: 50%;
+
+        width: 1px;
+        height: auto;
+    }
+
+    .how-process__step {
+        max-width: 320px;
+
+        margin: 0 auto;
+    }
+
+
+    /* PROCESS MEDIA */
+
+    .how-process__media {
+        grid-template-columns: 1fr;
+
+        gap: var(--space-2);
+    }
+
+    .how-process__media img {
+        aspect-ratio: 16 / 10;
+    }
+
+
+    /* FREE CATS */
+
+    .how-free-cats__items {
+        grid-template-columns: 1fr;
+
+        gap: var(--space-2);
+    }
+
+    .how-free-cats__item {
+        padding: var(--space-2);
+    }
+
+    .how-free-cats__media {
+        grid-template-columns: 1fr;
+
+        gap: var(--space-2);
+    }
+
+    .how-free-cats__media img {
+        aspect-ratio: 16 / 10;
+    }
+
+
+    /* RESULTS */
+
+    .how-results__grid {
+        grid-template-columns: 1fr;
+
+        max-width: 420px;
+    }
+
+    .how-result {
+        padding: var(--space-3);
+    }
+
+
+    /* HELP OPTIONS */
+
+    .how-help-options {
+        grid-template-columns: 1fr;
+
+        max-width: 420px;
+    }
+
+    .how-help-option {
+        min-height: 240px;
+    }
+
+
+    /* FINAL */
+
+    .how-final__actions {
+        flex-direction: column;
+
+        width: 100%;
+    }
+
+    .how-final__actions > a,
+    .how-final__actions > .button {
+        width: 100%;
+    }
+
+    .how-final__actions .button {
+        width: 100%;
+    }
+}

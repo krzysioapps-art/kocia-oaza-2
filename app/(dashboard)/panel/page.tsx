@@ -5,7 +5,6 @@ import {
     Cat,
     ClipboardList,
     HeartHandshake,
-    ShoppingBag,
 } from "lucide-react";
 
 const dashboardCards = [
@@ -32,14 +31,6 @@ const dashboardCards = [
             "Dodawaj i zarządzaj aktywnymi zbiórkami.",
         icon: HeartHandshake,
         className: "dashboard-home-card--fundraisers",
-    },
-    {
-        href: "/panel/bazarek",
-        title: "Bazarek",
-        description:
-            "Zarządzaj produktami i ofertami bazarku.",
-        icon: ShoppingBag,
-        className: "dashboard-home-card--bazarek",
     },
 ];
 

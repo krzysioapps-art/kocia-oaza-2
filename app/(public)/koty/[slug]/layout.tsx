@@ -1,9 +1,8 @@
 "use client";
 import { useEffect } from "react";
 
-import "@/app/style/koty/cat-page.css";
-import "@/app/style/koty/cat-actions.css";
-
+import "./cat-page.css";
+import "../../page.css";
 export default function CatLayout({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     document.body.classList.add("page--cat");

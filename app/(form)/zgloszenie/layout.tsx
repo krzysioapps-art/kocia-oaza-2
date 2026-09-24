@@ -1,4 +1,4 @@
-import "@/app/style/form.css";
+import "./form.css";
 
 export default function Layout({
   children,

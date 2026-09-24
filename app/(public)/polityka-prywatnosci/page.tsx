@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Container from "@/app/components/ui/Container";
 import Heading from "@/app/components/ui/Heading";
 
-import "@/app/style/privacy-policy.css";
+import "./privacy-policy.css";
 
 import {
     Info,
