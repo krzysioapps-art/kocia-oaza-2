@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 
 import CatMediaManager from "@/app/components/cats-admin/CatMediaManager";
 
-import "../../../cats.css";
+import "@/app/(dashboard)/cats.css";
 
 type Props = {
   params: Promise<{
