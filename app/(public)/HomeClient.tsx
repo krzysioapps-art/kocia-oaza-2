@@ -4,7 +4,6 @@ import {
   useEffect,
   useRef,
   useState,
-  type ReactNode,
 } from "react";
 
 import Container from "@/app/components/ui/Container";
@@ -41,10 +40,6 @@ type CatStatus =
   | "reserved"
   | "adopted"
   | "deceased";
-
-type HomeClientProps = {
-  children?: ReactNode;
-};
 
 function useCountUp(
   target: number,
@@ -467,6 +462,9 @@ function CatsSection() {
   const [latest, setLatest] =
     useState<any[]>([]);
 
+  const [loading, setLoading] =
+    useState(true);
+
   const trackRef =
     useRef<HTMLDivElement>(null);
 
@@ -480,28 +478,32 @@ function CatsSection() {
     async function load() {
       const supabase = createClient();
 
-      const { data } = await supabase
-        .from("cats")
-        .select(`
+      try {
+        const { data } = await supabase
+          .from("cats")
+          .select(`
           *,
           media:cat_media(*)
         `)
-        .is("deleted_at", null)
-        .order("created_at", {
-          ascending: false,
-        });
+          .is("deleted_at", null)
+          .order("created_at", {
+            ascending: false,
+          });
 
-      const filtered =
-        (data ?? [])
-          .filter(
-            (cat) =>
-              (cat.media &&
-                cat.media.length > 0) ||
-              cat.image_url
-          )
-          .slice(0, 8);
+        const filtered =
+          (data ?? [])
+            .filter(
+              (cat) =>
+                (cat.media &&
+                  cat.media.length > 0) ||
+                cat.image_url
+            )
+            .slice(0, 8);
 
-      setLatest(filtered);
+        setLatest(filtered);
+      } finally {
+        setLoading(false);
+      }
     }
 
     load();
@@ -586,7 +588,7 @@ function CatsSection() {
   }, [latest]);
 
   return (
-    <section className="section section--alt">
+    <section className="section section">
       <div className="cats-section">
         <Container>
           <div className="section__header">
@@ -607,155 +609,181 @@ function CatsSection() {
 
         <Reveal delay={120}>
           <Slider ref={trackRef}>
-            {latest.map((cat) => {
-              const status =
-                (cat.status ??
-                  "available") as CatStatus;
-
-              const age =
-                formatAge(
-                  cat.birth_date
-                );
-
-              const waitingLabel =
-                getWaitingLabel(
-                  cat.arrival_date
-                );
-
-              const isDeceased =
-                status === "deceased";
-
-              return (
-                <Card
-                  key={cat.id}
-                  href={`/koty/${cat.slug}`}
-                  className={`card card-base cats-section__card ${isDeceased
-                    ? "cats-section__card--deceased"
-                    : ""
-                    }`}
+            {loading
+              ? Array.from({ length: 4 }).map((_, index) => (
+                <div
+                  className="cats-section__card cats-section__card--skeleton"
+                  key={`cat-skeleton-${index}`}
+                  aria-hidden="true"
                 >
-                  <div className="cats-section__image-wrap">
-                    <img
-                      className="cats-section__image"
-                      src={getPrimaryImage(cat)}
-                      alt={`Kot ${cat.name}`}
-                    />
-
-                    {isDeceased && (
-                      <div
-                        className="cats-section__rainbow"
-                        aria-label="Za tęczowym mostem"
-                        title="Za tęczowym mostem"
-                      >
-                        🌈
-                      </div>
-                    )}
-
-                    <div
-                      className={`cats-section__status cats-section__status--${status}`}
-                    >
-                      {isDeceased ? (
-                        <>
-                          <span>
-                            {getStatusLabel(
-                              status,
-                              cat.gender
-                            )}
-                          </span>
-
-                          <small>
-                            za tęczowy most
-                          </small>
-                        </>
-                      ) : (
-                        getStatusLabel(
-                          status,
-                          cat.gender
-                        )
-                      )}
-                    </div>
-                  </div>
+                  <div className="cats-section__skeleton-image" />
 
                   <div className="cats-section__body">
-                    <div className="cats-section__heading">
-                      <h3>
-                        {cat.name}
-                      </h3>
+                    <div className="cats-section__skeleton-title" />
 
-                      <span className="cats-section__arrow">
-                        →
-                      </span>
+                    <div className="cats-section__skeleton-meta">
+                      <span />
+                      <span />
                     </div>
 
-                    <div className="cats-section__meta">
-                      {cat.gender ===
-                        "female" && (
-                          <span>
-                            <Venus size={15} />
-                            Kotka
-                          </span>
-                        )}
-
-                      {cat.gender ===
-                        "male" && (
-                          <span>
-                            <Mars size={15} />
-                            Kocurek
-                          </span>
-                        )}
-
-                      {age && (
-                        <span>
-                          {age}
-                        </span>
-                      )}
+                    <div className="cats-section__skeleton-text">
+                      <span />
+                      <span />
                     </div>
 
-                    {status ===
-                      "available" &&
-                      waitingLabel && (
-                        <div className="cats-section__waiting">
-                          <Clock3 size={14} />
-                          {waitingLabel}
-                        </div>
-                      )}
-
-                    {cat.tags &&
-                      cat.tags.length >
-                      0 && (
-                        <div className="cats-section__tags">
-                          {cat.tags
-                            .slice(0, 3)
-                            .map(
-                              (
-                                tag: string
-                              ) => (
-                                <span
-                                  key={tag}
-                                >
-                                  {tag}
-                                </span>
-                              )
-                            )}
-                        </div>
-                      )}
-
-                    {cat.description && (
-                      <p className="cats-section__description">
-                        {cat.description}
-                      </p>
-                    )}
-
-                    <span className="cats-section__link">
-                      Zobacz profil
-                      <span>
-                        →
-                      </span>
-                    </span>
+                    <div className="cats-section__skeleton-link" />
                   </div>
-                </Card>
-              );
-            })}
+                </div>
+              ))
+              : latest.map((cat) => {
+                const status =
+                  (cat.status ??
+                    "available") as CatStatus;
+
+                const age =
+                  formatAge(
+                    cat.birth_date
+                  );
+
+                const waitingLabel =
+                  getWaitingLabel(
+                    cat.arrival_date
+                  );
+
+                const isDeceased =
+                  status === "deceased";
+
+                return (
+                  <Card
+                    key={cat.id}
+                    href={`/koty/${cat.slug}`}
+                    className={`card card-base cats-section__card ${isDeceased
+                      ? "cats-section__card--deceased"
+                      : ""
+                      }`}
+                  >
+                    <div className="cats-section__image-wrap">
+                      <img
+                        className="cats-section__image"
+                        src={getPrimaryImage(cat)}
+                        alt={`Kot ${cat.name}`}
+                      />
+
+                      {isDeceased && (
+                        <div
+                          className="cats-section__rainbow"
+                          aria-label="Za tęczowym mostem"
+                          title="Za tęczowym mostem"
+                        >
+                          🌈
+                        </div>
+                      )}
+
+                      <div
+                        className={`cats-section__status cats-section__status--${status}`}
+                      >
+                        {isDeceased ? (
+                          <>
+                            <span>
+                              {getStatusLabel(
+                                status,
+                                cat.gender
+                              )}
+                            </span>
+
+                            <small>
+                              za tęczowy most
+                            </small>
+                          </>
+                        ) : (
+                          getStatusLabel(
+                            status,
+                            cat.gender
+                          )
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="cats-section__body">
+                      <div className="cats-section__heading">
+                        <h3>
+                          {cat.name}
+                        </h3>
+
+                        <span className="cats-section__arrow">
+                          →
+                        </span>
+                      </div>
+
+                      <div className="cats-section__meta">
+                        {cat.gender ===
+                          "female" && (
+                            <span>
+                              <Venus size={15} />
+                              Kotka
+                            </span>
+                          )}
+
+                        {cat.gender ===
+                          "male" && (
+                            <span>
+                              <Mars size={15} />
+                              Kocurek
+                            </span>
+                          )}
+
+                        {age && (
+                          <span>
+                            {age}
+                          </span>
+                        )}
+                      </div>
+
+                      {status ===
+                        "available" &&
+                        waitingLabel && (
+                          <div className="cats-section__waiting">
+                            <Clock3 size={14} />
+                            {waitingLabel}
+                          </div>
+                        )}
+
+                      {cat.tags &&
+                        cat.tags.length >
+                        0 && (
+                          <div className="cats-section__tags">
+                            {cat.tags
+                              .slice(0, 3)
+                              .map(
+                                (
+                                  tag: string
+                                ) => (
+                                  <span
+                                    key={tag}
+                                  >
+                                    {tag}
+                                  </span>
+                                )
+                              )}
+                          </div>
+                        )}
+
+                      {cat.description && (
+                        <p className="cats-section__description">
+                          {cat.description}
+                        </p>
+                      )}
+
+                      <span className="cats-section__link">
+                        Zobacz profil
+                        <span>
+                          →
+                        </span>
+                      </span>
+                    </div>
+                  </Card>
+                );
+              })}
           </Slider>
         </Reveal>
 
@@ -1258,39 +1286,302 @@ function NewsSection() {
   );
 }
 
+
+
+
+
+type Fundraiser = {
+  slug: string;
+  title: string;
+  imageUrl: string | null;
+  daysLeft: number | null;
+  stats: {
+    paymentsCount: number;
+    amount: number;
+    percentage: number;
+    amountLeft: number;
+    target: number;
+  } | null;
+};
+
+function FundraisersSection() {
+  const [fundraisers, setFundraisers] =
+    useState<Fundraiser[]>([]);
+
+  const trackRef =
+    useRef<HTMLDivElement>(null);
+
+  const [canLeft, setCanLeft] =
+    useState(false);
+
+  const [canRight, setCanRight] =
+    useState(false);
+
+  useEffect(() => {
+    async function loadFundraisers() {
+      try {
+        const response = await fetch(
+          "/api/fundraisers/live"
+        );
+
+        if (!response.ok) {
+          throw new Error(
+            "Nie udało się pobrać zbiórek"
+          );
+        }
+
+        const data =
+          await response.json();
+
+        setFundraisers(data);
+      } catch (error) {
+        console.error(
+          "Błąd pobierania zbiórek:",
+          error
+        );
+      }
+    }
+
+    loadFundraisers();
+  }, []);
+
+  const scroll = (dir: number) => {
+    const el = trackRef.current;
+
+    if (!el) return;
+
+    const firstCard =
+      el.children[0] as HTMLElement;
+
+    if (!firstCard) return;
+
+    const gap = 16;
+    const cardWidth =
+      firstCard.offsetWidth;
+
+    el.scrollBy({
+      left: dir * (cardWidth + gap),
+      behavior: "smooth",
+    });
+  };
+
+  const update = () => {
+    const el = trackRef.current;
+
+    if (!el) return;
+
+    const {
+      scrollLeft,
+      scrollWidth,
+      clientWidth,
+    } = el;
+
+    setCanLeft(scrollLeft > 0);
+
+    setCanRight(
+      scrollLeft + clientWidth <
+      scrollWidth - 2
+    );
+  };
+
+  useEffect(() => {
+    const el = trackRef.current;
+
+    if (!el) return;
+
+    update();
+
+    const observer =
+      new ResizeObserver(update);
+
+    observer.observe(el);
+
+    el.addEventListener(
+      "scroll",
+      update
+    );
+
+    window.addEventListener(
+      "resize",
+      update
+    );
+
+    return () => {
+      observer.disconnect();
+
+      el.removeEventListener(
+        "scroll",
+        update
+      );
+
+      window.removeEventListener(
+        "resize",
+        update
+      );
+    };
+  }, [fundraisers]);
+
+  return (
+    <section className="section section--alt">
+      <div className="cats-section">
+        <Container>
+          <div className="section__header">
+            <Reveal>
+              <Heading level="lg">
+                Pomóż nam ratować kolejne koty
+              </Heading>
+            </Reveal>
+
+            <Reveal delay={80}>
+              <p className="text">
+                Każda wpłata pomaga opłacić
+                leczenie, karmę i bezpieczne
+                schronienie.
+              </p>
+            </Reveal>
+          </div>
+        </Container>
+
+        <Reveal delay={120}>
+          <Slider ref={trackRef}>
+            {fundraisers.map((item) => {
+              const stats = item.stats;
+
+              return (
+                <article
+                  className="fundraisers-section__card"
+                  key={item.slug}
+                >
+                  <a
+                    href={`https://www.ratujemyzwierzaki.pl/en/${item.slug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="fundraisers-section__link"
+                  >
+                    {item.imageUrl && (
+                      <img
+                        className="fundraisers-section__image"
+                        src={item.imageUrl}
+                        alt=""
+                      />
+                    )}
+
+                    <div className="fundraisers-section__body">
+                      <h3>{item.title}</h3>
+
+                      {stats && (
+                        <>
+                          <div className="fundraisers-section__amounts">
+                            <strong>
+                              {stats.amount.toLocaleString("pl-PL", {
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 0,
+                              })}{" "}
+                              zł
+                            </strong>
+
+                            <span>
+                              /{" "}
+                              {stats.target.toLocaleString("pl-PL", {
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 0,
+                              })}{" "}
+                              zł
+                            </span>
+                          </div>
+
+                          <div className="fundraisers-section__progress">
+                            <div
+                              className="fundraisers-section__progress-bar"
+                              style={{
+                                width: `${Math.min(stats.percentage, 100)}%`,
+                              }}
+                            />
+                          </div>
+                        </>
+                      )}
+
+                      {item.daysLeft !== null && (
+                        <div className="fundraisers-section__days">
+                          {item.daysLeft === 1
+                            ? "Został 1 dzień"
+                            : `Zostało ${item.daysLeft} dni`}
+                        </div>
+                      )}
+
+                      <span className="fundraisers-section__cta">
+                        Zobacz zbiórkę
+                        <span>→</span>
+                      </span>
+                    </div>
+                  </a>
+                </article>
+              );
+            })}
+          </Slider>
+        </Reveal>
+
+        <Container>
+          <Reveal
+            className="cats-section__footer"
+            delay={180}
+          >
+            <button
+              type="button"
+              className="cats-section__nav"
+              onClick={() => scroll(-1)}
+              disabled={!canLeft}
+              aria-label="Poprzednie zbiórki"
+            >
+              <ArrowLeft size={20} />
+            </button>
+
+            <Button
+              variant="primary"
+              href="https://www.ratujemyzwierzaki.pl/en/organizacje/kociaoaza"
+            >
+              Zobacz wszystkie zbiórki
+            </Button>
+
+            <button
+              type="button"
+              className="cats-section__nav"
+              onClick={() => scroll(1)}
+              disabled={!canRight}
+              aria-label="Następne zbiórki"
+            >
+              <ArrowRight size={20} />
+            </button>
+          </Reveal>
+        </Container>
+      </div>
+    </section>
+  );
+}
+
 /* =========================================================
    HOME CLIENT
 ========================================================= */
 
-export default function HomeClient({
-  children,
-}: HomeClientProps) {
+export default function HomeClient() {
   return (
     <>
       <Hero />
+      <CatsSection />
+      <FundraisersSection />
+      <HelpSection />
+
+      <AdoptionFlow />
 
       <HowWeHelp />
 
-      {children}
 
-      <HelpSection />
 
-      <CatsSection />
 
-      <AdoptionFlow />
 
       <TipsSection />
 
       <FinalCTA />
-
-      {/*
-        Aktualności pozostają wyłączone,
-        tak jak w poprzednim page.tsx.
-      */}
-
-      {/*
-        <NewsSection />
-      */}
     </>
   );
 }

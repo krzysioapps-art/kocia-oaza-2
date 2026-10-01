@@ -23,15 +23,7 @@ const dashboardCards = [
             "Formularze adopcyjne i domów tymczasowych.",
         icon: ClipboardList,
         className: "dashboard-home-card--applications",
-    },
-    {
-        href: "/panel/zbiorki",
-        title: "Zbiórki",
-        description:
-            "Dodawaj i zarządzaj aktywnymi zbiórkami.",
-        icon: HeartHandshake,
-        className: "dashboard-home-card--fundraisers",
-    },
+    }
 ];
 
 export default function DashboardHomePage() {
@@ -45,7 +37,7 @@ export default function DashboardHomePage() {
 
                     <p>
                         Zarządzaj kotami, zgłoszeniami,
-                        zbiórkami i bazarkiem.
+                        i bazarkiem.
                     </p>
                 </div>
 
